@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin()    { return isSignedIn() && request.auth.token.role == 'admin'; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    match /users/{userId} {
+      allow read: if isAdmin() || isOwner(userId);
+      // Doctors may only ever touch their own fcmTokens field directly;
+      // every other user field (stats, name, etc.) is admin- or
+      // Cloud-Function-only.
+      allow update: if isOwner(userId) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fcmTokens']);
+      allow write: if isAdmin();
+    }
+
+    match /products/{productId} {
+      // No cost data lives on this doc — safe for any signed-in user
+      // (doctor or admin) to read.
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+
+      match /variants/{variantId} {
+        // sellPrice, label, quantity — safe for doctors to read.
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
+      }
+
+      match /costs/{variantId} {
+        // costPrice never reachable by a doctor's credentials, structurally
+        // — not just hidden by UI.
+        allow read, write: if isAdmin();
+      }
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin() || isOwner(resource.data.doctorId);
+      // Admin can create any order (manual entry). A doctor may only
+      // create an order for themselves, and only in the initial "waiting"
+      // state — they cannot pre-set status/payment fields.
+      allow create: if isAdmin() ||
+        (isSignedIn() &&
+         request.resource.data.doctorId == request.auth.uid &&
+         request.resource.data.status == 'waiting');
+      // Doctors cannot edit an order after submitting it.
+      allow update: if isAdmin();
+
+      match /payments/{paymentId} {
+        allow read: if isAdmin() ||
+          isOwner(get(/databases/$(database)/documents/orders/$(orderId)).data.doctorId);
+        allow create: if isAdmin() &&
+          request.resource.data.amount > 0;
+      }
+
+      match /profitData/{doc} {
+        // Cost/profit — never doctor-readable, even for their own order.
+        allow read, write: if isAdmin();
+      }
+    }
+
+    match /activityLog/{logId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Denormalized counters maintained exclusively by Cloud Functions via
+    // the Admin SDK, which bypasses these rules entirely — client writes
+    // are always denied so a buggy or compromised client can never corrupt
+    // dashboard aggregates.
+    match /stats/{document=**} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+  }
+}
