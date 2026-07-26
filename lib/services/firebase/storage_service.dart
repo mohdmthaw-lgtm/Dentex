@@ -55,6 +55,23 @@ class StorageService {
   String variantImagePath(String productId, String variantId) =>
       'products/$productId/variants/$variantId.jpg';
 
+  /// Shipment documents (invoices, packing lists, photos) can be any file
+  /// type, so — unlike the fixed `main.jpg` product/variant/offer photos —
+  /// this keeps the picked file's own extension and is never compressed
+  /// (compression only makes sense for photos, and a PDF isn't one).
+  Future<String> uploadShipmentDocument({
+    required String shipmentId,
+    required File file,
+    required String fileName,
+  }) async {
+    final ref = _storage.ref('shipments/$shipmentId/documents/$fileName');
+    await ref.putFile(file);
+    return ref.getDownloadURL();
+  }
+
+  String shipmentDocumentPath(String shipmentId, String fileName) =>
+      'shipments/$shipmentId/documents/$fileName';
+
   Future<String> uploadOfferImage({
     required String offerId,
     required File file,

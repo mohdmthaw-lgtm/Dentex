@@ -13,6 +13,9 @@ import '../../features/admin/orders/orders_list_screen.dart';
 import '../../features/admin/products/product_form_screen.dart';
 import '../../features/admin/products/products_list_screen.dart';
 import '../../features/admin/profits/profits_screen.dart';
+import '../../features/admin/shipments/shipment_detail_screen.dart';
+import '../../features/admin/shipments/shipment_form_screen.dart';
+import '../../features/admin/shipments/shipments_list_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/doctor/create_order/create_order_screen.dart';
 import '../../features/doctor/dashboard/doctor_dashboard_screen.dart';
@@ -100,6 +103,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/offers/:id',
         builder: (c, s) => OfferFormScreen(offerId: s.pathParameters['id']),
+      ),
+      GoRoute(
+        path: '/admin/shipments',
+        builder: (c, s) => const ShipmentsListScreen(),
+      ),
+      GoRoute(
+        path: '/admin/shipments/new',
+        builder: (c, s) => const ShipmentFormScreen(),
+      ),
+      GoRoute(
+        path: '/admin/shipments/:id',
+        builder: (c, s) =>
+            ShipmentDetailScreen(shipmentId: s.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/admin/shipments/:id/edit',
+        builder: (c, s) =>
+            ShipmentFormScreen(shipmentId: s.pathParameters['id']),
       ),
 
       // Doctor shell

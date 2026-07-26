@@ -17,6 +17,28 @@ class FirestorePaths {
   static const statsGlobalDoc = 'global';
   static const monthlyProfit = 'monthlyProfit';
   static const offers = 'offers';
+  static const shipments = 'shipments';
+  static const suppliers = 'suppliers';
+  static const counters = 'counters';
+  static const countersShipmentsDoc = 'shipments';
+}
+
+class ShipmentStatus {
+  ShipmentStatus._();
+
+  static const preparing = 'preparing';
+  static const readyToShip = 'ready_to_ship';
+  static const inTransit = 'in_transit';
+  static const received = 'received';
+
+  static const all = [preparing, readyToShip, inTransit, received];
+}
+
+class ShipmentType {
+  ShipmentType._();
+
+  static const sea = 'sea';
+  static const air = 'air';
 }
 
 class AppRoles {

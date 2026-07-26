@@ -70,6 +70,22 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // Shipments track import costs/supplier terms — internal business data,
+    // never doctor-readable (unlike products/offers).
+    match /shipments/{shipmentId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Client-side transactional counter (shipment number sequence) — admin
+    // only, same as everything else shipment-related.
+    match /counters/{counterId} {
+      allow read, write: if isAdmin();
+    }
+
     // Denormalized counters maintained exclusively by Cloud Functions via
     // the Admin SDK, which bypasses these rules entirely — client writes
     // are always denied so a buggy or compromised client can never corrupt

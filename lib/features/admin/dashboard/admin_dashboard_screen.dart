@@ -210,6 +210,7 @@ class _NavGrid extends StatelessWidget {
     _NavTileData('دراسات', Icons.insights, '/admin/analytics', AppTheme.warning),
     _NavTileData('الزبائن', Icons.people_alt, '/admin/customers', AppTheme.danger),
     _NavTileData('العروض', Icons.local_offer, '/admin/offers', AppTheme.warning),
+    _NavTileData('الشحنات', Icons.local_shipping, '/admin/shipments', AppTheme.primary),
   ];
 
   @override
