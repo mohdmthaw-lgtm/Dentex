@@ -61,6 +61,11 @@ service cloud.firestore {
       }
     }
 
+    match /offers/{offerId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
     match /activityLog/{logId} {
       allow read, write: if isAdmin();
     }

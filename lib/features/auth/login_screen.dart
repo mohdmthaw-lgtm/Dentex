@@ -65,18 +65,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(Icons.medical_services_rounded,
-                        size: 64, color: AppTheme.primary),
+                    Image.asset('assets/images/dentex_logo.png', height: 64),
                     const SizedBox(height: 12),
-                    Text(
-                      'dentex',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
                     Text(
                       'تسجيل الدخول',
                       textAlign: TextAlign.center,

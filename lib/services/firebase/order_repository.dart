@@ -14,6 +14,8 @@ class CartLine {
     required this.variantLabel,
     required this.unitSellPrice,
     required this.quantity,
+    this.offerId,
+    this.offerName,
   });
 
   final String productId;
@@ -22,6 +24,8 @@ class CartLine {
   final String variantLabel;
   final num unitSellPrice;
   final int quantity;
+  final String? offerId;
+  final String? offerName;
 
   num get lineTotal => unitSellPrice * quantity;
 }
@@ -105,6 +109,8 @@ class OrderRepository {
               'unitSellPrice': c.unitSellPrice,
               'quantity': c.quantity,
               'lineTotal': c.lineTotal,
+              if (c.offerId != null) 'offerId': c.offerId,
+              if (c.offerName != null) 'offerName': c.offerName,
             })
         .toList();
     final totalAmount =

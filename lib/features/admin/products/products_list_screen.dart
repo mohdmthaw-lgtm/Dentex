@@ -9,7 +9,7 @@ import '../../../models/product.dart';
 import '../../../services/firebase/service_providers.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 
 class ProductsListScreen extends ConsumerWidget {
   const ProductsListScreen({super.key});

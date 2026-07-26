@@ -18,6 +18,11 @@ class OrderItem with _$OrderItem {
     required num unitSellPrice,
     required int quantity,
     required num lineTotal,
+    // Set when this line came from an Offer/package rather than a
+    // manually-picked product, so order/invoice UIs can group the package's
+    // component lines under one heading instead of listing them flat.
+    String? offerId,
+    String? offerName,
   }) = _OrderItem;
 
   factory OrderItem.fromJson(Map<String, dynamic> json) =>
@@ -53,6 +58,61 @@ class Order with _$Order {
       Order.fromJson({...data, 'id': id});
 
   int get itemCount => items.fold(0, (sum, item) => sum + item.quantity);
+
+  /// One line per distinct product, or per package (collapsed to its name)
+  /// — for the truncated order-list preview text, so a multi-line package
+  /// doesn't blow up a 2-line summary into a wall of component names.
+  String get itemsSummary {
+    final parts = <String>[];
+    final seenOffers = <String>{};
+    for (final item in items) {
+      if (item.offerName != null) {
+        if (seenOffers.add(item.offerName!)) parts.add('${item.offerName} (بكج)');
+      } else {
+        parts.add('${item.productName} (${item.variantLabel}) x${item.quantity}');
+      }
+    }
+    return parts.join('، ');
+  }
+
+  /// Groups [items] by `offerId` so order/invoice UIs can show a package's
+  /// component lines together under one heading instead of listing every
+  /// line flat — items with no `offerId` each form their own single-item
+  /// group, unaffected.
+  List<OrderItemGroup> get itemGroups {
+    final result = <OrderItemGroup>[];
+    final offerIndex = <String, int>{};
+    for (final item in items) {
+      final offerId = item.offerId;
+      if (offerId != null) {
+        final idx = offerIndex[offerId];
+        if (idx != null) {
+          result[idx].items.add(item);
+          continue;
+        }
+        offerIndex[offerId] = result.length;
+      }
+      result.add(OrderItemGroup(
+        offerId: offerId,
+        offerName: item.offerName,
+        items: [item],
+      ));
+    }
+    return result;
+  }
+}
+
+/// Display-only grouping of [OrderItem]s that came from the same package
+/// (see [Order.itemGroups]) — not persisted, derived fresh from `items`.
+class OrderItemGroup {
+  OrderItemGroup({this.offerId, this.offerName, required this.items});
+
+  final String? offerId;
+  final String? offerName;
+  final List<OrderItem> items;
+
+  num get lineTotal => items.fold<num>(0, (sum, item) => sum + item.lineTotal);
+  int get quantity => items.fold(0, (sum, item) => sum + item.quantity);
 }
 
 /// orders/{orderId}/payments/{paymentId} — an append-only ledger. Multiple

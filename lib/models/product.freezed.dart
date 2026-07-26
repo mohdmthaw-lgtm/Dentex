@@ -22,6 +22,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) {
 mixin _$Product {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get manufacturer => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
   String get imagePath => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $ProductCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
+      String manufacturer,
       String description,
       String imageUrl,
       String imagePath,
@@ -80,6 +82,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? manufacturer = null,
     Object? description = null,
     Object? imageUrl = null,
     Object? imagePath = null,
@@ -98,6 +101,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      manufacturer: null == manufacturer
+          ? _value.manufacturer
+          : manufacturer // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
           ? _value.description
@@ -149,6 +156,7 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
+      String manufacturer,
       String description,
       String imageUrl,
       String imagePath,
@@ -175,6 +183,7 @@ class __$$ProductImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? manufacturer = null,
     Object? description = null,
     Object? imageUrl = null,
     Object? imagePath = null,
@@ -193,6 +202,10 @@ class __$$ProductImplCopyWithImpl<$Res>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      manufacturer: null == manufacturer
+          ? _value.manufacturer
+          : manufacturer // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
           ? _value.description
@@ -240,6 +253,7 @@ class _$ProductImpl extends _Product {
   const _$ProductImpl(
       {required this.id,
       required this.name,
+      this.manufacturer = '',
       this.description = '',
       this.imageUrl = '',
       this.imagePath = '',
@@ -259,6 +273,9 @@ class _$ProductImpl extends _Product {
   final String id;
   @override
   final String name;
+  @override
+  @JsonKey()
+  final String manufacturer;
   @override
   @JsonKey()
   final String description;
@@ -296,7 +313,7 @@ class _$ProductImpl extends _Product {
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Product(id: $id, name: $name, manufacturer: $manufacturer, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -306,6 +323,8 @@ class _$ProductImpl extends _Product {
             other is _$ProductImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.manufacturer, manufacturer) ||
+                other.manufacturer == manufacturer) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.imageUrl, imageUrl) ||
@@ -332,6 +351,7 @@ class _$ProductImpl extends _Product {
       runtimeType,
       id,
       name,
+      manufacturer,
       description,
       imageUrl,
       imagePath,
@@ -362,6 +382,7 @@ abstract class _Product extends Product {
   const factory _Product(
       {required final String id,
       required final String name,
+      final String manufacturer,
       final String description,
       final String imageUrl,
       final String imagePath,
@@ -379,6 +400,8 @@ abstract class _Product extends Product {
   String get id;
   @override
   String get name;
+  @override
+  String get manufacturer;
   @override
   String get description;
   @override

@@ -13,6 +13,7 @@ export const Paths = {
   stats: "stats",
   statsGlobalDoc: "global",
   monthlyProfit: "monthlyProfit",
+  offers: "offers",
 } as const;
 
 export const Roles = {

@@ -18,6 +18,7 @@ class _VariantRow {
     String sellPrice = '',
     String costPrice = '',
     String quantity = '',
+    this.imageUrl = '',
   })  : labelController = TextEditingController(text: label),
         sellPriceController = TextEditingController(text: sellPrice),
         costPriceController = TextEditingController(text: costPrice),
@@ -28,6 +29,11 @@ class _VariantRow {
   final TextEditingController sellPriceController;
   final TextEditingController costPriceController;
   final TextEditingController quantityController;
+  String imageUrl;
+  // A spec's photo can only be uploaded once it has a real variantId, same
+  // two-phase constraint as the product photo — so this stays null (and the
+  // picker hidden) until the row is `id != null` (an already-saved variant).
+  File? pickedImage;
 
   num get profit {
     final sell = num.tryParse(sellPriceController.text) ?? 0;
@@ -61,6 +67,7 @@ class ProductFormScreen extends ConsumerStatefulWidget {
 class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _manufacturerController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _thresholdController = TextEditingController(text: '10');
   final List<_VariantRow> _variants = [];
@@ -90,6 +97,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     }
     final variants = await repo.watchVariants(widget.productId!).first;
     _nameController.text = product.name;
+    _manufacturerController.text = product.manufacturer;
     _descriptionController.text = product.description;
     _thresholdController.text = product.lowStockThreshold.toString();
     for (final v in variants) {
@@ -100,6 +108,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         sellPrice: v.sellPrice.toString(),
         costPrice: cost.toString(),
         quantity: v.quantity.toString(),
+        imageUrl: v.imageUrl,
       ));
     }
     if (_variants.isEmpty) _variants.add(_VariantRow());
@@ -114,6 +123,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _manufacturerController.dispose();
     _descriptionController.dispose();
     _thresholdController.dispose();
     for (final v in _variants) {
@@ -129,6 +139,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     }
   }
 
+  Future<void> _pickVariantImage(_VariantRow row) async {
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) setState(() => row.pickedImage = File(picked.path));
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
@@ -141,6 +156,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         await repo.updateProductInfo(
           productId: productId,
           name: _nameController.text.trim(),
+          manufacturer: _manufacturerController.text.trim(),
           description: _descriptionController.text.trim(),
           lowStockThreshold: int.tryParse(_thresholdController.text) ?? 0,
         );
@@ -168,6 +184,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       } else {
         productId = await repo.createProduct(
           name: _nameController.text.trim(),
+          manufacturer: _manufacturerController.text.trim(),
           description: _descriptionController.text.trim(),
           lowStockThreshold: int.tryParse(_thresholdController.text) ?? 0,
           variants: _variants
@@ -191,6 +208,26 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           imageUrl: url,
           imagePath: ref.read(storageServiceProvider).productImagePath(productId),
         );
+      }
+
+      // Only already-saved variants (v.id != null) can carry a new photo —
+      // a brand-new row's variantId doesn't exist until the create/addVariant
+      // calls above finish, and those don't hand the id back to this loop.
+      for (final v in _variants) {
+        if (v.id != null && v.pickedImage != null) {
+          final storage = ref.read(storageServiceProvider);
+          final url = await storage.uploadVariantImage(
+            productId: productId,
+            variantId: v.id!,
+            file: v.pickedImage!,
+          );
+          await repo.updateVariantImage(
+            productId: productId,
+            variantId: v.id!,
+            imageUrl: url,
+            imagePath: storage.variantImagePath(productId, v.id!),
+          );
+        }
       }
 
       if (mounted) context.pop();
@@ -254,6 +291,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              controller: _manufacturerController,
+              decoration: const InputDecoration(labelText: 'الشركة المصنّعة'),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: 'المواصفات / الوصف'),
               maxLines: 2,
@@ -309,6 +351,28 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           children: [
             Row(
               children: [
+                if (v.id != null)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 10),
+                    child: GestureDetector(
+                      onTap: () => _pickVariantImage(v),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          color: Colors.grey.shade200,
+                          child: v.pickedImage != null
+                              ? Image.file(v.pickedImage!, fit: BoxFit.cover)
+                              : v.imageUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: v.imageUrl, fit: BoxFit.cover)
+                                  : const Icon(Icons.add_a_photo_outlined,
+                                      size: 18, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
                 Expanded(
                   child: TextFormField(
                     controller: v.labelController,

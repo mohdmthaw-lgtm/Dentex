@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/admin/analytics/analytics_screen.dart';
 import '../../features/admin/customers/customers_screen.dart';
 import '../../features/admin/dashboard/admin_dashboard_screen.dart';
+import '../../features/admin/offers/offer_form_screen.dart';
+import '../../features/admin/offers/offers_list_screen.dart';
 import '../../features/admin/orders/order_detail_screen.dart';
 import '../../features/admin/orders/order_form_screen.dart';
 import '../../features/admin/orders/orders_list_screen.dart';
@@ -14,6 +16,8 @@ import '../../features/admin/profits/profits_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/doctor/create_order/create_order_screen.dart';
 import '../../features/doctor/dashboard/doctor_dashboard_screen.dart';
+import '../../features/doctor/offers/offer_detail_screen.dart';
+import '../../features/doctor/offers/offers_screen.dart';
 import '../../features/doctor/orders/my_orders_screen.dart';
 import 'auth_state_provider.dart';
 
@@ -88,6 +92,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/admin/customers',
         builder: (c, s) => const CustomersScreen(),
       ),
+      GoRoute(path: '/admin/offers', builder: (c, s) => const OffersListScreen()),
+      GoRoute(
+        path: '/admin/offers/new',
+        builder: (c, s) => const OfferFormScreen(),
+      ),
+      GoRoute(
+        path: '/admin/offers/:id',
+        builder: (c, s) => OfferFormScreen(offerId: s.pathParameters['id']),
+      ),
 
       // Doctor shell
       GoRoute(
@@ -101,6 +114,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/doctor/create-order',
         builder: (c, s) => const CreateOrderScreen(),
+      ),
+      GoRoute(path: '/doctor/offers', builder: (c, s) => const OffersScreen()),
+      GoRoute(
+        path: '/doctor/offers/:id',
+        builder: (c, s) => OfferDetailScreen(offerId: s.pathParameters['id']!),
       ),
     ],
   );

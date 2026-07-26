@@ -9,7 +9,7 @@ import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/stat_tile.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 
 class CustomersScreen extends ConsumerStatefulWidget {
   const CustomersScreen({super.key});

@@ -8,8 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   AppTheme._();
 
-  static const primary = Color(0xFF2563EB);
-  static const primaryDark = Color(0xFF1E3A8A);
+  static const primary = Color(0xFF4EA5AB);
+  static const primaryDark = Color(0xFF2E6365);
   static const success = Color(0xFF16A34A);
   static const warning = Color(0xFFD97706);
   static const danger = Color(0xFFDC2626);

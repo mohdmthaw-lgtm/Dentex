@@ -24,13 +24,14 @@ class StatTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: tileColor, size: 20),
-            const SizedBox(height: 6),
+            Icon(icon, color: tileColor, size: 24),
+            const SizedBox(height: 8),
             Text(
               value,
+              textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -38,9 +39,10 @@ class StatTile extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               label,
+              textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -60,7 +62,7 @@ class StatTile extends StatelessWidget {
 class StatTileRow extends StatelessWidget {
   const StatTileRow({super.key, required this.tiles});
 
-  final List<StatTile> tiles;
+  final List<Widget> tiles;
 
   @override
   Widget build(BuildContext context) {

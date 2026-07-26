@@ -16,6 +16,7 @@ class FirestorePaths {
   static const stats = 'stats';
   static const statsGlobalDoc = 'global';
   static const monthlyProfit = 'monthlyProfit';
+  static const offers = 'offers';
 }
 
 class AppRoles {

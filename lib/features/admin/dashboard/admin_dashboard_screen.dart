@@ -7,9 +7,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../models/activity_log_entry.dart';
 import '../../../models/stats.dart';
 import '../../../services/firebase/service_providers.dart';
-import '../../../shared/widgets/stat_tile.dart';
 
-final _currency = NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+final _currency = NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -22,7 +21,7 @@ class AdminDashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('dentex'),
+        title: Image.asset('assets/images/dentex_logo.png', height: 36),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -39,30 +38,45 @@ class AdminDashboardScreen extends ConsumerWidget {
               stream: statsAsync,
               builder: (context, snap) {
                 final stats = snap.data ?? GlobalStats.empty;
-                return StatTileRow(tiles: [
-                  StatTile(
-                    label: 'عدد المنتجات',
-                    value: '${stats.totalProducts}',
-                    icon: Icons.inventory_2_outlined,
-                  ),
-                  StatTile(
-                    label: 'أرباح هذا الشهر',
-                    value: _currency.format(stats.totalProfitThisMonth),
-                    icon: Icons.trending_up,
-                    color: AppTheme.success,
-                  ),
-                  StatTile(
-                    label: 'طلبات هذا الشهر',
-                    value: '${stats.totalOrdersThisMonth}',
-                    icon: Icons.receipt_long_outlined,
-                  ),
-                  StatTile(
-                    label: 'الديون',
-                    value: _currency.format(stats.totalOutstandingDebt),
-                    icon: Icons.warning_amber_outlined,
-                    color: AppTheme.warning,
-                  ),
-                ]);
+                return Row(
+                  children: [
+                    Expanded(
+                      child: _QuickStatChip(
+                        label: 'المنتجات',
+                        value: '${stats.totalProducts}',
+                        icon: Icons.inventory_2_rounded,
+                        color: AppTheme.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _QuickStatChip(
+                        label: 'أرباح الشهر',
+                        value: _currency.format(stats.totalProfitThisMonth),
+                        icon: Icons.trending_up_rounded,
+                        color: AppTheme.success,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _QuickStatChip(
+                        label: 'طلبات الشهر',
+                        value: '${stats.totalOrdersThisMonth}',
+                        icon: Icons.local_shipping_rounded,
+                        color: AppTheme.primaryDark,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _QuickStatChip(
+                        label: 'الديون',
+                        value: _currency.format(stats.totalOutstandingDebt),
+                        icon: Icons.account_balance_wallet_rounded,
+                        color: AppTheme.warning,
+                      ),
+                    ),
+                  ],
+                );
               },
             ),
             const SizedBox(height: 20),
@@ -123,6 +137,61 @@ class AdminDashboardScreen extends ConsumerWidget {
   }
 }
 
+/// Compact, colour-forward stat chip for the dashboard's top strip —
+/// deliberately unlike [_NavTile]'s white card/left-aligned-icon look, so
+/// "at a glance" numbers read as a different kind of element than the
+/// tappable nav buttons below them, and take a single short row instead of
+/// a whole 2x2 grid.
+class _QuickStatChip extends StatelessWidget {
+  const _QuickStatChip({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            child: Icon(icon, color: Colors.white, size: 16),
+          ),
+          const SizedBox(height: 6),
+          FittedBox(
+            child: Text(
+              value,
+              maxLines: 1,
+              style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 15),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 10, color: color.withOpacity(0.8)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _NavTileData {
   const _NavTileData(this.label, this.icon, this.route, this.color);
   final String label;
@@ -140,28 +209,19 @@ class _NavGrid extends StatelessWidget {
     _NavTileData('الأرباح', Icons.bar_chart, '/admin/profits', AppTheme.success),
     _NavTileData('دراسات', Icons.insights, '/admin/analytics', AppTheme.warning),
     _NavTileData('الزبائن', Icons.people_alt, '/admin/customers', AppTheme.danger),
+    _NavTileData('العروض', Icons.local_offer, '/admin/offers', AppTheme.warning),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Spec layout: two rows of two tiles, then one full-width tile — a
-    // 2-2-1 grid, not a uniform 2-column grid all the way down.
-    final firstFour = _tiles.sublist(0, 4);
-    final last = _tiles[4];
-    return Column(
-      children: [
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.3,
-          children: firstFour.map((t) => _NavTile(t)).toList(),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(height: 90, child: _NavTile(last)),
-      ],
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.3,
+      children: _tiles.map((t) => _NavTile(t)).toList(),
     );
   }
 }

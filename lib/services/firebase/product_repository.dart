@@ -75,6 +75,7 @@ class ProductRepository {
   /// a caller never observes a partially-created product.
   Future<String> createProduct({
     required String name,
+    required String manufacturer,
     required String description,
     required int lowStockThreshold,
     required List<NewVariantInput> variants,
@@ -112,6 +113,7 @@ class ProductRepository {
 
     batch.set(productRef, {
       'name': name,
+      'manufacturer': manufacturer,
       'description': description,
       'imageUrl': '',
       'imagePath': '',
@@ -130,11 +132,13 @@ class ProductRepository {
   Future<void> updateProductInfo({
     required String productId,
     required String name,
+    required String manufacturer,
     required String description,
     required int lowStockThreshold,
   }) {
     return _products.doc(productId).update({
       'name': name,
+      'manufacturer': manufacturer,
       'description': description,
       'lowStockThreshold': lowStockThreshold,
       'updatedAt': FieldValue.serverTimestamp(),
@@ -215,6 +219,23 @@ class ProductRepository {
     });
     batch.set(costRef, {'costPrice': variant.costPrice});
     await batch.commit();
+  }
+
+  Future<void> updateVariantImage({
+    required String productId,
+    required String variantId,
+    required String imageUrl,
+    required String imagePath,
+  }) {
+    return _products
+        .doc(productId)
+        .collection(FirestorePaths.variants)
+        .doc(variantId)
+        .update({
+      'imageUrl': imageUrl,
+      'imagePath': imagePath,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> deleteProduct(String productId) {

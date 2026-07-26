@@ -12,6 +12,8 @@ interface OrderItem {
   unitSellPrice: number;
   quantity: number;
   lineTotal: number;
+  offerId?: string;
+  offerName?: string;
 }
 
 /**
@@ -50,6 +52,50 @@ export const onOrderCreated = onDocumentCreated(
             updatedAt: FieldValue.serverTimestamp(),
           })
       )
+    );
+
+    // 1.5. Package (offer) sales analytics. Items carrying the same
+    // offerId came from one Offer purchase — reread the offer's definition
+    // to work out how many packages this represents (orderedQuantity /
+    // the package's own defined item quantity) and how much discount that
+    // implies, rather than trusting anything client-supplied.
+    const offerGroups = new Map<string, OrderItem[]>();
+    for (const item of items) {
+      if (!item.offerId) continue;
+      const group = offerGroups.get(item.offerId) ?? [];
+      group.push(item);
+      offerGroups.set(item.offerId, group);
+    }
+    await Promise.all(
+      Array.from(offerGroups.entries()).map(async ([offerId, group]) => {
+        const offerRef = db.collection(Paths.offers).doc(offerId);
+        const offerSnap = await offerRef.get();
+        if (!offerSnap.exists) return;
+        const offerData = offerSnap.data() as {
+          items?: { unitPrice: number; quantity: number }[];
+          offerPrice?: number;
+        };
+        const offerItems = offerData.items ?? [];
+        const definedQuantity = offerItems.reduce((s, i) => s + i.quantity, 0);
+        const originalTotal = offerItems.reduce(
+          (s, i) => s + i.unitPrice * i.quantity,
+          0
+        );
+        const orderedQuantity = group.reduce((s, i) => s + i.quantity, 0);
+        const packagesPurchased =
+          definedQuantity > 0 ? Math.round(orderedQuantity / definedQuantity) : 1;
+        const revenue = group.reduce((s, i) => s + i.lineTotal, 0);
+        const discountGiven = Math.max(
+          0,
+          packagesPurchased * (originalTotal - (offerData.offerPrice ?? 0))
+        );
+        await offerRef.update({
+          timesSold: FieldValue.increment(1),
+          unitsSold: FieldValue.increment(packagesPurchased),
+          totalRevenue: FieldValue.increment(revenue),
+          totalDiscountGiven: FieldValue.increment(discountGiven),
+        });
+      })
     );
 
     // 2. Freeze the cost/profit snapshot from the admin-only costs path —

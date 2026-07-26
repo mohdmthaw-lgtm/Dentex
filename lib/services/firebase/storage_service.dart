@@ -40,4 +40,30 @@ class StorageService {
   }
 
   String productImagePath(String productId) => 'products/$productId/main.jpg';
+
+  Future<String> uploadVariantImage({
+    required String productId,
+    required String variantId,
+    required File file,
+  }) async {
+    final compressed = await _compress(file);
+    final ref = _storage.ref('products/$productId/variants/$variantId.jpg');
+    await ref.putFile(compressed);
+    return ref.getDownloadURL();
+  }
+
+  String variantImagePath(String productId, String variantId) =>
+      'products/$productId/variants/$variantId.jpg';
+
+  Future<String> uploadOfferImage({
+    required String offerId,
+    required File file,
+  }) async {
+    final compressed = await _compress(file);
+    final ref = _storage.ref('offers/$offerId/main.jpg');
+    await ref.putFile(compressed);
+    return ref.getDownloadURL();
+  }
+
+  String offerImagePath(String offerId) => 'offers/$offerId/main.jpg';
 }

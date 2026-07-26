@@ -11,5 +11,18 @@ service firebase.storage {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
+
+    match /products/{productId}/variants/{fileName} {
+      // Per-variant/spec photos, same read/write shape as the product photo.
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /offers/{offerId}/{fileName} {
+      // Same shape as /products above: doctors browse offer images,
+      // only admin uploads/replaces them.
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
   }
 }

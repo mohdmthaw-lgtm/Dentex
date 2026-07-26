@@ -11,6 +11,7 @@ class Product with _$Product {
   const factory Product({
     required String id,
     required String name,
+    @Default('') String manufacturer,
     @Default('') String description,
     @Default('') String imageUrl,
     @Default('') String imagePath,

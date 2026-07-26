@@ -17,6 +17,8 @@ class ProductVariant with _$ProductVariant {
     required num sellPrice,
     @Default(0) int quantity,
     @Default(0) int totalSold,
+    @Default('') String imageUrl,
+    @Default('') String imagePath,
     // Denormalized parent product name — written alongside the variant so
     // best-seller analytics (a collectionGroup query across every
     // product's variants) can display "product + variant" without an N+1

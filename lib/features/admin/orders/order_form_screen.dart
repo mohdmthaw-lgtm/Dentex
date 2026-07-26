@@ -11,7 +11,7 @@ import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 
 /// Manual order-entry flow: admin looks up an existing doctor (or creates
 /// one on the spot), builds a cart of product+variant+quantity lines, and
@@ -57,13 +57,13 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
   num get _total => _cart.fold(0, (sum, c) => sum + c.lineTotal);
 
   Future<void> _addProductToCart() async {
-    final result = await showModalBottomSheet<CartLine>(
+    final result = await showModalBottomSheet<List<CartLine>>(
       context: context,
       isScrollControlled: true,
       builder: (_) => const _ProductPickerSheet(),
     );
-    if (result != null) {
-      setState(() => _cart.add(result));
+    if (result != null && result.isNotEmpty) {
+      setState(() => _cart.addAll(result));
     }
   }
 
@@ -282,8 +282,11 @@ class _ProductPickerSheet extends ConsumerStatefulWidget {
 
 class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
   Product? _selectedProduct;
-  ProductVariant? _selectedVariant;
-  int _quantity = 1;
+  // variantId -> chosen quantity; lets several specs of the same product be
+  // added at once instead of picking a single variant per visit to the sheet.
+  final Map<String, int> _quantities = {};
+
+  int get _selectedCount => _quantities.values.where((q) => q > 0).length;
 
   @override
   Widget build(BuildContext context) {
@@ -329,52 +332,63 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () => setState(() {
                         _selectedProduct = null;
-                        _selectedVariant = null;
+                        _quantities.clear();
                       }),
                     ),
                     Text(_selectedProduct!.name, style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
                 const SizedBox(height: 8),
-                ...variants.map((v) => RadioListTile<ProductVariant>(
-                      title: Text(v.label),
-                      subtitle: Text('${_currency.format(v.sellPrice)} • متوفر ${v.quantity}'),
-                      value: v,
-                      groupValue: _selectedVariant,
-                      onChanged: (val) => setState(() => _selectedVariant = val),
-                    )),
-                if (_selectedVariant != null) ...[
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline),
-                        onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
-                      ),
-                      Text('$_quantity', style: Theme.of(context).textTheme.titleLarge),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline),
-                        onPressed: () => setState(() => _quantity++),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: () => Navigator.pop(
-                      context,
-                      CartLine(
-                        productId: _selectedProduct!.id,
-                        productName: _selectedProduct!.name,
-                        variantId: _selectedVariant!.id,
-                        variantLabel: _selectedVariant!.label,
-                        unitSellPrice: _selectedVariant!.sellPrice,
-                        quantity: _quantity,
-                      ),
-                    ),
-                    child: const Text('إضافة إلى الطلبية'),
-                  ),
-                ],
+                ...variants.map((v) {
+                  final qty = _quantities[v.id] ?? 0;
+                  final outOfStock = v.quantity <= 0;
+                  return ListTile(
+                    title: Text(v.label),
+                    subtitle: Text(outOfStock
+                        ? 'نفذ من المخزون'
+                        : '${_currency.format(v.sellPrice)} • متوفر ${v.quantity}'),
+                    trailing: outOfStock
+                        ? null
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle_outline),
+                                onPressed: qty > 0
+                                    ? () => setState(() => _quantities[v.id] = qty - 1)
+                                    : null,
+                              ),
+                              Text('$qty', style: Theme.of(context).textTheme.titleMedium),
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline),
+                                onPressed: () => setState(() => _quantities[v.id] = qty + 1),
+                              ),
+                            ],
+                          ),
+                  );
+                }),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: _selectedCount > 0
+                      ? () => Navigator.pop(
+                            context,
+                            variants
+                                .where((v) => (_quantities[v.id] ?? 0) > 0)
+                                .map((v) => CartLine(
+                                      productId: _selectedProduct!.id,
+                                      productName: _selectedProduct!.name,
+                                      variantId: v.id,
+                                      variantLabel: v.label,
+                                      unitSellPrice: v.sellPrice,
+                                      quantity: _quantities[v.id]!,
+                                    ))
+                                .toList(),
+                          )
+                      : null,
+                  child: Text(_selectedCount > 0
+                      ? 'إضافة $_selectedCount مواصفة إلى الطلبية'
+                      : 'إضافة إلى الطلبية'),
+                ),
               ],
             );
           },

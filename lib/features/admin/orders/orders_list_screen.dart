@@ -9,7 +9,7 @@ import '../../../models/order.dart';
 import '../../../services/firebase/service_providers.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 final _dateFormat = DateFormat.yMMMd('ar');
 
 class OrdersListScreen extends ConsumerWidget {
@@ -81,9 +81,7 @@ class _OrderCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 6),
               Text(
-                order.items
-                    .map((i) => '${i.productName} (${i.variantLabel}) x${i.quantity}')
-                    .join('، '),
+                order.itemsSummary,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium,

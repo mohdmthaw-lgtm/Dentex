@@ -26,7 +26,12 @@ mixin _$OrderItem {
   String get variantLabel => throw _privateConstructorUsedError;
   num get unitSellPrice => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  num get lineTotal => throw _privateConstructorUsedError;
+  num get lineTotal =>
+      throw _privateConstructorUsedError; // Set when this line came from an Offer/package rather than a
+// manually-picked product, so order/invoice UIs can group the package's
+// component lines under one heading instead of listing them flat.
+  String? get offerId => throw _privateConstructorUsedError;
+  String? get offerName => throw _privateConstructorUsedError;
 
   /// Serializes this OrderItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +55,9 @@ abstract class $OrderItemCopyWith<$Res> {
       String variantLabel,
       num unitSellPrice,
       int quantity,
-      num lineTotal});
+      num lineTotal,
+      String? offerId,
+      String? offerName});
 }
 
 /// @nodoc
@@ -75,6 +82,8 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
     Object? unitSellPrice = null,
     Object? quantity = null,
     Object? lineTotal = null,
+    Object? offerId = freezed,
+    Object? offerName = freezed,
   }) {
     return _then(_value.copyWith(
       productId: null == productId
@@ -105,6 +114,14 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
           ? _value.lineTotal
           : lineTotal // ignore: cast_nullable_to_non_nullable
               as num,
+      offerId: freezed == offerId
+          ? _value.offerId
+          : offerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      offerName: freezed == offerName
+          ? _value.offerName
+          : offerName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -124,7 +141,9 @@ abstract class _$$OrderItemImplCopyWith<$Res>
       String variantLabel,
       num unitSellPrice,
       int quantity,
-      num lineTotal});
+      num lineTotal,
+      String? offerId,
+      String? offerName});
 }
 
 /// @nodoc
@@ -147,6 +166,8 @@ class __$$OrderItemImplCopyWithImpl<$Res>
     Object? unitSellPrice = null,
     Object? quantity = null,
     Object? lineTotal = null,
+    Object? offerId = freezed,
+    Object? offerName = freezed,
   }) {
     return _then(_$OrderItemImpl(
       productId: null == productId
@@ -177,6 +198,14 @@ class __$$OrderItemImplCopyWithImpl<$Res>
           ? _value.lineTotal
           : lineTotal // ignore: cast_nullable_to_non_nullable
               as num,
+      offerId: freezed == offerId
+          ? _value.offerId
+          : offerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      offerName: freezed == offerName
+          ? _value.offerName
+          : offerName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -191,7 +220,9 @@ class _$OrderItemImpl implements _OrderItem {
       required this.variantLabel,
       required this.unitSellPrice,
       required this.quantity,
-      required this.lineTotal});
+      required this.lineTotal,
+      this.offerId,
+      this.offerName});
 
   factory _$OrderItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderItemImplFromJson(json);
@@ -210,10 +241,17 @@ class _$OrderItemImpl implements _OrderItem {
   final int quantity;
   @override
   final num lineTotal;
+// Set when this line came from an Offer/package rather than a
+// manually-picked product, so order/invoice UIs can group the package's
+// component lines under one heading instead of listing them flat.
+  @override
+  final String? offerId;
+  @override
+  final String? offerName;
 
   @override
   String toString() {
-    return 'OrderItem(productId: $productId, productName: $productName, variantId: $variantId, variantLabel: $variantLabel, unitSellPrice: $unitSellPrice, quantity: $quantity, lineTotal: $lineTotal)';
+    return 'OrderItem(productId: $productId, productName: $productName, variantId: $variantId, variantLabel: $variantLabel, unitSellPrice: $unitSellPrice, quantity: $quantity, lineTotal: $lineTotal, offerId: $offerId, offerName: $offerName)';
   }
 
   @override
@@ -234,13 +272,25 @@ class _$OrderItemImpl implements _OrderItem {
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
             (identical(other.lineTotal, lineTotal) ||
-                other.lineTotal == lineTotal));
+                other.lineTotal == lineTotal) &&
+            (identical(other.offerId, offerId) || other.offerId == offerId) &&
+            (identical(other.offerName, offerName) ||
+                other.offerName == offerName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, productName,
-      variantId, variantLabel, unitSellPrice, quantity, lineTotal);
+  int get hashCode => Object.hash(
+      runtimeType,
+      productId,
+      productName,
+      variantId,
+      variantLabel,
+      unitSellPrice,
+      quantity,
+      lineTotal,
+      offerId,
+      offerName);
 
   /// Create a copy of OrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -266,7 +316,9 @@ abstract class _OrderItem implements OrderItem {
       required final String variantLabel,
       required final num unitSellPrice,
       required final int quantity,
-      required final num lineTotal}) = _$OrderItemImpl;
+      required final num lineTotal,
+      final String? offerId,
+      final String? offerName}) = _$OrderItemImpl;
 
   factory _OrderItem.fromJson(Map<String, dynamic> json) =
       _$OrderItemImpl.fromJson;
@@ -284,7 +336,13 @@ abstract class _OrderItem implements OrderItem {
   @override
   int get quantity;
   @override
-  num get lineTotal;
+  num get lineTotal; // Set when this line came from an Offer/package rather than a
+// manually-picked product, so order/invoice UIs can group the package's
+// component lines under one heading instead of listing them flat.
+  @override
+  String? get offerId;
+  @override
+  String? get offerName;
 
   /// Create a copy of OrderItem
   /// with the given fields replaced by the non-null parameter values.

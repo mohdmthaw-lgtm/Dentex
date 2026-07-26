@@ -10,7 +10,7 @@ import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/stat_tile.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 final _dateFormat = DateFormat.yMMMd('ar');
 
 const _monthLabels = [
@@ -40,7 +40,7 @@ class ProfitsScreen extends ConsumerWidget {
                 StatTile(
                   label: 'إجمالي الأرباح',
                   value: _currency.format(stats.totalProfitAllTime),
-                  icon: Icons.savings_outlined,
+                  icon: Icons.paid_outlined,
                   color: AppTheme.success,
                 ),
                 StatTile(

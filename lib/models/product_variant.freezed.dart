@@ -24,7 +24,9 @@ mixin _$ProductVariant {
   String get label => throw _privateConstructorUsedError;
   num get sellPrice => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  int get totalSold =>
+  int get totalSold => throw _privateConstructorUsedError;
+  String get imageUrl => throw _privateConstructorUsedError;
+  String get imagePath =>
       throw _privateConstructorUsedError; // Denormalized parent product name — written alongside the variant so
 // best-seller analytics (a collectionGroup query across every
 // product's variants) can display "product + variant" without an N+1
@@ -57,6 +59,8 @@ abstract class $ProductVariantCopyWith<$Res> {
       num sellPrice,
       int quantity,
       int totalSold,
+      String imageUrl,
+      String imagePath,
       String productName,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
@@ -82,6 +86,8 @@ class _$ProductVariantCopyWithImpl<$Res, $Val extends ProductVariant>
     Object? sellPrice = null,
     Object? quantity = null,
     Object? totalSold = null,
+    Object? imageUrl = null,
+    Object? imagePath = null,
     Object? productName = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -107,6 +113,14 @@ class _$ProductVariantCopyWithImpl<$Res, $Val extends ProductVariant>
           ? _value.totalSold
           : totalSold // ignore: cast_nullable_to_non_nullable
               as int,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      imagePath: null == imagePath
+          ? _value.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String,
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
@@ -137,6 +151,8 @@ abstract class _$$ProductVariantImplCopyWith<$Res>
       num sellPrice,
       int quantity,
       int totalSold,
+      String imageUrl,
+      String imagePath,
       String productName,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
@@ -160,6 +176,8 @@ class __$$ProductVariantImplCopyWithImpl<$Res>
     Object? sellPrice = null,
     Object? quantity = null,
     Object? totalSold = null,
+    Object? imageUrl = null,
+    Object? imagePath = null,
     Object? productName = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -185,6 +203,14 @@ class __$$ProductVariantImplCopyWithImpl<$Res>
           ? _value.totalSold
           : totalSold // ignore: cast_nullable_to_non_nullable
               as int,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      imagePath: null == imagePath
+          ? _value.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String,
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
@@ -210,6 +236,8 @@ class _$ProductVariantImpl implements _ProductVariant {
       required this.sellPrice,
       this.quantity = 0,
       this.totalSold = 0,
+      this.imageUrl = '',
+      this.imagePath = '',
       this.productName = '',
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt});
@@ -229,6 +257,12 @@ class _$ProductVariantImpl implements _ProductVariant {
   @override
   @JsonKey()
   final int totalSold;
+  @override
+  @JsonKey()
+  final String imageUrl;
+  @override
+  @JsonKey()
+  final String imagePath;
 // Denormalized parent product name — written alongside the variant so
 // best-seller analytics (a collectionGroup query across every
 // product's variants) can display "product + variant" without an N+1
@@ -245,7 +279,7 @@ class _$ProductVariantImpl implements _ProductVariant {
 
   @override
   String toString() {
-    return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, imageUrl: $imageUrl, imagePath: $imagePath, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -261,6 +295,10 @@ class _$ProductVariantImpl implements _ProductVariant {
                 other.quantity == quantity) &&
             (identical(other.totalSold, totalSold) ||
                 other.totalSold == totalSold) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
             (identical(other.productName, productName) ||
                 other.productName == productName) &&
             (identical(other.createdAt, createdAt) ||
@@ -272,7 +310,7 @@ class _$ProductVariantImpl implements _ProductVariant {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, label, sellPrice, quantity,
-      totalSold, productName, createdAt, updatedAt);
+      totalSold, imageUrl, imagePath, productName, createdAt, updatedAt);
 
   /// Create a copy of ProductVariant
   /// with the given fields replaced by the non-null parameter values.
@@ -298,6 +336,8 @@ abstract class _ProductVariant implements ProductVariant {
       required final num sellPrice,
       final int quantity,
       final int totalSold,
+      final String imageUrl,
+      final String imagePath,
       final String productName,
       @TimestampConverter() final DateTime? createdAt,
       @TimestampConverter() final DateTime? updatedAt}) = _$ProductVariantImpl;
@@ -314,7 +354,12 @@ abstract class _ProductVariant implements ProductVariant {
   @override
   int get quantity;
   @override
-  int get totalSold; // Denormalized parent product name — written alongside the variant so
+  int get totalSold;
+  @override
+  String get imageUrl;
+  @override
+  String
+      get imagePath; // Denormalized parent product name — written alongside the variant so
 // best-seller analytics (a collectionGroup query across every
 // product's variants) can display "product + variant" without an N+1
 // read back to each parent product doc.

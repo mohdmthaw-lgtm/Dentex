@@ -8,7 +8,7 @@ import '../../../models/order.dart';
 import '../../../services/firebase/service_providers.dart';
 
 final _currency =
-    NumberFormat.currency(locale: 'ar', symbol: 'ر.س', decimalDigits: 0);
+    NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 final _dateFormat = DateFormat.yMMMd('ar').add_jm();
 
 class OrderDetailScreen extends ConsumerWidget {
@@ -78,18 +78,37 @@ class OrderDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Text('المنتجات', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
-              Card(
-                child: Column(
-                  children: order.items
-                      .map((item) => ListTile(
-                            title: Text('${item.productName} - ${item.variantLabel}'),
-                            subtitle: Text(
-                                '${item.quantity} × ${_currency.format(item.unitSellPrice)}'),
-                            trailing: Text(_currency.format(item.lineTotal)),
-                          ))
-                      .toList(),
-                ),
-              ),
+              ...order.itemGroups.map((group) => group.offerName != null
+                  ? Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ExpansionTile(
+                        leading: const Icon(Icons.local_offer_outlined, color: AppTheme.warning),
+                        title: Text('${group.offerName} (بكج)',
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text(_currency.format(group.lineTotal)),
+                        children: group.items
+                            .map((item) => ListTile(
+                                  title: Text('${item.productName} - ${item.variantLabel}'),
+                                  subtitle: Text(
+                                      '${item.quantity} × ${_currency.format(item.unitSellPrice)}'),
+                                  trailing: Text(_currency.format(item.lineTotal)),
+                                ))
+                            .toList(),
+                      ),
+                    )
+                  : Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: Column(
+                        children: group.items
+                            .map((item) => ListTile(
+                                  title: Text('${item.productName} - ${item.variantLabel}'),
+                                  subtitle: Text(
+                                      '${item.quantity} × ${_currency.format(item.unitSellPrice)}'),
+                                  trailing: Text(_currency.format(item.lineTotal)),
+                                ))
+                            .toList(),
+                      ),
+                    )),
               const SizedBox(height: 16),
               Card(
                 child: Padding(
