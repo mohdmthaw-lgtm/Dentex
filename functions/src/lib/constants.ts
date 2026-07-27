@@ -42,6 +42,15 @@ export const ActivityType = {
   productEdited: "product_edited",
   stockLow: "stock_low",
   stockOut: "stock_out",
+  tierUpgraded: "tier_upgraded",
+} as const;
+
+// A doctor's loyalty tier. Never persisted as a doctor's "current" value —
+// always recomputed live from this calendar year's orders (see tiers.ts).
+export const Tiers = {
+  silver: "silver",
+  gold: "gold",
+  platinum: "platinum",
 } as const;
 
 export const ADMIN_ALERTS_TOPIC = "admin_alerts";

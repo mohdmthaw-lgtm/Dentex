@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/firestore_paths.dart';
+import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/order.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -116,6 +118,25 @@ class OrderDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (order.discountRate > 0) ...[
+                        _summaryRow(context, 'المجموع قبل الخصم', order.displaySubtotal,
+                            strikethrough: true),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TierDiscountBadge(
+                                tier: tierForDiscountRate(order.discountRate),
+                                rate: order.discountRate,
+                              ),
+                              Text('- ${_currency.format(order.discountAmount)}',
+                                  style: const TextStyle(
+                                      color: AppTheme.success, fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                        ),
+                      ],
                       _summaryRow(context, 'الإجمالي', order.totalAmount),
                       _summaryRow(context, 'المدفوع', order.amountPaid,
                           color: AppTheme.success),
@@ -163,7 +184,8 @@ class OrderDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _summaryRow(BuildContext context, String label, num value, {Color? color}) {
+  Widget _summaryRow(BuildContext context, String label, num value,
+      {Color? color, bool strikethrough = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -171,7 +193,10 @@ class OrderDetailScreen extends ConsumerWidget {
         children: [
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
           Text(_currency.format(value),
-              style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+              style: TextStyle(
+                  fontWeight: strikethrough ? FontWeight.normal : FontWeight.bold,
+                  color: strikethrough ? Colors.grey : color,
+                  decoration: strikethrough ? TextDecoration.lineThrough : null)),
         ],
       ),
     );

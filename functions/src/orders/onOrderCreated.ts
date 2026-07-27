@@ -1,8 +1,9 @@
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { db } from "../lib/admin";
 import { notifyAdmins } from "../lib/fcm";
-import { Paths, ActivityType, Roles } from "../lib/constants";
+import { Paths, ActivityType, Roles, Tiers } from "../lib/constants";
+import { computeDoctorTierInfo, TIER_LABELS } from "../lib/tiers";
 
 interface OrderItem {
   productId: string;
@@ -111,12 +112,17 @@ export const onOrderCreated = onDocumentCreated(
           .get()
       )
     );
+    // A loyalty-tier discount (if any) reduces what the doctor actually
+    // pays without reducing item.lineTotal (which stays the full catalog
+    // price for stock/offer-analytics purposes) — so profit must be scaled
+    // down by the same rate here, or it would overstate real margin.
+    const discountRate = (order.discountRate as number) ?? 0;
     let totalCost = 0;
     let totalProfit = 0;
     const profitItems = items.map((item, i) => {
       const unitCostPrice = (costDocs[i].data()?.costPrice as number) ?? 0;
       const lineCost = unitCostPrice * item.quantity;
-      const lineProfit = item.lineTotal - lineCost;
+      const lineProfit = item.lineTotal * (1 - discountRate) - lineCost;
       totalCost += lineCost;
       totalProfit += lineProfit;
       return { variantId: item.variantId, unitCostPrice, lineProfit };
@@ -164,6 +170,56 @@ export const onOrderCreated = onDocumentCreated(
     // starts as fully unpaid before any same-transaction payment write
     // lands) and then reconciled downward by onPaymentCreated as payments
     // come in — see that trigger for the corresponding decrement.
+
+    // 4.5. Loyalty-tier bookkeeping. The tier itself is never stored — only
+    // a detection cursor (lastSeenTier/lastSeenTierYear) so we can tell "the
+    // doctor upgraded within this year" (log it) apart from "a new calendar
+    // year silently reset everyone to silver" (don't log it as a downgrade).
+    // Re-queries this doctor's orders for the year (now including the one
+    // that just triggered this function) rather than trusting any
+    // denormalized field, per the same "always recompute" rule the client
+    // follows.
+    {
+      const yearStart = Timestamp.fromDate(
+        new Date(Date.UTC(new Date().getUTCFullYear(), 0, 1))
+      );
+      const [ordersThisYearSnap, doctorSnap] = await Promise.all([
+        db
+          .collection(Paths.orders)
+          .where("doctorId", "==", order.doctorId)
+          .where("createdAt", ">=", yearStart)
+          .get(),
+        db.collection(Paths.users).doc(order.doctorId).get(),
+      ]);
+      const tierInfo = computeDoctorTierInfo(
+        ordersThisYearSnap.docs.map((d) => d.data())
+      );
+      const lastSeenTier = (doctorSnap.data()?.lastSeenTier as string) ?? Tiers.silver;
+      const lastSeenTierYear = (doctorSnap.data()?.lastSeenTierYear as number) ?? 0;
+
+      if (tierInfo.year !== lastSeenTierYear) {
+        // First time we've computed a tier for this doctor this year —
+        // silent reset, not a downgrade worth logging.
+        await db.collection(Paths.users).doc(order.doctorId).set(
+          { lastSeenTier: tierInfo.tier, lastSeenTierYear: tierInfo.year },
+          { merge: true }
+        );
+      } else if (tierInfo.tier !== lastSeenTier) {
+        await db.collection(Paths.users).doc(order.doctorId).set(
+          { lastSeenTier: tierInfo.tier },
+          { merge: true }
+        );
+        await db.collection(Paths.activityLog).add({
+          type: ActivityType.tierUpgraded,
+          actorUid: order.doctorId,
+          actorName: order.doctorNameSnapshot,
+          actorRole: Roles.doctor,
+          message: `🎉 د. ${order.doctorNameSnapshot} ترقّى إلى المستوى ${TIER_LABELS[tierInfo.tier]} لعام ${tierInfo.year}`,
+          relatedOrderId: orderId,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
+    }
 
     // 5. Activity log — always logged; push notification only when the
     // *doctor* is the one who placed the order (admin already knows about

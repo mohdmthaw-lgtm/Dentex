@@ -33,7 +33,14 @@ mixin _$UserProfile {
   @TimestampConverter()
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   List<String> get fcmTokens => throw _privateConstructorUsedError;
-  DoctorStats get stats => throw _privateConstructorUsedError;
+  DoctorStats get stats =>
+      throw _privateConstructorUsedError; // Tier-upgrade detection cursor only — NOT the doctor's current tier.
+// The current tier is always recomputed live from this year's orders
+// (see computeDoctorTierInfo); these two fields exist solely so the
+// onOrderCreated Cloud Function can tell "upgraded within this year"
+// apart from "a new year silently reset everyone to silver".
+  String get lastSeenTier => throw _privateConstructorUsedError;
+  int get lastSeenTierYear => throw _privateConstructorUsedError;
 
   /// Serializes this UserProfile to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -62,7 +69,9 @@ abstract class $UserProfileCopyWith<$Res> {
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt,
       List<String> fcmTokens,
-      DoctorStats stats});
+      DoctorStats stats,
+      String lastSeenTier,
+      int lastSeenTierYear});
 
   $DoctorStatsCopyWith<$Res> get stats;
 }
@@ -93,6 +102,8 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
     Object? updatedAt = freezed,
     Object? fcmTokens = null,
     Object? stats = null,
+    Object? lastSeenTier = null,
+    Object? lastSeenTierYear = null,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -139,6 +150,14 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as DoctorStats,
+      lastSeenTier: null == lastSeenTier
+          ? _value.lastSeenTier
+          : lastSeenTier // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastSeenTierYear: null == lastSeenTierYear
+          ? _value.lastSeenTierYear
+          : lastSeenTierYear // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 
@@ -172,7 +191,9 @@ abstract class _$$UserProfileImplCopyWith<$Res>
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt,
       List<String> fcmTokens,
-      DoctorStats stats});
+      DoctorStats stats,
+      String lastSeenTier,
+      int lastSeenTierYear});
 
   @override
   $DoctorStatsCopyWith<$Res> get stats;
@@ -202,6 +223,8 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? fcmTokens = null,
     Object? stats = null,
+    Object? lastSeenTier = null,
+    Object? lastSeenTierYear = null,
   }) {
     return _then(_$UserProfileImpl(
       uid: null == uid
@@ -248,6 +271,14 @@ class __$$UserProfileImplCopyWithImpl<$Res>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as DoctorStats,
+      lastSeenTier: null == lastSeenTier
+          ? _value.lastSeenTier
+          : lastSeenTier // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastSeenTierYear: null == lastSeenTierYear
+          ? _value.lastSeenTierYear
+          : lastSeenTierYear // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -266,7 +297,9 @@ class _$UserProfileImpl extends _UserProfile {
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt,
       final List<String> fcmTokens = const <String>[],
-      this.stats = DoctorStats.empty})
+      this.stats = DoctorStats.empty,
+      this.lastSeenTier = 'silver',
+      this.lastSeenTierYear = 0})
       : _fcmTokens = fcmTokens,
         super._();
 
@@ -308,10 +341,21 @@ class _$UserProfileImpl extends _UserProfile {
   @override
   @JsonKey()
   final DoctorStats stats;
+// Tier-upgrade detection cursor only — NOT the doctor's current tier.
+// The current tier is always recomputed live from this year's orders
+// (see computeDoctorTierInfo); these two fields exist solely so the
+// onOrderCreated Cloud Function can tell "upgraded within this year"
+// apart from "a new year silently reset everyone to silver".
+  @override
+  @JsonKey()
+  final String lastSeenTier;
+  @override
+  @JsonKey()
+  final int lastSeenTierYear;
 
   @override
   String toString() {
-    return 'UserProfile(uid: $uid, role: $role, phone: $phone, authEmail: $authEmail, name: $name, clinicName: $clinicName, location: $location, createdAt: $createdAt, updatedAt: $updatedAt, fcmTokens: $fcmTokens, stats: $stats)';
+    return 'UserProfile(uid: $uid, role: $role, phone: $phone, authEmail: $authEmail, name: $name, clinicName: $clinicName, location: $location, createdAt: $createdAt, updatedAt: $updatedAt, fcmTokens: $fcmTokens, stats: $stats, lastSeenTier: $lastSeenTier, lastSeenTierYear: $lastSeenTierYear)';
   }
 
   @override
@@ -335,7 +379,11 @@ class _$UserProfileImpl extends _UserProfile {
                 other.updatedAt == updatedAt) &&
             const DeepCollectionEquality()
                 .equals(other._fcmTokens, _fcmTokens) &&
-            (identical(other.stats, stats) || other.stats == stats));
+            (identical(other.stats, stats) || other.stats == stats) &&
+            (identical(other.lastSeenTier, lastSeenTier) ||
+                other.lastSeenTier == lastSeenTier) &&
+            (identical(other.lastSeenTierYear, lastSeenTierYear) ||
+                other.lastSeenTierYear == lastSeenTierYear));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -352,7 +400,9 @@ class _$UserProfileImpl extends _UserProfile {
       createdAt,
       updatedAt,
       const DeepCollectionEquality().hash(_fcmTokens),
-      stats);
+      stats,
+      lastSeenTier,
+      lastSeenTierYear);
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -382,7 +432,9 @@ abstract class _UserProfile extends UserProfile {
       @TimestampConverter() final DateTime? createdAt,
       @TimestampConverter() final DateTime? updatedAt,
       final List<String> fcmTokens,
-      final DoctorStats stats}) = _$UserProfileImpl;
+      final DoctorStats stats,
+      final String lastSeenTier,
+      final int lastSeenTierYear}) = _$UserProfileImpl;
   const _UserProfile._() : super._();
 
   factory _UserProfile.fromJson(Map<String, dynamic> json) =
@@ -411,7 +463,16 @@ abstract class _UserProfile extends UserProfile {
   @override
   List<String> get fcmTokens;
   @override
-  DoctorStats get stats;
+  DoctorStats
+      get stats; // Tier-upgrade detection cursor only — NOT the doctor's current tier.
+// The current tier is always recomputed live from this year's orders
+// (see computeDoctorTierInfo); these two fields exist solely so the
+// onOrderCreated Cloud Function can tell "upgraded within this year"
+// apart from "a new year silently reset everyone to silver".
+  @override
+  String get lastSeenTier;
+  @override
+  int get lastSeenTierYear;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.

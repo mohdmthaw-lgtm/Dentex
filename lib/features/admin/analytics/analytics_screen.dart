@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/firestore_paths.dart';
+import '../../../core/utils/doctor_tier.dart';
 import '../../../models/order.dart';
 import '../../../models/product_variant.dart';
 import '../../../models/stats.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/stat_tile.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -112,6 +115,39 @@ class AnalyticsScreen extends ConsumerWidget {
                           ),
                         ))
                     .toList(),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          _SectionTitle('توزيع الأطباء حسب المستوى لعام ${DateTime.now().year}'),
+          StreamBuilder<List<UserProfile>>(
+            stream: userRepo.watchDoctors(),
+            builder: (context, snap) {
+              final doctors = snap.data ?? [];
+              if (doctors.isEmpty) return const _EmptyHint('لا يوجد أطباء بعد');
+              return FutureBuilder<List<DoctorTierInfo>>(
+                future: Future.wait(doctors.map((d) =>
+                    orderRepo.getOrdersForDoctor(d.uid).then(computeDoctorTierInfo))),
+                builder: (context, tierSnap) {
+                  final infos = tierSnap.data;
+                  if (infos == null) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  const tiers = [DoctorTier.platinum, DoctorTier.gold, DoctorTier.silver];
+                  return Column(
+                    children: tiers
+                        .map((t) => Card(
+                              child: ListTile(
+                                leading: TierBadge(tier: t),
+                                title: Text('${infos.where((i) => i.tier == t).length} طبيب'),
+                              ),
+                            ))
+                        .toList(),
+                  );
+                },
               );
             },
           ),

@@ -77,4 +77,17 @@ class ActivityType {
   static const productEdited = 'product_edited';
   static const stockLow = 'stock_low';
   static const stockOut = 'stock_out';
+  static const tierUpgraded = 'tier_upgraded';
+}
+
+/// A doctor's loyalty tier. Never persisted as the doctor's "current" value
+/// anywhere — always recomputed live from this calendar year's orders (see
+/// computeDoctorTierInfo). Order docs do freeze the discountRate that was
+/// in effect at creation time, which corresponds 1:1 with one of these tiers.
+class DoctorTier {
+  DoctorTier._();
+
+  static const silver = 'silver';
+  static const gold = 'gold';
+  static const platinum = 'platinum';
 }

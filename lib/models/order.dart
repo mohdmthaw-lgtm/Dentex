@@ -40,6 +40,11 @@ class Order with _$Order {
     required String createdByUid,
     @Default('waiting') String status,
     @Default(<OrderItem>[]) List<OrderItem> items,
+    // Pre-discount sum of item lineTotals. Falls back to totalAmount for
+    // orders placed before the loyalty-tier discount existed.
+    @Default(0) num subtotalAmount,
+    @Default(0) num discountRate,
+    @Default(0) num discountAmount,
     @Default(0) num totalAmount,
     @Default(0) num amountPaid,
     @Default(0) num amountRemaining,
@@ -58,6 +63,11 @@ class Order with _$Order {
       Order.fromJson({...data, 'id': id});
 
   int get itemCount => items.fold(0, (sum, item) => sum + item.quantity);
+
+  /// Orders placed before the loyalty-tier discount existed never had
+  /// `subtotalAmount` written (deserializes to 0) — fall back to
+  /// `totalAmount` so old orders still display a sensible pre-discount price.
+  num get displaySubtotal => subtotalAmount > 0 ? subtotalAmount : totalAmount;
 
   /// One line per distinct product, or per package (collapsed to its name)
   /// — for the truncated order-list preview text, so a multi-line package

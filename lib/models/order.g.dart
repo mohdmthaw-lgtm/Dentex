@@ -44,6 +44,9 @@ _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
               ?.map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <OrderItem>[],
+      subtotalAmount: json['subtotalAmount'] as num? ?? 0,
+      discountRate: json['discountRate'] as num? ?? 0,
+      discountAmount: json['discountAmount'] as num? ?? 0,
       totalAmount: json['totalAmount'] as num? ?? 0,
       amountPaid: json['amountPaid'] as num? ?? 0,
       amountRemaining: json['amountRemaining'] as num? ?? 0,
@@ -65,6 +68,9 @@ Map<String, dynamic> _$$OrderImplToJson(_$OrderImpl instance) =>
       'createdByUid': instance.createdByUid,
       'status': instance.status,
       'items': instance.items,
+      'subtotalAmount': instance.subtotalAmount,
+      'discountRate': instance.discountRate,
+      'discountAmount': instance.discountAmount,
       'totalAmount': instance.totalAmount,
       'amountPaid': instance.amountPaid,
       'amountRemaining': instance.amountRemaining,

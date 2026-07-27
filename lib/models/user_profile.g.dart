@@ -24,6 +24,8 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
       stats: json['stats'] == null
           ? DoctorStats.empty
           : DoctorStats.fromJson(json['stats'] as Map<String, dynamic>),
+      lastSeenTier: json['lastSeenTier'] as String? ?? 'silver',
+      lastSeenTierYear: (json['lastSeenTierYear'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
@@ -39,4 +41,6 @@ Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
       'updatedAt': const TimestampConverter().toJson(instance.updatedAt),
       'fcmTokens': instance.fcmTokens,
       'stats': instance.stats,
+      'lastSeenTier': instance.lastSeenTier,
+      'lastSeenTierYear': instance.lastSeenTierYear,
     };

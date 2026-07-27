@@ -130,7 +130,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/doctor/orders',
-        builder: (c, s) => const MyOrdersScreen(),
+        builder: (c, s) =>
+            MyOrdersScreen(initialFilter: s.uri.queryParameters['filter']),
       ),
       GoRoute(
         path: '/doctor/create-order',

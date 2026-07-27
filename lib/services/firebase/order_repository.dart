@@ -65,6 +65,18 @@ class OrderRepository {
             snap.docs.map((d) => Order.fromDoc(d.id, d.data())).toList());
   }
 
+  /// One-shot equivalent of [watchOrdersForDoctor] — used right before
+  /// submitting a new order, to compute the doctor's current loyalty-tier
+  /// standing (see computeDoctorTierInfo) without holding a live listener
+  /// open just for that.
+  Future<List<Order>> getOrdersForDoctor(String doctorId) async {
+    final snap = await _orders
+        .where('doctorId', isEqualTo: doctorId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snap.docs.map((d) => Order.fromDoc(d.id, d.data())).toList();
+  }
+
   Stream<List<Order>> watchHighestValueOrders({int limit = 10}) {
     return _orders
         .orderBy('totalAmount', descending: true)
@@ -99,6 +111,11 @@ class OrderRepository {
     required List<CartLine> items,
     required num amountPaidNow,
     String notes = '',
+    // The doctor's loyalty-tier discount rate (0, 0.05, 0.10 — see
+    // computeDoctorTierInfo/tierDiscounts), applied uniformly to the
+    // subtotal. Centralized here so the admin and doctor order-creation
+    // flows can never compute it differently.
+    num discountRate = 0,
   }) async {
     final orderItems = items
         .map((c) => {
@@ -113,8 +130,10 @@ class OrderRepository {
               if (c.offerName != null) 'offerName': c.offerName,
             })
         .toList();
-    final totalAmount =
+    final subtotalAmount =
         items.fold<num>(0, (total, c) => total + c.lineTotal);
+    final discountAmount = subtotalAmount * discountRate;
+    final totalAmount = subtotalAmount - discountAmount;
 
     final orderRef = _orders.doc();
     await orderRef.set({
@@ -125,6 +144,9 @@ class OrderRepository {
       'createdByUid': createdByUid,
       'status': OrderStatus.waiting,
       'items': orderItems,
+      'subtotalAmount': subtotalAmount,
+      'discountRate': discountRate,
+      'discountAmount': discountAmount,
       'totalAmount': totalAmount,
       'amountPaid': 0, // the payments subcollection write below is the
       'amountRemaining': totalAmount, // source of truth; onPaymentCreated

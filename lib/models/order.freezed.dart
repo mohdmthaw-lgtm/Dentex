@@ -366,7 +366,12 @@ mixin _$Order {
       throw _privateConstructorUsedError; // 'admin' | 'doctor'
   String get createdByUid => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  List<OrderItem> get items => throw _privateConstructorUsedError;
+  List<OrderItem> get items =>
+      throw _privateConstructorUsedError; // Pre-discount sum of item lineTotals. Falls back to totalAmount for
+// orders placed before the loyalty-tier discount existed.
+  num get subtotalAmount => throw _privateConstructorUsedError;
+  num get discountRate => throw _privateConstructorUsedError;
+  num get discountAmount => throw _privateConstructorUsedError;
   num get totalAmount => throw _privateConstructorUsedError;
   num get amountPaid => throw _privateConstructorUsedError;
   num get amountRemaining => throw _privateConstructorUsedError;
@@ -402,6 +407,9 @@ abstract class $OrderCopyWith<$Res> {
       String createdByUid,
       String status,
       List<OrderItem> items,
+      num subtotalAmount,
+      num discountRate,
+      num discountAmount,
       num totalAmount,
       num amountPaid,
       num amountRemaining,
@@ -435,6 +443,9 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? createdByUid = null,
     Object? status = null,
     Object? items = null,
+    Object? subtotalAmount = null,
+    Object? discountRate = null,
+    Object? discountAmount = null,
     Object? totalAmount = null,
     Object? amountPaid = null,
     Object? amountRemaining = null,
@@ -477,6 +488,18 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<OrderItem>,
+      subtotalAmount: null == subtotalAmount
+          ? _value.subtotalAmount
+          : subtotalAmount // ignore: cast_nullable_to_non_nullable
+              as num,
+      discountRate: null == discountRate
+          ? _value.discountRate
+          : discountRate // ignore: cast_nullable_to_non_nullable
+              as num,
+      discountAmount: null == discountAmount
+          ? _value.discountAmount
+          : discountAmount // ignore: cast_nullable_to_non_nullable
+              as num,
       totalAmount: null == totalAmount
           ? _value.totalAmount
           : totalAmount // ignore: cast_nullable_to_non_nullable
@@ -529,6 +552,9 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
       String createdByUid,
       String status,
       List<OrderItem> items,
+      num subtotalAmount,
+      num discountRate,
+      num discountAmount,
       num totalAmount,
       num amountPaid,
       num amountRemaining,
@@ -560,6 +586,9 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? createdByUid = null,
     Object? status = null,
     Object? items = null,
+    Object? subtotalAmount = null,
+    Object? discountRate = null,
+    Object? discountAmount = null,
     Object? totalAmount = null,
     Object? amountPaid = null,
     Object? amountRemaining = null,
@@ -602,6 +631,18 @@ class __$$OrderImplCopyWithImpl<$Res>
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
               as List<OrderItem>,
+      subtotalAmount: null == subtotalAmount
+          ? _value.subtotalAmount
+          : subtotalAmount // ignore: cast_nullable_to_non_nullable
+              as num,
+      discountRate: null == discountRate
+          ? _value.discountRate
+          : discountRate // ignore: cast_nullable_to_non_nullable
+              as num,
+      discountAmount: null == discountAmount
+          ? _value.discountAmount
+          : discountAmount // ignore: cast_nullable_to_non_nullable
+              as num,
       totalAmount: null == totalAmount
           ? _value.totalAmount
           : totalAmount // ignore: cast_nullable_to_non_nullable
@@ -650,6 +691,9 @@ class _$OrderImpl extends _Order {
       required this.createdByUid,
       this.status = 'waiting',
       final List<OrderItem> items = const <OrderItem>[],
+      this.subtotalAmount = 0,
+      this.discountRate = 0,
+      this.discountAmount = 0,
       this.totalAmount = 0,
       this.amountPaid = 0,
       this.amountRemaining = 0,
@@ -690,6 +734,17 @@ class _$OrderImpl extends _Order {
     return EqualUnmodifiableListView(_items);
   }
 
+// Pre-discount sum of item lineTotals. Falls back to totalAmount for
+// orders placed before the loyalty-tier discount existed.
+  @override
+  @JsonKey()
+  final num subtotalAmount;
+  @override
+  @JsonKey()
+  final num discountRate;
+  @override
+  @JsonKey()
+  final num discountAmount;
   @override
   @JsonKey()
   final num totalAmount;
@@ -717,7 +772,7 @@ class _$OrderImpl extends _Order {
 
   @override
   String toString() {
-    return 'Order(id: $id, doctorId: $doctorId, doctorNameSnapshot: $doctorNameSnapshot, doctorPhoneSnapshot: $doctorPhoneSnapshot, createdBy: $createdBy, createdByUid: $createdByUid, status: $status, items: $items, totalAmount: $totalAmount, amountPaid: $amountPaid, amountRemaining: $amountRemaining, paymentStatus: $paymentStatus, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt, completedAt: $completedAt)';
+    return 'Order(id: $id, doctorId: $doctorId, doctorNameSnapshot: $doctorNameSnapshot, doctorPhoneSnapshot: $doctorPhoneSnapshot, createdBy: $createdBy, createdByUid: $createdByUid, status: $status, items: $items, subtotalAmount: $subtotalAmount, discountRate: $discountRate, discountAmount: $discountAmount, totalAmount: $totalAmount, amountPaid: $amountPaid, amountRemaining: $amountRemaining, paymentStatus: $paymentStatus, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt, completedAt: $completedAt)';
   }
 
   @override
@@ -738,6 +793,12 @@ class _$OrderImpl extends _Order {
                 other.createdByUid == createdByUid) &&
             (identical(other.status, status) || other.status == status) &&
             const DeepCollectionEquality().equals(other._items, _items) &&
+            (identical(other.subtotalAmount, subtotalAmount) ||
+                other.subtotalAmount == subtotalAmount) &&
+            (identical(other.discountRate, discountRate) ||
+                other.discountRate == discountRate) &&
+            (identical(other.discountAmount, discountAmount) ||
+                other.discountAmount == discountAmount) &&
             (identical(other.totalAmount, totalAmount) ||
                 other.totalAmount == totalAmount) &&
             (identical(other.amountPaid, amountPaid) ||
@@ -757,24 +818,28 @@ class _$OrderImpl extends _Order {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      doctorId,
-      doctorNameSnapshot,
-      doctorPhoneSnapshot,
-      createdBy,
-      createdByUid,
-      status,
-      const DeepCollectionEquality().hash(_items),
-      totalAmount,
-      amountPaid,
-      amountRemaining,
-      paymentStatus,
-      notes,
-      createdAt,
-      updatedAt,
-      completedAt);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        doctorId,
+        doctorNameSnapshot,
+        doctorPhoneSnapshot,
+        createdBy,
+        createdByUid,
+        status,
+        const DeepCollectionEquality().hash(_items),
+        subtotalAmount,
+        discountRate,
+        discountAmount,
+        totalAmount,
+        amountPaid,
+        amountRemaining,
+        paymentStatus,
+        notes,
+        createdAt,
+        updatedAt,
+        completedAt
+      ]);
 
   /// Create a copy of Order
   /// with the given fields replaced by the non-null parameter values.
@@ -802,6 +867,9 @@ abstract class _Order extends Order {
       required final String createdByUid,
       final String status,
       final List<OrderItem> items,
+      final num subtotalAmount,
+      final num discountRate,
+      final num discountAmount,
       final num totalAmount,
       final num amountPaid,
       final num amountRemaining,
@@ -829,7 +897,15 @@ abstract class _Order extends Order {
   @override
   String get status;
   @override
-  List<OrderItem> get items;
+  List<OrderItem>
+      get items; // Pre-discount sum of item lineTotals. Falls back to totalAmount for
+// orders placed before the loyalty-tier discount existed.
+  @override
+  num get subtotalAmount;
+  @override
+  num get discountRate;
+  @override
+  num get discountAmount;
   @override
   num get totalAmount;
   @override

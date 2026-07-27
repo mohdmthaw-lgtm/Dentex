@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/firestore_paths.dart';
+import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/order.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -87,6 +89,24 @@ class _OrderCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
+              if (order.discountRate > 0)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      Text(_currency.format(order.displaySubtotal),
+                          style: const TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: Colors.grey,
+                              fontSize: 12)),
+                      const SizedBox(width: 8),
+                      TierDiscountBadge(
+                        tier: tierForDiscountRate(order.discountRate),
+                        rate: order.discountRate,
+                      ),
+                    ],
+                  ),
+                ),
               Row(
                 children: [
                   Text(_currency.format(order.totalAmount),

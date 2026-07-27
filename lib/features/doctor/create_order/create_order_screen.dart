@@ -4,11 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/firestore_paths.dart';
+import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/doctor_tier.dart';
+import '../../../models/order.dart';
 import '../../../models/product.dart';
 import '../../../models/product_variant.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -30,8 +35,106 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
   String _query = '';
   bool _submitting = false;
 
-  num get _total => _cart.fold(0, (sum, c) => sum + c.lineTotal);
+  // This doctor's orders (all-time), fetched once and reused both to
+  // compute the discount that applies to this new order and, right after
+  // submission, to optimistically predict whether it crosses into a new
+  // tier — see _maybeShowTierUpBanner.
+  List<Order> _doctorOrders = [];
+  DoctorTierInfo? _tierInfo;
+
+  num get _subtotal => _cart.fold(0, (sum, c) => sum + c.lineTotal);
+  num get _discountRate => tierDiscounts[_tierInfo?.tier ?? DoctorTier.silver] ?? 0;
+  num get _discountAmount => _subtotal * _discountRate;
+  num get _total => _subtotal - _discountAmount;
   int get _itemCount => _cart.fold(0, (sum, c) => sum + c.quantity);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTierInfo();
+  }
+
+  Future<void> _loadTierInfo() async {
+    final uid = ref.read(authServiceProvider).currentUser!.uid;
+    final orders = await ref.read(orderRepositoryProvider).getOrdersForDoctor(uid);
+    if (mounted) {
+      setState(() {
+        _doctorOrders = orders;
+        _tierInfo = computeDoctorTierInfo(orders);
+      });
+    }
+  }
+
+  int _tierRank(String tier) => switch (tier) {
+        DoctorTier.platinum => 2,
+        DoctorTier.gold => 1,
+        _ => 0,
+      };
+
+  /// Best-effort, client-only prediction shown immediately after a
+  /// successful submit — the durable tier-upgrade record (activity log +
+  /// lastSeenTier) is written server-side by onOrderCreated regardless of
+  /// whether this banner manages to show.
+  void _maybeShowTierUpBanner(String uid, num orderTotal) {
+    final before = _tierInfo;
+    if (before == null) return;
+    final projected = Order(
+      id: 'projected',
+      doctorId: uid,
+      doctorNameSnapshot: '',
+      createdBy: 'doctor',
+      createdByUid: uid,
+      totalAmount: orderTotal,
+      amountRemaining: orderTotal, // COD — unpaid until delivery.
+      createdAt: DateTime.now(),
+    );
+    final after = computeDoctorTierInfo([..._doctorOrders, projected]);
+    if (_tierRank(after.tier) > _tierRank(before.tier)) {
+      _showTierUpBanner(after.tier);
+    }
+  }
+
+  void _showTierUpBanner(String tier) {
+    final meta = tierMeta[tier]!;
+    final overlay = Overlay.of(context);
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 12,
+        left: 16,
+        right: 16,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: meta.color,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4)),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text('🎉 ترقّيت إلى المستوى ${meta.label} ${meta.emoji}',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
+                  onPressed: () => entry.remove(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 4), () {
+      if (entry.mounted) entry.remove();
+    });
+  }
 
   @override
   void dispose() {
@@ -59,6 +162,11 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
       final auth = ref.read(authServiceProvider);
       final uid = auth.currentUser!.uid;
       final profile = await ref.read(userRepositoryProvider).getUser(uid);
+      // Recompute fresh right before writing the order, in case time has
+      // passed since this screen loaded and another order already landed.
+      final freshOrders = await ref.read(orderRepositoryProvider).getOrdersForDoctor(uid);
+      final tierInfo = computeDoctorTierInfo(freshOrders);
+      final discountRate = tierDiscounts[tierInfo.tier] ?? 0;
       await ref.read(orderRepositoryProvider).createOrder(
             doctorId: uid,
             doctorNameSnapshot: profile?.name ?? '',
@@ -67,11 +175,16 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
             createdByUid: uid,
             items: _cart,
             amountPaidNow: 0, // COD — payment happens on delivery.
+            discountRate: discountRate,
           );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم إرسال الطلبية بنجاح')),
         );
+        final subtotal = _cart.fold<num>(0, (sum, c) => sum + c.lineTotal);
+        _doctorOrders = freshOrders;
+        _tierInfo = tierInfo;
+        _maybeShowTierUpBanner(uid, subtotal - subtotal * discountRate);
         context.pop();
       }
     } finally {
@@ -139,7 +252,7 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 0.72,
+                    childAspectRatio: 0.62,
                   ),
                   itemCount: filtered.length,
                   itemBuilder: (context, i) => _ProductCard(
@@ -167,8 +280,22 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('$_itemCount منتج', style: Theme.of(context).textTheme.bodySmall),
-                          Text(_currency.format(_total),
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          if (_discountRate > 0)
+                            Row(
+                              children: [
+                                Text(_currency.format(_subtotal),
+                                    style: const TextStyle(
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.grey,
+                                        fontSize: 13)),
+                                const SizedBox(width: 6),
+                                Text(_currency.format(_total),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              ],
+                            )
+                          else
+                            Text(_currency.format(_total),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                         ],
                       ),
                     ),
@@ -216,6 +343,28 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                   ),
                 ),
               ),
+              if (_discountRate > 0)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TierDiscountBadge(tier: _tierInfo!.tier, rate: _discountRate),
+                      Text.rich(
+                        TextSpan(children: [
+                          TextSpan(
+                              text: '${_currency.format(_subtotal)}  ',
+                              style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough, color: Colors.grey)),
+                          TextSpan(
+                              text: _currency.format(_total),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, color: AppTheme.primary)),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: FilledButton(

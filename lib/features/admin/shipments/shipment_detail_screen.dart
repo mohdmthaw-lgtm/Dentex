@@ -218,7 +218,7 @@ class _ShipmentDetailScreenState extends ConsumerState<ShipmentDetailScreen> {
 
               // Info.
               _SectionCard(title: 'معلومات الشحنة', children: [
-                _infoRow('المورد / شركة التصدير', shipment.supplierName),
+                _infoRow('شركة الشحن / التصدير', shipment.supplierName),
                 _infoRow('رقم طلب الشراء', shipment.purchaseOrderNumber),
                 _infoRow('شركة الشحن', shipment.shippingCompany),
                 _infoRow('وكيل الشحن', shipment.shippingAgent),
@@ -236,34 +236,39 @@ class _ShipmentDetailScreenState extends ConsumerState<ShipmentDetailScreen> {
               ]),
               const SizedBox(height: 16),
 
-              // Products.
+              // Products, grouped by supplier/manufacturer.
               _SectionCard(title: 'المنتجات (${shipment.items.length})', children: [
-                for (final item in shipment.items)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(item.productName,
-                                  style: const TextStyle(fontWeight: FontWeight.w600)),
-                              if (item.manufacturer.isNotEmpty)
-                                Text(item.manufacturer,
+                for (final group in _groupItemsByManufacturer(shipment.items)) ...[
+                  Text(group.manufacturer.isEmpty ? 'بدون مورد محدد' : group.manufacturer,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall
+                          ?.copyWith(color: AppTheme.primary)),
+                  for (final item in group.items)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, right: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(item.productName,
+                                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                                Text(
+                                    '${item.quantity} قطعة · ${item.cartonCount} كرتون · $symbol ${item.purchasePrice}',
                                     style: Theme.of(context).textTheme.bodySmall),
-                              Text(
-                                  '${item.quantity} قطعة · ${item.cartonCount} كرتون · $symbol ${item.purchasePrice}',
-                                  style: Theme.of(context).textTheme.bodySmall),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Text('$symbol ${item.lineTotal.toStringAsFixed(2)}',
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
-                      ],
+                          Text('$symbol ${item.lineTotal.toStringAsFixed(2)}',
+                              style: const TextStyle(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
                     ),
-                  ),
+                  const SizedBox(height: 10),
+                ],
                 const Divider(),
                 _infoRow('إجمالي الكميات', '${shipment.totalQuantity}'),
                 _infoRow('إجمالي الكراتين', '${shipment.totalCartons}'),
@@ -327,6 +332,23 @@ class _ShipmentDetailScreenState extends ConsumerState<ShipmentDetailScreen> {
     );
   }
 
+  /// Groups the flat items list by manufacturer, preserving each
+  /// manufacturer's first-appearance order — mirrors how the edit form
+  /// organizes products under their supplier.
+  List<_ManufacturerGroup> _groupItemsByManufacturer(List<ShipmentItem> items) {
+    final groups = <String, _ManufacturerGroup>{};
+    final ordered = <_ManufacturerGroup>[];
+    for (final item in items) {
+      final group = groups.putIfAbsent(item.manufacturer, () {
+        final g = _ManufacturerGroup(item.manufacturer);
+        ordered.add(g);
+        return g;
+      });
+      group.items.add(item);
+    }
+    return ordered;
+  }
+
   Widget _infoRow(String label, String value, {bool bold = false}) {
     if (value.isEmpty) return const SizedBox.shrink();
     return Padding(
@@ -343,6 +365,12 @@ class _ShipmentDetailScreenState extends ConsumerState<ShipmentDetailScreen> {
       ),
     );
   }
+}
+
+class _ManufacturerGroup {
+  _ManufacturerGroup(this.manufacturer);
+  final String manufacturer;
+  final List<ShipmentItem> items = [];
 }
 
 class _SectionCard extends StatelessWidget {

@@ -20,6 +20,13 @@ class UserProfile with _$UserProfile {
     @TimestampConverter() DateTime? updatedAt,
     @Default(<String>[]) List<String> fcmTokens,
     @Default(DoctorStats.empty) DoctorStats stats,
+    // Tier-upgrade detection cursor only — NOT the doctor's current tier.
+    // The current tier is always recomputed live from this year's orders
+    // (see computeDoctorTierInfo); these two fields exist solely so the
+    // onOrderCreated Cloud Function can tell "upgraded within this year"
+    // apart from "a new year silently reset everyone to silver".
+    @Default('silver') String lastSeenTier,
+    @Default(0) int lastSeenTierYear,
   }) = _UserProfile;
 
   const UserProfile._();

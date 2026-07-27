@@ -3,12 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/firestore_paths.dart';
+import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/doctor_tier.dart';
 import '../../../models/product.dart';
 import '../../../models/product_variant.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -35,6 +39,12 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
   final _notesController = TextEditingController();
   bool _submitting = false;
 
+  // The selected doctor's loyalty-tier standing, based on their orders this
+  // calendar year — determines the discount applied to this new order.
+  DoctorTierInfo? _tierInfo;
+
+  num get _discountRate => tierDiscounts[_tierInfo?.tier ?? DoctorTier.silver] ?? 0;
+
   @override
   void dispose() {
     _doctorSearchController.dispose();
@@ -54,7 +64,26 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
     }
   }
 
-  num get _total => _cart.fold(0, (sum, c) => sum + c.lineTotal);
+  num get _subtotal => _cart.fold(0, (sum, c) => sum + c.lineTotal);
+  num get _discountAmount => _subtotal * _discountRate;
+  num get _total => _subtotal - _discountAmount;
+
+  Future<DoctorTierInfo> _fetchTierInfo(String doctorId) async {
+    final orders = await ref.read(orderRepositoryProvider).getOrdersForDoctor(doctorId);
+    return computeDoctorTierInfo(orders);
+  }
+
+  Future<void> _loadTierInfo() async {
+    final doctor = _selectedDoctor;
+    if (doctor == null) {
+      setState(() => _tierInfo = null);
+      return;
+    }
+    final info = await _fetchTierInfo(doctor.uid);
+    if (mounted && _selectedDoctor?.uid == doctor.uid) {
+      setState(() => _tierInfo = info);
+    }
+  }
 
   Future<void> _addProductToCart() async {
     final result = await showModalBottomSheet<List<CartLine>>(
@@ -121,6 +150,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
         );
         _searchResults = [];
       });
+      _loadTierInfo();
     }
   }
 
@@ -130,6 +160,11 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
     try {
       final auth = ref.read(authServiceProvider);
       final currentUser = auth.currentUser;
+      // Recompute fresh right before writing the order, in case the cart
+      // was built up over a while and the doctor placed another order
+      // meanwhile (from either this or another admin session).
+      final tierInfo = await _fetchTierInfo(_selectedDoctor!.uid);
+      final discountRate = tierDiscounts[tierInfo.tier] ?? 0;
       await ref.read(orderRepositoryProvider).createOrder(
             doctorId: _selectedDoctor!.uid,
             doctorNameSnapshot: _selectedDoctor!.name,
@@ -139,6 +174,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
             items: _cart,
             amountPaidNow: num.tryParse(_amountPaidController.text) ?? 0,
             notes: _notesController.text.trim(),
+            discountRate: discountRate,
           );
       if (mounted) context.pop();
     } finally {
@@ -163,7 +199,10 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
                     '${_selectedDoctor!.clinicName}  •  ${_selectedDoctor!.phone}'),
                 trailing: IconButton(
                   icon: const Icon(Icons.close),
-                  onPressed: () => setState(() => _selectedDoctor = null),
+                  onPressed: () => setState(() {
+                    _selectedDoctor = null;
+                    _tierInfo = null;
+                  }),
                 ),
               ),
             )
@@ -186,10 +225,13 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
             ..._searchResults.map((d) => ListTile(
                   title: Text(d.name),
                   subtitle: Text('${d.clinicName}  •  ${d.phone}'),
-                  onTap: () => setState(() {
-                    _selectedDoctor = d;
-                    _searchResults = [];
-                  }),
+                  onTap: () {
+                    setState(() {
+                      _selectedDoctor = d;
+                      _searchResults = [];
+                    });
+                    _loadTierInfo();
+                  },
                 )),
             TextButton.icon(
               onPressed: _showCreateDoctorDialog,
@@ -228,6 +270,27 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
               )),
           if (_cart.isNotEmpty) ...[
             const Divider(),
+            if (_discountRate > 0) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('المجموع قبل الخصم'),
+                  Text(_currency.format(_subtotal),
+                      style: const TextStyle(
+                          decoration: TextDecoration.lineThrough, color: Colors.grey)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TierDiscountBadge(tier: _tierInfo!.tier, rate: _discountRate),
+                  Text('- ${_currency.format(_discountAmount)}',
+                      style: const TextStyle(color: AppTheme.success, fontWeight: FontWeight.w600)),
+                ],
+              ),
+              const SizedBox(height: 4),
+            ],
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

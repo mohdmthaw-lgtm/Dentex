@@ -14,18 +14,15 @@ final _date = DateFormat.yMMMd('ar');
 class _ItemRow {
   _ItemRow({
     String productName = '',
-    String manufacturer = '',
     String quantity = '',
     String cartonCount = '',
     String purchasePrice = '',
   })  : productNameController = TextEditingController(text: productName),
-        manufacturerController = TextEditingController(text: manufacturer),
         quantityController = TextEditingController(text: quantity),
         cartonCountController = TextEditingController(text: cartonCount),
         purchasePriceController = TextEditingController(text: purchasePrice);
 
   final TextEditingController productNameController;
-  final TextEditingController manufacturerController;
   final TextEditingController quantityController;
   final TextEditingController cartonCountController;
   final TextEditingController purchasePriceController;
@@ -34,9 +31,9 @@ class _ItemRow {
       (num.tryParse(purchasePriceController.text) ?? 0) *
       (int.tryParse(quantityController.text) ?? 0);
 
-  ShipmentItem toItem() => ShipmentItem(
+  ShipmentItem toItem(String manufacturer) => ShipmentItem(
         productName: productNameController.text.trim(),
-        manufacturer: manufacturerController.text.trim(),
+        manufacturer: manufacturer,
         quantity: int.tryParse(quantityController.text) ?? 0,
         cartonCount: int.tryParse(cartonCountController.text) ?? 0,
         purchasePrice: num.tryParse(purchasePriceController.text) ?? 0,
@@ -44,10 +41,31 @@ class _ItemRow {
 
   void dispose() {
     productNameController.dispose();
-    manufacturerController.dispose();
     quantityController.dispose();
     cartonCountController.dispose();
     purchasePriceController.dispose();
+  }
+}
+
+/// One supplier/manufacturer within the shipment, with its own list of
+/// product lines. A single shipment routinely bundles goods bought from
+/// several different suppliers under one shipment number, so the form
+/// groups products by supplier instead of repeating the supplier name on
+/// every product row.
+class _SupplierGroup {
+  _SupplierGroup({String supplierName = ''})
+      : supplierController = TextEditingController(text: supplierName);
+
+  final TextEditingController supplierController;
+  final List<_ItemRow> items = [];
+
+  num get groupTotal => items.fold<num>(0, (sum, r) => sum + r.lineTotal);
+
+  void dispose() {
+    supplierController.dispose();
+    for (final item in items) {
+      item.dispose();
+    }
   }
 }
 
@@ -79,7 +97,7 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
   final _transportController = TextEditingController(text: '0');
   final _otherCostController = TextEditingController(text: '0');
 
-  final List<_ItemRow> _items = [];
+  final List<_SupplierGroup> _supplierGroups = [];
 
   String _shipmentType = ShipmentType.sea;
   String _currency = 'USD';
@@ -88,7 +106,9 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
   bool _loading = false;
   bool _saving = false;
 
-  num get _productsTotal => _items.fold<num>(0, (sum, r) => sum + r.lineTotal);
+  Iterable<_ItemRow> get _allItems => _supplierGroups.expand((g) => g.items);
+
+  num get _productsTotal => _allItems.fold<num>(0, (sum, r) => sum + r.lineTotal);
   num get _costsTotal =>
       (num.tryParse(_shippingCostController.text) ?? 0) +
       (num.tryParse(_customsController.text) ?? 0) +
@@ -105,7 +125,7 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
     if (widget.isEditing) {
       _loadExisting();
     } else {
-      _items.add(_ItemRow());
+      _supplierGroups.add(_SupplierGroup()..items.add(_ItemRow()));
     }
   }
 
@@ -131,16 +151,29 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
       _storageController.text = shipment.costs.storage.toString();
       _transportController.text = shipment.costs.transport.toString();
       _otherCostController.text = shipment.costs.other.toString();
+
+      // Reconstruct supplier groups from the flat items list, keeping items
+      // with the same manufacturer together in their original order.
+      final groupsByManufacturer = <String, _SupplierGroup>{};
       for (final item in shipment.items) {
-        _items.add(_ItemRow(
+        final group = groupsByManufacturer.putIfAbsent(
+          item.manufacturer,
+          () {
+            final g = _SupplierGroup(supplierName: item.manufacturer);
+            _supplierGroups.add(g);
+            return g;
+          },
+        );
+        group.items.add(_ItemRow(
           productName: item.productName,
-          manufacturer: item.manufacturer,
           quantity: item.quantity.toString(),
           cartonCount: item.cartonCount.toString(),
           purchasePrice: item.purchasePrice.toString(),
         ));
       }
-      if (_items.isEmpty) _items.add(_ItemRow());
+      if (_supplierGroups.isEmpty) {
+        _supplierGroups.add(_SupplierGroup()..items.add(_ItemRow()));
+      }
     }
     if (mounted) setState(() => _loading = false);
   }
@@ -160,26 +193,34 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
     _storageController.dispose();
     _transportController.dispose();
     _otherCostController.dispose();
-    for (final row in _items) {
-      row.dispose();
+    for (final group in _supplierGroups) {
+      group.dispose();
     }
     super.dispose();
   }
 
-  void _addItemRow() {
-    // Auto-fill the new row's manufacturer from the previous one — the spec
-    // asks for this since a shipment's items are very often all from the
-    // same factory, while still letting each row be edited independently.
-    final lastManufacturer =
-        _items.isNotEmpty ? _items.last.manufacturerController.text : '';
-    setState(() => _items.add(_ItemRow(manufacturer: lastManufacturer)));
+  void _addSupplierGroup() {
+    setState(() => _supplierGroups.add(_SupplierGroup()..items.add(_ItemRow())));
   }
 
-  void _removeItemRow(int index) {
-    if (_items.length <= 1) return;
+  void _removeSupplierGroup(int index) {
+    if (_supplierGroups.length <= 1) return;
     setState(() {
-      _items[index].dispose();
-      _items.removeAt(index);
+      _supplierGroups[index].dispose();
+      _supplierGroups.removeAt(index);
+    });
+  }
+
+  void _addProductRow(int groupIndex) {
+    setState(() => _supplierGroups[groupIndex].items.add(_ItemRow()));
+  }
+
+  void _removeProductRow(int groupIndex, int itemIndex) {
+    final group = _supplierGroups[groupIndex];
+    if (group.items.length <= 1) return;
+    setState(() {
+      group.items[itemIndex].dispose();
+      group.items.removeAt(itemIndex);
     });
   }
 
@@ -206,10 +247,14 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
     setState(() => _saving = true);
     try {
       final repo = ref.read(shipmentRepositoryProvider);
-      final items = _items
-          .where((r) => r.productNameController.text.trim().isNotEmpty)
-          .map((r) => r.toItem())
-          .toList();
+      final items = <ShipmentItem>[];
+      for (final group in _supplierGroups) {
+        final manufacturer = group.supplierController.text.trim();
+        for (final row in group.items) {
+          if (row.productNameController.text.trim().isEmpty) continue;
+          items.add(row.toItem(manufacturer));
+        }
+      }
       final costs = ShipmentCosts(
         shipping: num.tryParse(_shippingCostController.text) ?? 0,
         customs: num.tryParse(_customsController.text) ?? 0,
@@ -280,7 +325,7 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
             const SizedBox(height: 12),
             _SupplierField(
               controller: _supplierController,
-              label: 'المورد / شركة التصدير',
+              label: 'شركة الشحن / التصدير',
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -364,16 +409,16 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
             const SizedBox(height: 24),
             Row(
               children: [
-                Text('المنتجات', style: Theme.of(context).textTheme.titleMedium),
+                Text('الموردون والمنتجات', style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: _addItemRow,
+                  onPressed: _addSupplierGroup,
                   icon: const Icon(Icons.add),
-                  label: const Text('إضافة منتج'),
+                  label: const Text('إضافة مورد'),
                 ),
               ],
             ),
-            ...List.generate(_items.length, (i) => _buildItemCard(i)),
+            ...List.generate(_supplierGroups.length, (i) => _buildSupplierGroupCard(i)),
             const SizedBox(height: 8),
             _buildItemsSummary(),
             const SizedBox(height: 24),
@@ -431,10 +476,60 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
     );
   }
 
-  Widget _buildItemCard(int index) {
-    final row = _items[index];
+  Widget _buildSupplierGroupCard(int groupIndex) {
+    final group = _supplierGroups[groupIndex];
     return Card(
       margin: const EdgeInsets.only(top: 10),
+      color: AppTheme.surfaceLight,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _SupplierField(
+                    controller: group.supplierController,
+                    label: 'المورد / المصنع',
+                  ),
+                ),
+                if (_supplierGroups.length > 1)
+                  IconButton(
+                    icon: const Icon(Icons.close, color: AppTheme.danger),
+                    tooltip: 'حذف المورد',
+                    onPressed: () => _removeSupplierGroup(groupIndex),
+                  ),
+              ],
+            ),
+            ...List.generate(
+                group.items.length, (i) => _buildProductCard(groupIndex, i)),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton.icon(
+                onPressed: () => _addProductRow(groupIndex),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('إضافة منتج لهذا المورد'),
+              ),
+            ),
+            if (group.items.length > 1)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  'إجمالي المورد: $_symbol ${group.groupTotal.toStringAsFixed(2)}',
+                  style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.primary),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductCard(int groupIndex, int itemIndex) {
+    final row = _supplierGroups[groupIndex].items[itemIndex];
+    return Card(
+      margin: const EdgeInsets.only(top: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -447,18 +542,12 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
                     decoration: const InputDecoration(labelText: 'اسم المنتج'),
                   ),
                 ),
-                if (_items.length > 1)
+                if (_supplierGroups[groupIndex].items.length > 1)
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: AppTheme.danger),
-                    onPressed: () => _removeItemRow(index),
+                    onPressed: () => _removeProductRow(groupIndex, itemIndex),
                   ),
               ],
-            ),
-            const SizedBox(height: 8),
-            _SupplierField(
-              controller: row.manufacturerController,
-              label: 'المصنع / المورد',
-              dense: true,
             ),
             const SizedBox(height: 8),
             Row(
@@ -503,16 +592,19 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
   }
 
   Widget _buildItemsSummary() {
-    final totalQty = _items.fold<int>(0, (s, r) => s + (int.tryParse(r.quantityController.text) ?? 0));
+    final totalQty =
+        _allItems.fold<int>(0, (s, r) => s + (int.tryParse(r.quantityController.text) ?? 0));
     final totalCartons =
-        _items.fold<int>(0, (s, r) => s + (int.tryParse(r.cartonCountController.text) ?? 0));
+        _allItems.fold<int>(0, (s, r) => s + (int.tryParse(r.cartonCountController.text) ?? 0));
     return Card(
       color: AppTheme.surfaceLight,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            _summaryLine('عدد المنتجات', '${_items.where((r) => r.productNameController.text.trim().isNotEmpty).length}'),
+            _summaryLine('عدد الموردين', '${_supplierGroups.length}'),
+            _summaryLine('عدد المنتجات',
+                '${_allItems.where((r) => r.productNameController.text.trim().isNotEmpty).length}'),
             _summaryLine('إجمالي الكميات', '$totalQty'),
             _summaryLine('إجمالي الكراتين', '$totalCartons'),
             _summaryLine('إجمالي قيمة المنتجات', '$_symbol ${_productsTotal.toStringAsFixed(2)}'),
@@ -558,10 +650,9 @@ class _ShipmentFormScreenState extends ConsumerState<ShipmentFormScreen> {
 }
 
 class _SupplierField extends StatelessWidget {
-  const _SupplierField({required this.controller, required this.label, this.dense = false});
+  const _SupplierField({required this.controller, required this.label});
   final TextEditingController controller;
   final String label;
-  final bool dense;
 
   @override
   Widget build(BuildContext context) {
@@ -569,7 +660,6 @@ class _SupplierField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        isDense: dense,
         suffixIcon: IconButton(
           icon: const Icon(Icons.list_alt, size: 20),
           onPressed: () async {

@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/doctor_tier.dart';
+import '../../../models/order.dart';
 import '../../../models/stats.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/stat_tile.dart';
+import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -93,23 +96,41 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               return Column(
                 children: doctors
                     .map((d) => Card(
-                          child: ListTile(
-                            leading: const CircleAvatar(child: Icon(Icons.person)),
-                            title: Text(d.name),
-                            subtitle: Text(
-                                '${d.clinicName}${d.location.isNotEmpty ? ' • ${d.location}' : ''}'),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('${d.stats.totalOrders} طلب',
-                                    style: Theme.of(context).textTheme.bodySmall),
-                                Text(_currency.format(d.stats.totalSpent),
-                                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                                if (d.stats.totalDebt > 0)
-                                  Text('دين ${_currency.format(d.stats.totalDebt)}',
-                                      style: const TextStyle(
-                                          color: AppTheme.danger, fontSize: 12)),
+                                const CircleAvatar(child: Icon(Icons.person)),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(d.name, style: Theme.of(context).textTheme.titleMedium),
+                                      Text(
+                                          '${d.clinicName}${d.location.isNotEmpty ? ' • ${d.location}' : ''}',
+                                          style: Theme.of(context).textTheme.bodySmall),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    _DoctorTierBadge(doctorId: d.uid),
+                                    const SizedBox(height: 4),
+                                    Text('${d.stats.totalOrders} طلب',
+                                        style: Theme.of(context).textTheme.bodySmall),
+                                    Text(_currency.format(d.stats.totalSpent),
+                                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    if (d.stats.totalDebt > 0)
+                                      Text('دين ${_currency.format(d.stats.totalDebt)}',
+                                          style: const TextStyle(
+                                              color: AppTheme.danger, fontSize: 12)),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -120,6 +141,24 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Shows this doctor's loyalty tier for the current calendar year — computed
+/// live from their orders, never stored (see computeDoctorTierInfo).
+class _DoctorTierBadge extends ConsumerWidget {
+  const _DoctorTierBadge({required this.doctorId});
+  final String doctorId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return StreamBuilder<List<Order>>(
+      stream: ref.watch(orderRepositoryProvider).watchOrdersForDoctor(doctorId),
+      builder: (context, snap) {
+        final tierInfo = computeDoctorTierInfo(snap.data ?? []);
+        return TierBadge(tier: tierInfo.tier);
+      },
     );
   }
 }
