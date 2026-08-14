@@ -4,3 +4,4 @@ export { onPaymentCreated } from "./orders/onPaymentCreated";
 export { onVariantWrite } from "./products/onVariantWrite";
 export { onProductWrite } from "./products/onProductWrite";
 export { createDoctorAccount } from "./users/createDoctorAccount";
+export { deleteOwnAccount } from "./users/deleteOwnAccount";

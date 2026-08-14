@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/utils/responsive.dart';
+
 /// One of the small stat cards used across every admin screen's top bar
 /// (dashboard's 4 tiles, Profits'/Analytics'/Customers' tile rows).
 class StatTile extends StatelessWidget {
@@ -67,7 +69,7 @@ class StatTileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: responsiveGridColumns(context),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,

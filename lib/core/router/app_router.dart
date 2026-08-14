@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/account_requests/account_requests_screen.dart';
 import '../../features/admin/analytics/analytics_screen.dart';
 import '../../features/admin/customers/customers_screen.dart';
 import '../../features/admin/dashboard/admin_dashboard_screen.dart';
@@ -17,11 +18,14 @@ import '../../features/admin/shipments/shipment_detail_screen.dart';
 import '../../features/admin/shipments/shipment_form_screen.dart';
 import '../../features/admin/shipments/shipments_list_screen.dart';
 import '../../features/auth/login_screen.dart';
+import '../../features/auth/request_account_screen.dart';
+import '../../features/doctor/account/account_settings_screen.dart';
 import '../../features/doctor/create_order/create_order_screen.dart';
 import '../../features/doctor/dashboard/doctor_dashboard_screen.dart';
 import '../../features/doctor/offers/offer_detail_screen.dart';
 import '../../features/doctor/offers/offers_screen.dart';
 import '../../features/doctor/orders/my_orders_screen.dart';
+import '../../models/user_profile.dart';
 import 'auth_state_provider.dart';
 
 /// Nav is tile/button-driven per spec (admin's 2-2-1 grid, doctor's big
@@ -36,21 +40,25 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/login',
     redirect: (context, state) {
       final status = authState.valueOrNull?.status ?? AppAuthStatus.loading;
-      final loggingIn = state.matchedLocation == '/login';
+      // '/request-account' is the signed-out "create an account" entry
+      // point (App Store Guideline 3.2) — it must stay reachable without
+      // credentials, exactly like '/login'.
+      final isPublicRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/request-account';
 
       if (status == AppAuthStatus.loading) return null;
 
       if (status == AppAuthStatus.signedOut) {
-        return loggingIn ? null : '/login';
+        return isPublicRoute ? null : '/login';
       }
       if (status == AppAuthStatus.admin) {
-        if (loggingIn || !state.matchedLocation.startsWith('/admin')) {
+        if (isPublicRoute || !state.matchedLocation.startsWith('/admin')) {
           return '/admin';
         }
         return null;
       }
       if (status == AppAuthStatus.doctor) {
-        if (loggingIn || !state.matchedLocation.startsWith('/doctor')) {
+        if (isPublicRoute || !state.matchedLocation.startsWith('/doctor')) {
           return '/doctor';
         }
         return null;
@@ -60,6 +68,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refreshNotifier,
     routes: [
       GoRoute(path: '/login', builder: (c, s) => const LoginScreen()),
+      GoRoute(
+        path: '/request-account',
+        builder: (c, s) => const RequestAccountScreen(),
+      ),
 
       // Admin shell
       GoRoute(path: '/admin', builder: (c, s) => const AdminDashboardScreen()),
@@ -94,6 +106,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/customers',
         builder: (c, s) => const CustomersScreen(),
+      ),
+      GoRoute(
+        path: '/admin/account-requests',
+        builder: (c, s) => const AccountRequestsScreen(),
       ),
       GoRoute(path: '/admin/offers', builder: (c, s) => const OffersListScreen()),
       GoRoute(
@@ -141,6 +157,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/doctor/offers/:id',
         builder: (c, s) => OfferDetailScreen(offerId: s.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/doctor/account',
+        builder: (c, s) => AccountSettingsScreen(profile: s.extra as UserProfile),
       ),
     ],
   );

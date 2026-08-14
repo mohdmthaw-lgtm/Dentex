@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'account_request_repository.dart';
 import 'activity_log_repository.dart';
 import 'auth_service.dart';
 import 'fcm_service.dart';
@@ -32,3 +33,5 @@ final statsRepositoryProvider =
 final storageServiceProvider =
     Provider<StorageService>((ref) => StorageService());
 final fcmServiceProvider = Provider<FcmService>((ref) => FcmService());
+final accountRequestRepositoryProvider =
+    Provider<AccountRequestRepository>((ref) => AccountRequestRepository());

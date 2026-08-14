@@ -27,6 +27,11 @@ class UserProfile with _$UserProfile {
     // apart from "a new year silently reset everyone to silver".
     @Default('silver') String lastSeenTier,
     @Default(0) int lastSeenTierYear,
+    // Set when an admin (not the doctor) chose this account's password —
+    // e.g. the walk-in order flow — so the doctor is forced to a
+    // change-password screen on first login and ends up the sole holder of
+    // their real password. See createDoctorAccount Cloud Function.
+    @Default(false) bool mustChangePassword,
   }) = _UserProfile;
 
   const UserProfile._();

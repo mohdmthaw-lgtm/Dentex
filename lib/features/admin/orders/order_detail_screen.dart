@@ -7,6 +7,7 @@ import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/order.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
@@ -90,6 +91,7 @@ class OrderDetailScreen extends ConsumerWidget {
                         subtitle: Text(_currency.format(group.lineTotal)),
                         children: group.items
                             .map((item) => ListTile(
+                                  leading: ProductThumbnail(imageUrl: item.productImageUrl),
                                   title: Text('${item.productName} - ${item.variantLabel}'),
                                   subtitle: Text(
                                       '${item.quantity} × ${_currency.format(item.unitSellPrice)}'),
@@ -103,6 +105,7 @@ class OrderDetailScreen extends ConsumerWidget {
                       child: Column(
                         children: group.items
                             .map((item) => ListTile(
+                                  leading: ProductThumbnail(imageUrl: item.productImageUrl),
                                   title: Text('${item.productName} - ${item.variantLabel}'),
                                   subtitle: Text(
                                       '${item.quantity} × ${_currency.format(item.unitSellPrice)}'),

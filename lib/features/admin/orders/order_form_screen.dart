@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,10 +14,21 @@ import '../../../models/product_variant.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
+
+/// A throwaway password for the walk-in "add doctor" flow — never shown to
+/// the admin or the doctor; it only exists to satisfy Firebase Auth's
+/// password requirement until the doctor sets their own real one via the
+/// forced change-password screen (mustChangePassword: true).
+String _generateTempPassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  final rand = Random.secure();
+  return List.generate(16, (_) => chars[rand.nextInt(chars.length)]).join();
+}
 
 /// Manual order-entry flow: admin looks up an existing doctor (or creates
 /// one on the spot), builds a cart of product+variant+quantity lines, and
@@ -101,7 +114,6 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
     final phoneCtrl = TextEditingController();
     final clinicCtrl = TextEditingController();
     final locationCtrl = TextEditingController();
-    final passwordCtrl = TextEditingController();
 
     final created = await showDialog<bool>(
       context: context,
@@ -115,7 +127,14 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
               TextField(controller: phoneCtrl, decoration: const InputDecoration(labelText: 'رقم الهاتف')),
               TextField(controller: clinicCtrl, decoration: const InputDecoration(labelText: 'اسم العيادة')),
               TextField(controller: locationCtrl, decoration: const InputDecoration(labelText: 'الموقع')),
-              TextField(controller: passwordCtrl, decoration: const InputDecoration(labelText: 'كلمة سر مبدئية')),
+              const SizedBox(height: 12),
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'سيُطلب من الدكتور تعيين كلمة سر خاصة به عند أول تسجيل دخول.',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ),
             ],
           ),
         ),
@@ -129,14 +148,17 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
     if (created == true &&
         nameCtrl.text.trim().isNotEmpty &&
         phoneCtrl.text.trim().isNotEmpty) {
+      // Nobody (not even the admin creating this account) ever sees or
+      // chooses this value — it only exists to satisfy Firebase Auth's
+      // "password required" constraint until the doctor picks their own on
+      // the forced change-password screen (mustChangePassword: true).
       final uid = await ref.read(userRepositoryProvider).createDoctorAccount(
             phone: phoneCtrl.text.trim(),
-            password: passwordCtrl.text.trim().isEmpty
-                ? '123456'
-                : passwordCtrl.text.trim(),
+            password: _generateTempPassword(),
             name: nameCtrl.text.trim(),
             clinicName: clinicCtrl.text.trim(),
             location: locationCtrl.text.trim(),
+            mustChangePassword: true,
           );
       setState(() {
         _selectedDoctor = UserProfile(
@@ -253,6 +275,7 @@ class _OrderFormScreenState extends ConsumerState<OrderFormScreen> {
           ),
           ..._cart.asMap().entries.map((entry) => Card(
                 child: ListTile(
+                  leading: ProductThumbnail(imageUrl: entry.value.productImageUrl),
                   title: Text('${entry.value.productName} - ${entry.value.variantLabel}'),
                   subtitle: Text(
                       '${entry.value.quantity} × ${_currency.format(entry.value.unitSellPrice)}'),
@@ -371,6 +394,7 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                   Text('اختر منتج', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   ...products.map((p) => ListTile(
+                        leading: ProductThumbnail(imageUrl: p.imageUrl),
                         title: Text(p.name),
                         subtitle: Text('الكمية المتوفرة: ${p.totalQuantity}'),
                         onTap: () => setState(() => _selectedProduct = p),
@@ -406,6 +430,9 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                   final qty = _quantities[v.id] ?? 0;
                   final outOfStock = v.quantity <= 0;
                   return ListTile(
+                    leading: ProductThumbnail(
+                      imageUrl: v.imageUrl.isNotEmpty ? v.imageUrl : _selectedProduct!.imageUrl,
+                    ),
                     title: Text(v.label),
                     subtitle: Text(outOfStock
                         ? 'نفذ من المخزون'
@@ -440,6 +467,9 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                                 .map((v) => CartLine(
                                       productId: _selectedProduct!.id,
                                       productName: _selectedProduct!.name,
+                                      productImageUrl: v.imageUrl.isNotEmpty
+                                          ? v.imageUrl
+                                          : _selectedProduct!.imageUrl,
                                       variantId: v.id,
                                       variantLabel: v.label,
                                       unitSellPrice: v.sellPrice,

@@ -40,7 +40,12 @@ mixin _$UserProfile {
 // onOrderCreated Cloud Function can tell "upgraded within this year"
 // apart from "a new year silently reset everyone to silver".
   String get lastSeenTier => throw _privateConstructorUsedError;
-  int get lastSeenTierYear => throw _privateConstructorUsedError;
+  int get lastSeenTierYear =>
+      throw _privateConstructorUsedError; // Set when an admin (not the doctor) chose this account's password —
+// e.g. the walk-in order flow — so the doctor is forced to a
+// change-password screen on first login and ends up the sole holder of
+// their real password. See createDoctorAccount Cloud Function.
+  bool get mustChangePassword => throw _privateConstructorUsedError;
 
   /// Serializes this UserProfile to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -71,7 +76,8 @@ abstract class $UserProfileCopyWith<$Res> {
       List<String> fcmTokens,
       DoctorStats stats,
       String lastSeenTier,
-      int lastSeenTierYear});
+      int lastSeenTierYear,
+      bool mustChangePassword});
 
   $DoctorStatsCopyWith<$Res> get stats;
 }
@@ -104,6 +110,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
     Object? stats = null,
     Object? lastSeenTier = null,
     Object? lastSeenTierYear = null,
+    Object? mustChangePassword = null,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -158,6 +165,10 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
           ? _value.lastSeenTierYear
           : lastSeenTierYear // ignore: cast_nullable_to_non_nullable
               as int,
+      mustChangePassword: null == mustChangePassword
+          ? _value.mustChangePassword
+          : mustChangePassword // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -193,7 +204,8 @@ abstract class _$$UserProfileImplCopyWith<$Res>
       List<String> fcmTokens,
       DoctorStats stats,
       String lastSeenTier,
-      int lastSeenTierYear});
+      int lastSeenTierYear,
+      bool mustChangePassword});
 
   @override
   $DoctorStatsCopyWith<$Res> get stats;
@@ -225,6 +237,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? stats = null,
     Object? lastSeenTier = null,
     Object? lastSeenTierYear = null,
+    Object? mustChangePassword = null,
   }) {
     return _then(_$UserProfileImpl(
       uid: null == uid
@@ -279,6 +292,10 @@ class __$$UserProfileImplCopyWithImpl<$Res>
           ? _value.lastSeenTierYear
           : lastSeenTierYear // ignore: cast_nullable_to_non_nullable
               as int,
+      mustChangePassword: null == mustChangePassword
+          ? _value.mustChangePassword
+          : mustChangePassword // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -299,7 +316,8 @@ class _$UserProfileImpl extends _UserProfile {
       final List<String> fcmTokens = const <String>[],
       this.stats = DoctorStats.empty,
       this.lastSeenTier = 'silver',
-      this.lastSeenTierYear = 0})
+      this.lastSeenTierYear = 0,
+      this.mustChangePassword = false})
       : _fcmTokens = fcmTokens,
         super._();
 
@@ -352,10 +370,17 @@ class _$UserProfileImpl extends _UserProfile {
   @override
   @JsonKey()
   final int lastSeenTierYear;
+// Set when an admin (not the doctor) chose this account's password —
+// e.g. the walk-in order flow — so the doctor is forced to a
+// change-password screen on first login and ends up the sole holder of
+// their real password. See createDoctorAccount Cloud Function.
+  @override
+  @JsonKey()
+  final bool mustChangePassword;
 
   @override
   String toString() {
-    return 'UserProfile(uid: $uid, role: $role, phone: $phone, authEmail: $authEmail, name: $name, clinicName: $clinicName, location: $location, createdAt: $createdAt, updatedAt: $updatedAt, fcmTokens: $fcmTokens, stats: $stats, lastSeenTier: $lastSeenTier, lastSeenTierYear: $lastSeenTierYear)';
+    return 'UserProfile(uid: $uid, role: $role, phone: $phone, authEmail: $authEmail, name: $name, clinicName: $clinicName, location: $location, createdAt: $createdAt, updatedAt: $updatedAt, fcmTokens: $fcmTokens, stats: $stats, lastSeenTier: $lastSeenTier, lastSeenTierYear: $lastSeenTierYear, mustChangePassword: $mustChangePassword)';
   }
 
   @override
@@ -383,7 +408,9 @@ class _$UserProfileImpl extends _UserProfile {
             (identical(other.lastSeenTier, lastSeenTier) ||
                 other.lastSeenTier == lastSeenTier) &&
             (identical(other.lastSeenTierYear, lastSeenTierYear) ||
-                other.lastSeenTierYear == lastSeenTierYear));
+                other.lastSeenTierYear == lastSeenTierYear) &&
+            (identical(other.mustChangePassword, mustChangePassword) ||
+                other.mustChangePassword == mustChangePassword));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -402,7 +429,8 @@ class _$UserProfileImpl extends _UserProfile {
       const DeepCollectionEquality().hash(_fcmTokens),
       stats,
       lastSeenTier,
-      lastSeenTierYear);
+      lastSeenTierYear,
+      mustChangePassword);
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -434,7 +462,8 @@ abstract class _UserProfile extends UserProfile {
       final List<String> fcmTokens,
       final DoctorStats stats,
       final String lastSeenTier,
-      final int lastSeenTierYear}) = _$UserProfileImpl;
+      final int lastSeenTierYear,
+      final bool mustChangePassword}) = _$UserProfileImpl;
   const _UserProfile._() : super._();
 
   factory _UserProfile.fromJson(Map<String, dynamic> json) =
@@ -472,7 +501,12 @@ abstract class _UserProfile extends UserProfile {
   @override
   String get lastSeenTier;
   @override
-  int get lastSeenTierYear;
+  int get lastSeenTierYear; // Set when an admin (not the doctor) chose this account's password —
+// e.g. the walk-in order flow — so the doctor is forced to a
+// change-password screen on first login and ends up the sole holder of
+// their real password. See createDoctorAccount Cloud Function.
+  @override
+  bool get mustChangePassword;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.

@@ -13,6 +13,9 @@ class OrderItem with _$OrderItem {
   const factory OrderItem({
     required String productId,
     required String productName,
+    // Snapshotted alongside productName so order history keeps showing an
+    // image even if the product is later edited or deleted.
+    @Default('') String productImageUrl,
     required String variantId,
     required String variantLabel,
     required num unitSellPrice,

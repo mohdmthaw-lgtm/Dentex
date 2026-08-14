@@ -9,6 +9,12 @@ interface CreateDoctorAccountData {
   name: string;
   clinicName?: string;
   location?: string;
+  // Set when the admin (not the doctor) chose the password, e.g. the
+  // walk-in order flow — forces a change-password screen on first login so
+  // the doctor ends up the sole holder of their real password. Not needed
+  // when the password came from the doctor themselves via a request-account
+  // submission.
+  mustChangePassword?: boolean;
 }
 
 function digitsOnly(phone: string): string {
@@ -33,7 +39,14 @@ export const createDoctorAccount = onCall<CreateDoctorAccountData>(
       );
     }
 
-    const { phone, password, name, clinicName = "", location = "" } = request.data;
+    const {
+      phone,
+      password,
+      name,
+      clinicName = "",
+      location = "",
+      mustChangePassword = false,
+    } = request.data;
     if (!phone || !password || !name) {
       throw new HttpsError("invalid-argument", "phone, password, and name are required.");
     }
@@ -59,6 +72,7 @@ export const createDoctorAccount = onCall<CreateDoctorAccountData>(
         name,
         clinicName,
         location,
+        mustChangePassword,
         fcmTokens: [],
         stats: { totalOrders: 0, totalSpent: 0, totalDebt: 0, lastOrderAt: null },
         createdAt: FieldValue.serverTimestamp(),

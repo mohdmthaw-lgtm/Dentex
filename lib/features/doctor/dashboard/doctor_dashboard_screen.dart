@@ -11,8 +11,10 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/doctor_tier.dart';
 import '../../../models/order.dart';
 import '../../../models/user_profile.dart';
+import '../../../services/firebase/auth_service.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/stat_tile.dart';
+import '../account/change_password_screen.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -30,10 +32,55 @@ class DoctorDashboardScreen extends ConsumerWidget {
     final auth = ref.watch(authServiceProvider);
     final uid = auth.currentUser?.uid;
 
+    if (uid == null) return const Scaffold(body: SizedBox.shrink());
+
+    // Walk-in accounts get a system-generated temp password (see
+    // UserRepository.createDoctorAccount) — block the real dashboard until
+    // the doctor sets their own, rather than nesting this inside it.
+    return StreamBuilder<UserProfile?>(
+      stream: ref.watch(userRepositoryProvider).watchUser(uid),
+      builder: (context, snap) {
+        final profile = snap.data;
+        if (profile != null && profile.mustChangePassword) {
+          return ChangePasswordScreen(uid: uid);
+        }
+        return _DoctorDashboardBody(auth: auth, uid: uid, profile: profile);
+      },
+    );
+  }
+}
+
+Future<void> _openWhatsApp(BuildContext context) async {
+  final uri = Uri.parse('https://wa.me/$_supportWhatsAppNumber');
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تعذر فتح واتساب')),
+      );
+    }
+  }
+}
+
+class _DoctorDashboardBody extends ConsumerWidget {
+  const _DoctorDashboardBody({required this.auth, required this.uid, required this.profile});
+
+  final AuthService auth;
+  final String uid;
+  final UserProfile? profile;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset('assets/images/dentex_logo.png', height: 36),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            tooltip: 'حسابي',
+            onPressed: profile == null
+                ? null
+                : () => context.push('/doctor/account', extra: profile),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => auth.signOut(),
@@ -45,93 +92,72 @@ class DoctorDashboardScreen extends ConsumerWidget {
         onPressed: () => _openWhatsApp(context),
         child: SvgPicture.asset('assets/images/whatsapp_icon.svg', width: 28, height: 28),
       ),
-      body: uid == null
-          ? const SizedBox.shrink()
-          : StreamBuilder<UserProfile?>(
-              stream: ref.watch(userRepositoryProvider).watchUser(uid),
-              builder: (context, snap) {
-                final profile = snap.data;
-                return StreamBuilder<List<Order>>(
-                  stream: ref.watch(orderRepositoryProvider).watchOrdersForDoctor(uid),
-                  builder: (context, ordersSnap) {
-                    final tierInfo = computeDoctorTierInfo(ordersSnap.data ?? []);
-                    return ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: [
-                        if (profile != null)
-                          _WelcomeCard(name: profile.name, tierInfo: tierInfo),
-                        const SizedBox(height: 16),
-                        Text(
-                          'طلبات أسرع - إدارة أسهل - وعيادة جاهزة دائماً',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.arefRuqaa(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.primaryDark,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        StatTileRow(tiles: [
-                          // List order is mirrored by the RTL grid: item 1
-                          // lands in the rightmost cell, item 2 to its left.
-                          _TappableStatTile(
-                            label: 'متأخر عليّ',
-                            value: _currency.format(profile?.stats.totalDebt ?? 0),
-                            icon: Icons.warning_amber_outlined,
-                            color: AppTheme.warning,
-                            onTap: () => context.push('/doctor/orders?filter=debt'),
-                          ),
-                          _ActionTile(
-                            label: 'فواتيري / طلبياتي',
-                            icon: Icons.receipt_long,
-                            color: AppTheme.primary,
-                            onTap: () => context.push('/doctor/orders'),
-                          ),
-                          _ActionTile(
-                            label: 'العروض',
-                            icon: Icons.local_offer_outlined,
-                            color: AppTheme.warning,
-                            onTap: () => context.push('/doctor/offers'),
-                          ),
-                          _ActionTile(
-                            label: 'كافة المنتجات',
-                            icon: Icons.inventory_2_outlined,
-                            color: AppTheme.primary,
-                            onTap: () => context.push('/doctor/create-order'),
-                          ),
-                        ]),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 120,
-                          child: FilledButton.icon(
-                            onPressed: () => context.push('/doctor/create-order'),
-                            icon: const Icon(Icons.add_shopping_cart, size: 32),
-                            label: const Text('إنشاء طلبية',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
+      body: StreamBuilder<List<Order>>(
+        stream: ref.watch(orderRepositoryProvider).watchOrdersForDoctor(uid),
+        builder: (context, ordersSnap) {
+          final tierInfo = computeDoctorTierInfo(ordersSnap.data ?? []);
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              if (profile != null) _WelcomeCard(name: profile!.name, tierInfo: tierInfo),
+              const SizedBox(height: 16),
+              Text(
+                'طلبات أسرع - إدارة أسهل - وعيادة جاهزة دائماً',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.arefRuqaa(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.primaryDark,
+                ),
+              ),
+              const SizedBox(height: 20),
+              StatTileRow(tiles: [
+                // List order is mirrored by the RTL grid: item 1
+                // lands in the rightmost cell, item 2 to its left.
+                _TappableStatTile(
+                  label: 'متأخر عليّ',
+                  value: _currency.format(profile?.stats.totalDebt ?? 0),
+                  icon: Icons.warning_amber_outlined,
+                  color: AppTheme.warning,
+                  onTap: () => context.push('/doctor/orders?filter=debt'),
+                ),
+                _ActionTile(
+                  label: 'فواتيري / طلبياتي',
+                  icon: Icons.receipt_long,
+                  color: AppTheme.primary,
+                  onTap: () => context.push('/doctor/orders'),
+                ),
+                _ActionTile(
+                  label: 'العروض',
+                  icon: Icons.local_offer_outlined,
+                  color: AppTheme.warning,
+                  onTap: () => context.push('/doctor/offers'),
+                ),
+                _ActionTile(
+                  label: 'كافة المنتجات',
+                  icon: Icons.inventory_2_outlined,
+                  color: AppTheme.primary,
+                  onTap: () => context.push('/doctor/create-order'),
+                ),
+              ]),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 120,
+                child: FilledButton.icon(
+                  onPressed: () => context.push('/doctor/create-order'),
+                  icon: const Icon(Icons.add_shopping_cart, size: 32),
+                  label: const Text('إنشاء طلبية',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
-  }
-
-  Future<void> _openWhatsApp(BuildContext context) async {
-    final uri = Uri.parse('https://wa.me/$_supportWhatsAppNumber');
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذر فتح واتساب')),
-        );
-      }
-    }
   }
 }
 

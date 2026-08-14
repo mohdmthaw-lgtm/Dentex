@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../models/offer.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -37,6 +38,7 @@ class _OfferDetailScreenState extends ConsumerState<OfferDetailScreen> {
       return CartLine(
         productId: item.productId,
         productName: item.productName,
+        productImageUrl: item.productImageUrl,
         variantId: item.variantId,
         variantLabel: item.variantLabel,
         unitSellPrice: unitSellPrice,
@@ -146,7 +148,7 @@ class _OfferDetailScreenState extends ConsumerState<OfferDetailScreen> {
                           const SizedBox(height: 8),
                           ...offer.items.map((item) => Card(
                                 child: ListTile(
-                                  leading: const Icon(Icons.inventory_2_outlined),
+                                  leading: ProductThumbnail(imageUrl: item.productImageUrl),
                                   title: Text('${item.productName} - ${item.variantLabel}'),
                                   subtitle: Text('الكمية: ${item.quantity}'),
                                   trailing: Text(_currency.format(item.lineTotal)),

@@ -10,6 +10,7 @@ _$OrderItemImpl _$$OrderItemImplFromJson(Map<String, dynamic> json) =>
     _$OrderItemImpl(
       productId: json['productId'] as String,
       productName: json['productName'] as String,
+      productImageUrl: json['productImageUrl'] as String? ?? '',
       variantId: json['variantId'] as String,
       variantLabel: json['variantLabel'] as String,
       unitSellPrice: json['unitSellPrice'] as num,
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$OrderItemImplToJson(_$OrderItemImpl instance) =>
     <String, dynamic>{
       'productId': instance.productId,
       'productName': instance.productName,
+      'productImageUrl': instance.productImageUrl,
       'variantId': instance.variantId,
       'variantLabel': instance.variantLabel,
       'unitSellPrice': instance.unitSellPrice,

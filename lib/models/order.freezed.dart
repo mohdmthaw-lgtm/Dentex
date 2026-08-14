@@ -21,7 +21,10 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$OrderItem {
   String get productId => throw _privateConstructorUsedError;
-  String get productName => throw _privateConstructorUsedError;
+  String get productName =>
+      throw _privateConstructorUsedError; // Snapshotted alongside productName so order history keeps showing an
+// image even if the product is later edited or deleted.
+  String get productImageUrl => throw _privateConstructorUsedError;
   String get variantId => throw _privateConstructorUsedError;
   String get variantLabel => throw _privateConstructorUsedError;
   num get unitSellPrice => throw _privateConstructorUsedError;
@@ -51,6 +54,7 @@ abstract class $OrderItemCopyWith<$Res> {
   $Res call(
       {String productId,
       String productName,
+      String productImageUrl,
       String variantId,
       String variantLabel,
       num unitSellPrice,
@@ -77,6 +81,7 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
   $Res call({
     Object? productId = null,
     Object? productName = null,
+    Object? productImageUrl = null,
     Object? variantId = null,
     Object? variantLabel = null,
     Object? unitSellPrice = null,
@@ -93,6 +98,10 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      productImageUrl: null == productImageUrl
+          ? _value.productImageUrl
+          : productImageUrl // ignore: cast_nullable_to_non_nullable
               as String,
       variantId: null == variantId
           ? _value.variantId
@@ -137,6 +146,7 @@ abstract class _$$OrderItemImplCopyWith<$Res>
   $Res call(
       {String productId,
       String productName,
+      String productImageUrl,
       String variantId,
       String variantLabel,
       num unitSellPrice,
@@ -161,6 +171,7 @@ class __$$OrderItemImplCopyWithImpl<$Res>
   $Res call({
     Object? productId = null,
     Object? productName = null,
+    Object? productImageUrl = null,
     Object? variantId = null,
     Object? variantLabel = null,
     Object? unitSellPrice = null,
@@ -177,6 +188,10 @@ class __$$OrderItemImplCopyWithImpl<$Res>
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      productImageUrl: null == productImageUrl
+          ? _value.productImageUrl
+          : productImageUrl // ignore: cast_nullable_to_non_nullable
               as String,
       variantId: null == variantId
           ? _value.variantId
@@ -216,6 +231,7 @@ class _$OrderItemImpl implements _OrderItem {
   const _$OrderItemImpl(
       {required this.productId,
       required this.productName,
+      this.productImageUrl = '',
       required this.variantId,
       required this.variantLabel,
       required this.unitSellPrice,
@@ -231,6 +247,11 @@ class _$OrderItemImpl implements _OrderItem {
   final String productId;
   @override
   final String productName;
+// Snapshotted alongside productName so order history keeps showing an
+// image even if the product is later edited or deleted.
+  @override
+  @JsonKey()
+  final String productImageUrl;
   @override
   final String variantId;
   @override
@@ -251,7 +272,7 @@ class _$OrderItemImpl implements _OrderItem {
 
   @override
   String toString() {
-    return 'OrderItem(productId: $productId, productName: $productName, variantId: $variantId, variantLabel: $variantLabel, unitSellPrice: $unitSellPrice, quantity: $quantity, lineTotal: $lineTotal, offerId: $offerId, offerName: $offerName)';
+    return 'OrderItem(productId: $productId, productName: $productName, productImageUrl: $productImageUrl, variantId: $variantId, variantLabel: $variantLabel, unitSellPrice: $unitSellPrice, quantity: $quantity, lineTotal: $lineTotal, offerId: $offerId, offerName: $offerName)';
   }
 
   @override
@@ -263,6 +284,8 @@ class _$OrderItemImpl implements _OrderItem {
                 other.productId == productId) &&
             (identical(other.productName, productName) ||
                 other.productName == productName) &&
+            (identical(other.productImageUrl, productImageUrl) ||
+                other.productImageUrl == productImageUrl) &&
             (identical(other.variantId, variantId) ||
                 other.variantId == variantId) &&
             (identical(other.variantLabel, variantLabel) ||
@@ -284,6 +307,7 @@ class _$OrderItemImpl implements _OrderItem {
       runtimeType,
       productId,
       productName,
+      productImageUrl,
       variantId,
       variantLabel,
       unitSellPrice,
@@ -312,6 +336,7 @@ abstract class _OrderItem implements OrderItem {
   const factory _OrderItem(
       {required final String productId,
       required final String productName,
+      final String productImageUrl,
       required final String variantId,
       required final String variantLabel,
       required final num unitSellPrice,
@@ -326,7 +351,11 @@ abstract class _OrderItem implements OrderItem {
   @override
   String get productId;
   @override
-  String get productName;
+  String
+      get productName; // Snapshotted alongside productName so order history keeps showing an
+// image even if the product is later edited or deleted.
+  @override
+  String get productImageUrl;
   @override
   String get variantId;
   @override

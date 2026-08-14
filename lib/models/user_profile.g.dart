@@ -26,6 +26,7 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
           : DoctorStats.fromJson(json['stats'] as Map<String, dynamic>),
       lastSeenTier: json['lastSeenTier'] as String? ?? 'silver',
       lastSeenTierYear: (json['lastSeenTierYear'] as num?)?.toInt() ?? 0,
+      mustChangePassword: json['mustChangePassword'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
@@ -43,4 +44,5 @@ Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
       'stats': instance.stats,
       'lastSeenTier': instance.lastSeenTier,
       'lastSeenTierYear': instance.lastSeenTierYear,
+      'mustChangePassword': instance.mustChangePassword,
     };

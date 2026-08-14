@@ -52,8 +52,10 @@ functions/.env.*
 # Secrets — never commit
 scripts/serviceAccountKey.json
 **/serviceAccountKey.json
+scripts/backups/
 *.jks
 *.keystore
+ios/certs/
 key.properties
 GoogleService-Info.plist
 google-services.json

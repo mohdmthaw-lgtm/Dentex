@@ -94,6 +94,18 @@ class AuthService {
 
   Future<void> signOut() => _auth.signOut();
 
+  /// Changes the currently-signed-in user's password — used both by the
+  /// forced first-login flow (see UserProfile.mustChangePassword) and any
+  /// future self-service "change my password" entry point. Relies on the
+  /// session being recent (true right after sign-in); Firebase throws
+  /// `requires-recent-login` otherwise, which callers surface as an error
+  /// asking the user to sign in again.
+  Future<void> updatePassword(String newPassword) async {
+    final user = _auth.currentUser;
+    if (user == null) throw StateError('No signed-in user');
+    await user.updatePassword(newPassword);
+  }
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;

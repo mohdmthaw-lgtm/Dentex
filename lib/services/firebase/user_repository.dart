@@ -83,6 +83,7 @@ class UserRepository {
     required String name,
     required String clinicName,
     required String location,
+    bool mustChangePassword = false,
   }) async {
     final result = await _functions.httpsCallable('createDoctorAccount').call({
       'phone': phone,
@@ -90,6 +91,7 @@ class UserRepository {
       'name': name,
       'clinicName': clinicName,
       'location': location,
+      'mustChangePassword': mustChangePassword,
     });
     return result.data['uid'] as String;
   }
@@ -98,5 +100,19 @@ class UserRepository {
     return _users.doc(uid).update({
       'fcmTokens': FieldValue.arrayUnion([token]),
     });
+  }
+
+  /// App Store Guideline 5.1.1(v): any app that supports account creation
+  /// must also let the user delete their own account, not just deactivate
+  /// it. Deletes the caller's own Firebase Auth user + Firestore profile via
+  /// the deleteOwnAccount Cloud Function (Admin SDK required for auth
+  /// deletion). Caller must sign out afterward — deleting the Auth user
+  /// does not automatically end the local client session.
+  Future<void> deleteOwnAccount() async {
+    await _functions.httpsCallable('deleteOwnAccount').call();
+  }
+
+  Future<void> clearMustChangePassword(String uid) {
+    return _users.doc(uid).update({'mustChangePassword': false});
   }
 }

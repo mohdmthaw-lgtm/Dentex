@@ -8,11 +8,13 @@ import '../../../core/constants/firestore_paths.dart';
 import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/doctor_tier.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../models/order.dart';
 import '../../../models/product.dart';
 import '../../../models/product_variant.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
@@ -248,8 +250,8 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                 }
                 return GridView.builder(
                   padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: responsiveGridColumns(context),
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     childAspectRatio: 0.62,
@@ -331,6 +333,7 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                   controller: scrollController,
                   itemCount: _cart.length,
                   itemBuilder: (context, i) => ListTile(
+                    leading: ProductThumbnail(imageUrl: _cart[i].productImageUrl),
                     title: Text('${_cart[i].productName} - ${_cart[i].variantLabel}'),
                     subtitle: Text('${_cart[i].quantity} × ${_currency.format(_cart[i].unitSellPrice)}'),
                     trailing: IconButton(
@@ -470,6 +473,8 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
         .map((v) => CartLine(
               productId: widget.product.id,
               productName: widget.product.name,
+              productImageUrl:
+                  v.imageUrl.isNotEmpty ? v.imageUrl : widget.product.imageUrl,
               variantId: v.id,
               variantLabel: v.label,
               unitSellPrice: v.sellPrice,

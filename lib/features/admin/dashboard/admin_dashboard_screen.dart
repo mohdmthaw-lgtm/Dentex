@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../models/activity_log_entry.dart';
 import '../../../models/stats.dart';
 import '../../../services/firebase/service_providers.dart';
@@ -80,6 +81,27 @@ class AdminDashboardScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 20),
+            StreamBuilder<int>(
+              stream: ref.watch(accountRequestRepositoryProvider).watchPendingCount(),
+              builder: (context, snap) {
+                final count = snap.data ?? 0;
+                if (count == 0) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Card(
+                    color: AppTheme.warning.withOpacity(0.12),
+                    child: ListTile(
+                      leading: const Icon(Icons.person_add_alt_1, color: AppTheme.warning),
+                      title: Text('لديك $count ${count == 1 ? 'طلب حساب جديد' : 'طلبات حسابات جديدة'}'),
+                      trailing: FilledButton(
+                        onPressed: () => context.push('/admin/account-requests'),
+                        child: const Text('مراجعة'),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
             const _NavGrid(),
             const SizedBox(height: 24),
             Text('آخر الحركات', style: Theme.of(context).textTheme.titleMedium),
@@ -211,12 +233,13 @@ class _NavGrid extends StatelessWidget {
     _NavTileData('الزبائن', Icons.people_alt, '/admin/customers', AppTheme.danger),
     _NavTileData('العروض', Icons.local_offer, '/admin/offers', AppTheme.warning),
     _NavTileData('الشحنات', Icons.local_shipping, '/admin/shipments', AppTheme.primary),
+    _NavTileData('طلبات الحسابات', Icons.person_add_alt_1, '/admin/account-requests', AppTheme.primaryDark),
   ];
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: responsiveGridColumns(context),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,

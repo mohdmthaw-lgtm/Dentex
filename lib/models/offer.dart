@@ -14,6 +14,10 @@ class OfferItem with _$OfferItem {
   const factory OfferItem({
     required String productId,
     required String productName,
+    // Snapshotted at package-build time, same as productName, so the
+    // offer-contents list can show a thumbnail without a live product
+    // lookup even if the product is later edited or deleted.
+    @Default('') String productImageUrl,
     required String variantId,
     required String variantLabel,
     required num unitPrice,

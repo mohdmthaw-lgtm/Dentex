@@ -10,6 +10,7 @@ class CartLine {
   const CartLine({
     required this.productId,
     required this.productName,
+    this.productImageUrl = '',
     required this.variantId,
     required this.variantLabel,
     required this.unitSellPrice,
@@ -20,6 +21,7 @@ class CartLine {
 
   final String productId;
   final String productName;
+  final String productImageUrl;
   final String variantId;
   final String variantLabel;
   final num unitSellPrice;
@@ -121,6 +123,7 @@ class OrderRepository {
         .map((c) => {
               'productId': c.productId,
               'productName': c.productName,
+              'productImageUrl': c.productImageUrl,
               'variantId': c.variantId,
               'variantLabel': c.variantLabel,
               'unitSellPrice': c.unitSellPrice,

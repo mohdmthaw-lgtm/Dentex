@@ -10,6 +10,7 @@ _$OfferItemImpl _$$OfferItemImplFromJson(Map<String, dynamic> json) =>
     _$OfferItemImpl(
       productId: json['productId'] as String,
       productName: json['productName'] as String,
+      productImageUrl: json['productImageUrl'] as String? ?? '',
       variantId: json['variantId'] as String,
       variantLabel: json['variantLabel'] as String,
       unitPrice: json['unitPrice'] as num,
@@ -20,6 +21,7 @@ Map<String, dynamic> _$$OfferItemImplToJson(_$OfferItemImpl instance) =>
     <String, dynamic>{
       'productId': instance.productId,
       'productName': instance.productName,
+      'productImageUrl': instance.productImageUrl,
       'variantId': instance.variantId,
       'variantLabel': instance.variantLabel,
       'unitPrice': instance.unitPrice,

@@ -94,5 +94,30 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow write: if false;
     }
+
+    // The one collection a signed-out client may write to: a prospective
+    // doctor requesting an account from the login screen (App Store
+    // Guideline 3.2 requires this to be reachable without existing
+    // credentials). Locked to a fixed field set and a forced 'pending'
+    // status so an anonymous caller can never self-approve or inject
+    // arbitrary fields; only an admin can read, update, or delete requests.
+    match /accountRequests/{requestId} {
+      allow create: if request.resource.data.status == 'pending' &&
+        request.resource.data.keys().hasOnly(
+          ['name', 'phone', 'password', 'clinicName', 'location', 'notes', 'status', 'createdAt']) &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() > 0 && request.resource.data.name.size() < 200 &&
+        request.resource.data.phone is string &&
+        request.resource.data.phone.size() > 0 && request.resource.data.phone.size() < 30 &&
+        request.resource.data.password is string &&
+        request.resource.data.password.size() >= 6 && request.resource.data.password.size() < 200 &&
+        request.resource.data.clinicName is string && request.resource.data.clinicName.size() < 200 &&
+        request.resource.data.location is string && request.resource.data.location.size() < 200 &&
+        request.resource.data.notes is string && request.resource.data.notes.size() < 1000;
+      // Never world-readable, not even by the requester who submitted it —
+      // this is the only place the plaintext password briefly lives, and
+      // only an admin approving the request ever needs to read it back.
+      allow read, update, delete: if isAdmin();
+    }
   }
 }

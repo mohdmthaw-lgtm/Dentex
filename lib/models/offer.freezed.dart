@@ -21,7 +21,11 @@ OfferItem _$OfferItemFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$OfferItem {
   String get productId => throw _privateConstructorUsedError;
-  String get productName => throw _privateConstructorUsedError;
+  String get productName =>
+      throw _privateConstructorUsedError; // Snapshotted at package-build time, same as productName, so the
+// offer-contents list can show a thumbnail without a live product
+// lookup even if the product is later edited or deleted.
+  String get productImageUrl => throw _privateConstructorUsedError;
   String get variantId => throw _privateConstructorUsedError;
   String get variantLabel => throw _privateConstructorUsedError;
   num get unitPrice => throw _privateConstructorUsedError;
@@ -45,6 +49,7 @@ abstract class $OfferItemCopyWith<$Res> {
   $Res call(
       {String productId,
       String productName,
+      String productImageUrl,
       String variantId,
       String variantLabel,
       num unitPrice,
@@ -68,6 +73,7 @@ class _$OfferItemCopyWithImpl<$Res, $Val extends OfferItem>
   $Res call({
     Object? productId = null,
     Object? productName = null,
+    Object? productImageUrl = null,
     Object? variantId = null,
     Object? variantLabel = null,
     Object? unitPrice = null,
@@ -81,6 +87,10 @@ class _$OfferItemCopyWithImpl<$Res, $Val extends OfferItem>
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      productImageUrl: null == productImageUrl
+          ? _value.productImageUrl
+          : productImageUrl // ignore: cast_nullable_to_non_nullable
               as String,
       variantId: null == variantId
           ? _value.variantId
@@ -113,6 +123,7 @@ abstract class _$$OfferItemImplCopyWith<$Res>
   $Res call(
       {String productId,
       String productName,
+      String productImageUrl,
       String variantId,
       String variantLabel,
       num unitPrice,
@@ -134,6 +145,7 @@ class __$$OfferItemImplCopyWithImpl<$Res>
   $Res call({
     Object? productId = null,
     Object? productName = null,
+    Object? productImageUrl = null,
     Object? variantId = null,
     Object? variantLabel = null,
     Object? unitPrice = null,
@@ -147,6 +159,10 @@ class __$$OfferItemImplCopyWithImpl<$Res>
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      productImageUrl: null == productImageUrl
+          ? _value.productImageUrl
+          : productImageUrl // ignore: cast_nullable_to_non_nullable
               as String,
       variantId: null == variantId
           ? _value.variantId
@@ -174,6 +190,7 @@ class _$OfferItemImpl extends _OfferItem {
   const _$OfferItemImpl(
       {required this.productId,
       required this.productName,
+      this.productImageUrl = '',
       required this.variantId,
       required this.variantLabel,
       required this.unitPrice,
@@ -187,6 +204,12 @@ class _$OfferItemImpl extends _OfferItem {
   final String productId;
   @override
   final String productName;
+// Snapshotted at package-build time, same as productName, so the
+// offer-contents list can show a thumbnail without a live product
+// lookup even if the product is later edited or deleted.
+  @override
+  @JsonKey()
+  final String productImageUrl;
   @override
   final String variantId;
   @override
@@ -198,7 +221,7 @@ class _$OfferItemImpl extends _OfferItem {
 
   @override
   String toString() {
-    return 'OfferItem(productId: $productId, productName: $productName, variantId: $variantId, variantLabel: $variantLabel, unitPrice: $unitPrice, quantity: $quantity)';
+    return 'OfferItem(productId: $productId, productName: $productName, productImageUrl: $productImageUrl, variantId: $variantId, variantLabel: $variantLabel, unitPrice: $unitPrice, quantity: $quantity)';
   }
 
   @override
@@ -210,6 +233,8 @@ class _$OfferItemImpl extends _OfferItem {
                 other.productId == productId) &&
             (identical(other.productName, productName) ||
                 other.productName == productName) &&
+            (identical(other.productImageUrl, productImageUrl) ||
+                other.productImageUrl == productImageUrl) &&
             (identical(other.variantId, variantId) ||
                 other.variantId == variantId) &&
             (identical(other.variantLabel, variantLabel) ||
@@ -223,7 +248,7 @@ class _$OfferItemImpl extends _OfferItem {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, productId, productName,
-      variantId, variantLabel, unitPrice, quantity);
+      productImageUrl, variantId, variantLabel, unitPrice, quantity);
 
   /// Create a copy of OfferItem
   /// with the given fields replaced by the non-null parameter values.
@@ -245,6 +270,7 @@ abstract class _OfferItem extends OfferItem {
   const factory _OfferItem(
       {required final String productId,
       required final String productName,
+      final String productImageUrl,
       required final String variantId,
       required final String variantLabel,
       required final num unitPrice,
@@ -257,7 +283,12 @@ abstract class _OfferItem extends OfferItem {
   @override
   String get productId;
   @override
-  String get productName;
+  String
+      get productName; // Snapshotted at package-build time, same as productName, so the
+// offer-contents list can show a thumbnail without a live product
+// lookup even if the product is later edited or deleted.
+  @override
+  String get productImageUrl;
   @override
   String get variantId;
   @override

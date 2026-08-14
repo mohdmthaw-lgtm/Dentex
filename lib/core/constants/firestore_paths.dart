@@ -21,6 +21,7 @@ class FirestorePaths {
   static const suppliers = 'suppliers';
   static const counters = 'counters';
   static const countersShipmentsDoc = 'shipments';
+  static const accountRequests = 'accountRequests';
 }
 
 class ShipmentStatus {

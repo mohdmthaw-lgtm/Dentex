@@ -12,6 +12,7 @@ import '../../../models/offer.dart';
 import '../../../models/product.dart';
 import '../../../models/product_variant.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -347,6 +348,7 @@ class _OfferFormScreenState extends ConsumerState<OfferFormScreen> {
     return Card(
       margin: const EdgeInsets.only(top: 8),
       child: ListTile(
+        leading: ProductThumbnail(imageUrl: item.productImageUrl),
         title: Text('${item.productName} - ${item.variantLabel}'),
         subtitle: Text('${item.quantity} × ${_currency.format(item.unitPrice)}'),
         trailing: Row(
@@ -442,6 +444,7 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
         .map((v) => OfferItem(
               productId: product.id,
               productName: product.name,
+              productImageUrl: v.imageUrl.isNotEmpty ? v.imageUrl : product.imageUrl,
               variantId: v.id,
               variantLabel: v.label,
               unitPrice: v.sellPrice,
@@ -478,6 +481,7 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                       itemBuilder: (context, i) {
                         final p = widget.products[i];
                         return ListTile(
+                          leading: ProductThumbnail(imageUrl: p.imageUrl),
                           title: Text(p.name),
                           subtitle: Text(p.description,
                               maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -493,6 +497,9 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
                             final qty = _quantities[v.id] ?? 0;
                             final outOfStock = v.quantity <= 0;
                             return ListTile(
+                              leading: ProductThumbnail(
+                                imageUrl: v.imageUrl.isNotEmpty ? v.imageUrl : _product!.imageUrl,
+                              ),
                               title: Text(v.label),
                               subtitle: Text(outOfStock
                                   ? 'نفذ من المخزون'

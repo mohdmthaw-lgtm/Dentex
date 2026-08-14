@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../services/firebase/auth_service.dart';
@@ -126,6 +127,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   strokeWidth: 2, color: Colors.white),
                             )
                           : const Text('دخول'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () => context.push('/request-account'),
+                      child: const Text('ليس لديك حساب؟ اطلب حساباً'),
                     ),
                   ],
                 ),

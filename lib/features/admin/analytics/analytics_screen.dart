@@ -9,6 +9,7 @@ import '../../../models/product_variant.dart';
 import '../../../models/stats.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/stat_tile.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
@@ -66,7 +67,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 children: variants
                     .map((v) => Card(
                           child: ListTile(
-                            leading: const Icon(Icons.local_fire_department_outlined),
+                            leading: ProductThumbnail(imageUrl: v.imageUrl),
                             title: Text('${v.productName} - ${v.label}'),
                             trailing: Text('${v.totalSold} وحدة مباعة'),
                           ),
