@@ -24,6 +24,10 @@ class AccountRequestRepository {
     String clinicName = '',
     String location = '',
     String notes = '',
+    String accountType = AccountRequestType.solo,
+    String centerName = '',
+    int chairCount = 1,
+    List<AccountRequestDoctor> doctors = const [],
   }) {
     return _requests.add({
       'name': name,
@@ -34,6 +38,10 @@ class AccountRequestRepository {
       'notes': notes,
       'status': AccountRequestStatus.pending,
       'createdAt': FieldValue.serverTimestamp(),
+      'accountType': accountType,
+      'centerName': centerName,
+      'chairCount': chairCount,
+      'doctors': doctors.map((d) => d.toJson()).toList(),
     });
   }
 
@@ -60,6 +68,25 @@ class AccountRequestRepository {
       // Never needed again once the account exists — don't leave a
       // plaintext password sitting in Firestore any longer than necessary.
       'password': FieldValue.delete(),
+    });
+  }
+
+  /// Same idea as [markApproved] but for a 'center' request, where several
+  /// doctors (the primary submitter + [doctors]) were created together —
+  /// scrubs every plaintext password, including the ones nested inside the
+  /// `doctors` list, once every account exists.
+  Future<void> markApprovedCenter({
+    required String id,
+    required List<AccountRequestDoctor> doctors,
+    required List<String> doctorUids,
+  }) {
+    final scrubbedDoctors =
+        doctors.map((d) => d.copyWith(password: '').toJson()).toList();
+    return _requests.doc(id).update({
+      'status': AccountRequestStatus.approved,
+      'doctorUids': doctorUids,
+      'password': FieldValue.delete(),
+      'doctors': scrubbedDoctors,
     });
   }
 }

@@ -9,7 +9,7 @@ part 'order.g.dart';
 /// Fields are frozen at creation time so later price edits on the product
 /// never retroactively change a historical order's total.
 @freezed
-class OrderItem with _$OrderItem {
+abstract class OrderItem with _$OrderItem {
   const factory OrderItem({
     required String productId,
     required String productName,
@@ -33,7 +33,7 @@ class OrderItem with _$OrderItem {
 }
 
 @freezed
-class Order with _$Order {
+abstract class Order with _$Order {
   const factory Order({
     required String id,
     required String doctorId,
@@ -133,7 +133,7 @@ class OrderItemGroup {
 /// its own audit trail rather than editing a single amountPaid scalar in
 /// place, so concurrent payment recording can never lose an update.
 @freezed
-class Payment with _$Payment {
+abstract class Payment with _$Payment {
   const factory Payment({
     required String id,
     required num amount,
@@ -155,7 +155,7 @@ class Payment with _$Payment {
 /// one document; a doctor legitimately reads their own order (to see what
 /// they owe) but must never see cost/profit.
 @freezed
-class ProfitDataSummary with _$ProfitDataSummary {
+abstract class ProfitDataSummary with _$ProfitDataSummary {
   const factory ProfitDataSummary({
     @Default(<ProfitLineItem>[]) List<ProfitLineItem> items,
     @Default(0) num totalCost,
@@ -167,7 +167,7 @@ class ProfitDataSummary with _$ProfitDataSummary {
 }
 
 @freezed
-class ProfitLineItem with _$ProfitLineItem {
+abstract class ProfitLineItem with _$ProfitLineItem {
   const factory ProfitLineItem({
     required String variantId,
     required num unitCostPrice,

@@ -13,6 +13,13 @@ class AppTheme {
   static const success = Color(0xFF16A34A);
   static const warning = Color(0xFFD97706);
   static const danger = Color(0xFFDC2626);
+  // Used to give same-shaped tiles a distinct accent (e.g. appointments vs
+  // accounting on the doctor dashboard) instead of every card defaulting
+  // to the brand teal — see _ManagementTile in doctor_dashboard_screen.dart.
+  // Each accent is also carried through its whole section's screens (see
+  // e.g. patients_list_screen.dart), not just its dashboard tile.
+  static const info = Color(0xFF3B82F6);
+  static const accent = Color(0xFF7C3AED);
   static const surfaceLight = Color(0xFFF8FAFC);
   static const surfaceDark = Color(0xFF0F172A);
 
@@ -31,7 +38,7 @@ class AppTheme {
         backgroundColor: surfaceLight,
         foregroundColor: Colors.black87,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         color: Colors.white,
         shape: RoundedRectangleBorder(

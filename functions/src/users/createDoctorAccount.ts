@@ -15,6 +15,11 @@ interface CreateDoctorAccountData {
   // when the password came from the doctor themselves via a request-account
   // submission.
   mustChangePassword?: boolean;
+  // Set together when this doctor is joining a medical center (see
+  // medicalCenterRepository.createCenter on the client) — orders/debt/tier
+  // stay entirely independent regardless of accountType/centerId.
+  accountType?: "solo" | "center";
+  centerId?: string;
 }
 
 function digitsOnly(phone: string): string {
@@ -46,6 +51,8 @@ export const createDoctorAccount = onCall<CreateDoctorAccountData>(
       clinicName = "",
       location = "",
       mustChangePassword = false,
+      accountType = "solo",
+      centerId,
     } = request.data;
     if (!phone || !password || !name) {
       throw new HttpsError("invalid-argument", "phone, password, and name are required.");
@@ -60,7 +67,15 @@ export const createDoctorAccount = onCall<CreateDoctorAccountData>(
       displayName: name,
     });
 
-    await auth.setCustomUserClaims(userRecord.uid, { role: Roles.doctor });
+    // centerId lives in the custom claim (not just the Firestore doc) so
+    // firestore.rules' isCenterMember() can check membership as a pure
+    // token comparison — no get() lookup, which Firestore's collectionGroup
+    // `list` queries (see onVisitCreated/watchVisitsForOwner) can't prove
+    // safe when the rule depends on a Firestore read instead of the token.
+    await auth.setCustomUserClaims(userRecord.uid, {
+      role: Roles.doctor,
+      centerId: centerId ?? null,
+    });
 
     await db
       .collection(Paths.users)
@@ -73,6 +88,8 @@ export const createDoctorAccount = onCall<CreateDoctorAccountData>(
         clinicName,
         location,
         mustChangePassword,
+        accountType,
+        centerId: centerId ?? null,
         fcmTokens: [],
         stats: { totalOrders: 0, totalSpent: 0, totalDebt: 0, lastOrderAt: null },
         createdAt: FieldValue.serverTimestamp(),

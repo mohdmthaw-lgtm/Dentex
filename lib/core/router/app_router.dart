@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/admin/account_requests/account_requests_screen.dart';
 import '../../features/admin/analytics/analytics_screen.dart';
+import '../../features/admin/consumption/consumption_mappings_screen.dart';
 import '../../features/admin/customers/customers_screen.dart';
 import '../../features/admin/dashboard/admin_dashboard_screen.dart';
 import '../../features/admin/offers/offer_form_screen.dart';
@@ -20,11 +21,23 @@ import '../../features/admin/shipments/shipments_list_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/request_account_screen.dart';
 import '../../features/doctor/account/account_settings_screen.dart';
+import '../../features/doctor/accounting/accounting_dashboard_screen.dart';
+import '../../features/doctor/accounting/debts_screen.dart';
+import '../../features/doctor/accounting/transactions_screen.dart';
+import '../../features/doctor/appointments/add_appointment_screen.dart';
+import '../../features/doctor/appointments/appointments_screen.dart';
+import '../../features/doctor/accounting/expense_form_screen.dart';
+import '../../features/doctor/accounting/expenses_screen.dart';
 import '../../features/doctor/create_order/create_order_screen.dart';
 import '../../features/doctor/dashboard/doctor_dashboard_screen.dart';
 import '../../features/doctor/offers/offer_detail_screen.dart';
 import '../../features/doctor/offers/offers_screen.dart';
 import '../../features/doctor/orders/my_orders_screen.dart';
+import '../../features/doctor/patients/add_visit_screen.dart';
+import '../../features/doctor/patients/patient_detail_screen.dart';
+import '../../features/doctor/patients/patient_form_screen.dart';
+import '../../features/doctor/patients/patients_list_screen.dart';
+import '../../features/doctor/patients/tooth_photo_archive_screen.dart';
 import '../../models/user_profile.dart';
 import 'auth_state_provider.dart';
 
@@ -39,7 +52,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final status = authState.valueOrNull?.status ?? AppAuthStatus.loading;
+      final status = authState.value?.status ?? AppAuthStatus.loading;
       // '/request-account' is the signed-out "create an account" entry
       // point (App Store Guideline 3.2) — it must stay reachable without
       // credentials, exactly like '/login'.
@@ -138,6 +151,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (c, s) =>
             ShipmentFormScreen(shipmentId: s.pathParameters['id']),
       ),
+      GoRoute(
+        path: '/admin/consumption-mappings',
+        builder: (c, s) => const ConsumptionMappingsScreen(),
+      ),
 
       // Doctor shell
       GoRoute(
@@ -151,7 +168,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/doctor/create-order',
-        builder: (c, s) => const CreateOrderScreen(),
+        builder: (c, s) => CreateOrderScreen(profile: s.extra as UserProfile?),
       ),
       GoRoute(path: '/doctor/offers', builder: (c, s) => const OffersScreen()),
       GoRoute(
@@ -161,6 +178,70 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/doctor/account',
         builder: (c, s) => AccountSettingsScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/patients',
+        builder: (c, s) => PatientsListScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/patients/new',
+        builder: (c, s) {
+          final args = s.extra as PatientFormArgs;
+          return PatientFormScreen(profile: args.profile, existing: args.existing);
+        },
+      ),
+      GoRoute(
+        path: '/doctor/patients/:id',
+        builder: (c, s) => PatientDetailScreen(
+          patientId: s.pathParameters['id']!,
+          profile: s.extra as UserProfile,
+        ),
+      ),
+      GoRoute(
+        path: '/doctor/patients/:id/edit',
+        builder: (c, s) {
+          final args = s.extra as PatientFormArgs;
+          return PatientFormScreen(profile: args.profile, existing: args.existing);
+        },
+      ),
+      GoRoute(
+        path: '/doctor/patients/:id/visits/new',
+        builder: (c, s) => AddVisitScreen(
+          patientId: s.pathParameters['id']!,
+          args: s.extra as AddVisitArgs,
+        ),
+      ),
+      GoRoute(
+        path: '/doctor/patients/:id/teeth/:tooth/photos',
+        builder: (c, s) => ToothPhotoArchiveScreen(args: s.extra as ToothArchiveArgs),
+      ),
+      GoRoute(
+        path: '/doctor/accounting',
+        builder: (c, s) => AccountingDashboardScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/accounting/debts',
+        builder: (c, s) => DebtsScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/accounting/transactions',
+        builder: (c, s) => TransactionsScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/appointments',
+        builder: (c, s) => AppointmentsScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/appointments/new',
+        builder: (c, s) => AddAppointmentScreen(args: s.extra as AddAppointmentArgs),
+      ),
+      GoRoute(
+        path: '/doctor/accounting/expenses',
+        builder: (c, s) => ExpensesScreen(profile: s.extra as UserProfile),
+      ),
+      GoRoute(
+        path: '/doctor/accounting/expenses/new',
+        builder: (c, s) => ExpenseFormScreen(profile: s.extra as UserProfile),
       ),
     ],
   );

@@ -6,19 +6,17 @@ part of 'stats.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$GlobalStatsImpl _$$GlobalStatsImplFromJson(Map<String, dynamic> json) =>
-    _$GlobalStatsImpl(
-      totalProducts: (json['totalProducts'] as num?)?.toInt() ?? 0,
-      totalCustomers: (json['totalCustomers'] as num?)?.toInt() ?? 0,
-      totalOrdersAllTime: (json['totalOrdersAllTime'] as num?)?.toInt() ?? 0,
-      totalOrdersThisMonth:
-          (json['totalOrdersThisMonth'] as num?)?.toInt() ?? 0,
-      totalProfitAllTime: json['totalProfitAllTime'] as num? ?? 0,
-      totalProfitThisMonth: json['totalProfitThisMonth'] as num? ?? 0,
-      totalOutstandingDebt: json['totalOutstandingDebt'] as num? ?? 0,
-    );
+_GlobalStats _$GlobalStatsFromJson(Map<String, dynamic> json) => _GlobalStats(
+  totalProducts: (json['totalProducts'] as num?)?.toInt() ?? 0,
+  totalCustomers: (json['totalCustomers'] as num?)?.toInt() ?? 0,
+  totalOrdersAllTime: (json['totalOrdersAllTime'] as num?)?.toInt() ?? 0,
+  totalOrdersThisMonth: (json['totalOrdersThisMonth'] as num?)?.toInt() ?? 0,
+  totalProfitAllTime: json['totalProfitAllTime'] as num? ?? 0,
+  totalProfitThisMonth: json['totalProfitThisMonth'] as num? ?? 0,
+  totalOutstandingDebt: json['totalOutstandingDebt'] as num? ?? 0,
+);
 
-Map<String, dynamic> _$$GlobalStatsImplToJson(_$GlobalStatsImpl instance) =>
+Map<String, dynamic> _$GlobalStatsToJson(_GlobalStats instance) =>
     <String, dynamic>{
       'totalProducts': instance.totalProducts,
       'totalCustomers': instance.totalCustomers,
@@ -29,15 +27,15 @@ Map<String, dynamic> _$$GlobalStatsImplToJson(_$GlobalStatsImpl instance) =>
       'totalOutstandingDebt': instance.totalOutstandingDebt,
     };
 
-_$MonthlyProfitImpl _$$MonthlyProfitImplFromJson(Map<String, dynamic> json) =>
-    _$MonthlyProfitImpl(
+_MonthlyProfit _$MonthlyProfitFromJson(Map<String, dynamic> json) =>
+    _MonthlyProfit(
       monthKey: json['monthKey'] as String,
       totalProfit: json['totalProfit'] as num? ?? 0,
       totalOrders: (json['totalOrders'] as num?)?.toInt() ?? 0,
       totalRevenue: json['totalRevenue'] as num? ?? 0,
     );
 
-Map<String, dynamic> _$$MonthlyProfitImplToJson(_$MonthlyProfitImpl instance) =>
+Map<String, dynamic> _$MonthlyProfitToJson(_MonthlyProfit instance) =>
     <String, dynamic>{
       'monthKey': instance.monthKey,
       'totalProfit': instance.totalProfit,

@@ -9,7 +9,7 @@ part 'supplier.g.dart';
 /// exporter/freight supplier and as a shipment item's manufacturer — one
 /// list, picked independently per field (see Shipment doc comment).
 @freezed
-class Supplier with _$Supplier {
+abstract class Supplier with _$Supplier {
   const factory Supplier({
     required String id,
     required String name,

@@ -22,6 +22,16 @@ class FirestorePaths {
   static const counters = 'counters';
   static const countersShipmentsDoc = 'shipments';
   static const accountRequests = 'accountRequests';
+  static const medicalCenters = 'medicalCenters';
+  static const patients = 'patients';
+  static const visits = 'visits';
+  static const clinicStats = 'clinicStats';
+  static const appointments = 'appointments';
+  static const expenses = 'expenses';
+  static const expenseTemplates = 'expenseTemplates';
+  static const patientPayments = 'patientPayments';
+  static const toothPhotos = 'toothPhotos';
+  static const consumptionMappings = 'consumptionMappings';
 }
 
 class ShipmentStatus {

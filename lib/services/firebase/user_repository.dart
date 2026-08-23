@@ -84,6 +84,11 @@ class UserRepository {
     required String clinicName,
     required String location,
     bool mustChangePassword = false,
+    // Set together when this doctor is joining a medical center (see
+    // MedicalCenterRepository.createCenter) — every other doctor field
+    // (orders, debt, tier) stays entirely independent regardless.
+    String? centerId,
+    String accountType = 'solo',
   }) async {
     final result = await _functions.httpsCallable('createDoctorAccount').call({
       'phone': phone,
@@ -92,8 +97,26 @@ class UserRepository {
       'clinicName': clinicName,
       'location': location,
       'mustChangePassword': mustChangePassword,
+      if (centerId != null) 'centerId': centerId,
+      'accountType': accountType,
     });
     return result.data['uid'] as String;
+  }
+
+  /// Patches an already-created doctor onto a [MedicalCenter] after the
+  /// fact — used for the center's manager, whose account is created
+  /// *before* the center doc exists (a [MedicalCenter] needs a managerUid,
+  /// which only exists once that account is created). Every other member
+  /// doctor gets centerId/accountType set directly at creation instead
+  /// (see AccountRequestsScreen._approveCenter). Must go through the
+  /// setCenterMembership Cloud Function, not a plain Firestore update —
+  /// only the Admin SDK can set the `centerId` custom claim
+  /// firestore.rules' isCenterMember checks.
+  Future<void> setCenterMembership({required String uid, required String centerId}) async {
+    await _functions.httpsCallable('setCenterMembership').call({
+      'uid': uid,
+      'centerId': centerId,
+    });
   }
 
   Future<void> registerFcmToken(String uid, String token) {

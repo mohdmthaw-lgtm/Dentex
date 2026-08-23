@@ -10,7 +10,7 @@ part 'product_variant.g.dart';
 /// products/{productId}/costs/{variantId} path so doctor-facing security
 /// rules can grant read access to this doc without ever exposing margin.
 @freezed
-class ProductVariant with _$ProductVariant {
+abstract class ProductVariant with _$ProductVariant {
   const factory ProductVariant({
     required String id,
     required String label,
@@ -39,7 +39,7 @@ class ProductVariant with _$ProductVariant {
 /// screens can render quantity/price without an N+1 read into the
 /// variants subcollection.
 @freezed
-class VariantSummary with _$VariantSummary {
+abstract class VariantSummary with _$VariantSummary {
   const factory VariantSummary({
     required String variantId,
     required String label,
@@ -56,7 +56,7 @@ class VariantSummary with _$VariantSummary {
 /// because Firestore security rules can only restrict whole docs, not
 /// individual fields within one doc.
 @freezed
-class ProductVariantCost with _$ProductVariantCost {
+abstract class ProductVariantCost with _$ProductVariantCost {
   const factory ProductVariantCost({
     required num costPrice,
   }) = _ProductVariantCost;

@@ -9,7 +9,7 @@ part 'stats.g.dart';
 /// "completed" (confirmed business rule: profit counts at completion,
 /// not at order placement).
 @freezed
-class GlobalStats with _$GlobalStats {
+abstract class GlobalStats with _$GlobalStats {
   const factory GlobalStats({
     @Default(0) int totalProducts,
     @Default(0) int totalCustomers,
@@ -28,7 +28,7 @@ class GlobalStats with _$GlobalStats {
 
 /// stats/monthlyProfit/{YYYY-MM} — keyed by order *completion* month.
 @freezed
-class MonthlyProfit with _$MonthlyProfit {
+abstract class MonthlyProfit with _$MonthlyProfit {
   const factory MonthlyProfit({
     required String monthKey, // "YYYY-MM"
     @Default(0) num totalProfit,

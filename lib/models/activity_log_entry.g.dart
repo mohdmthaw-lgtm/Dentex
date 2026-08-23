@@ -6,9 +6,8 @@ part of 'activity_log_entry.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ActivityLogEntryImpl _$$ActivityLogEntryImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ActivityLogEntryImpl(
+_ActivityLogEntry _$ActivityLogEntryFromJson(Map<String, dynamic> json) =>
+    _ActivityLogEntry(
       id: json['id'] as String,
       type: json['type'] as String,
       actorUid: json['actorUid'] as String,
@@ -20,8 +19,7 @@ _$ActivityLogEntryImpl _$$ActivityLogEntryImplFromJson(
       createdAt: const TimestampConverter().fromJson(json['createdAt']),
     );
 
-Map<String, dynamic> _$$ActivityLogEntryImplToJson(
-        _$ActivityLogEntryImpl instance) =>
+Map<String, dynamic> _$ActivityLogEntryToJson(_ActivityLogEntry instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': instance.type,

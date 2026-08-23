@@ -6,7 +6,7 @@ part 'activity_log_entry.freezed.dart';
 part 'activity_log_entry.g.dart';
 
 @freezed
-class ActivityLogEntry with _$ActivityLogEntry {
+abstract class ActivityLogEntry with _$ActivityLogEntry {
   const factory ActivityLogEntry({
     required String id,
     required String type, // see ActivityType constants

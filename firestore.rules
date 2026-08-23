@@ -7,6 +7,25 @@ service cloud.firestore {
     function isAdmin()    { return isSignedIn() && request.auth.token.role == 'admin'; }
     function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
 
+    // Clinic-management module (patients/visits/payments/clinicStats):
+    // centerId lives in a custom claim (set by createDoctorAccount /
+    // setCenterMembership Cloud Functions), not a Firestore get() lookup —
+    // deliberately, because Firestore's collectionGroup `list` queries
+    // (watchVisitsForOwner/watchPaymentsForOwner) can't prove a query safe
+    // when the rule depends on reading another document; a pure token
+    // comparison has no such limitation.
+    function isCenterMember(centerId) {
+      return isSignedIn() && request.auth.token.centerId == centerId;
+    }
+    // ownerType/ownerId together identify who a patient/visit/payment
+    // belongs to — a single doctor's own clinic, or a medical center shared
+    // by several doctors (see lib/models/patient.dart PatientOwnerType).
+    function canAccessOwner(ownerType, ownerId) {
+      return isAdmin() ||
+        (ownerType == 'doctor' && isOwner(ownerId)) ||
+        (ownerType == 'center' && isCenterMember(ownerId));
+    }
+
     match /users/{userId} {
       allow read: if isAdmin() || isOwner(userId);
       // Doctors may only ever touch their own fcmTokens field directly;
@@ -104,7 +123,8 @@ service cloud.firestore {
     match /accountRequests/{requestId} {
       allow create: if request.resource.data.status == 'pending' &&
         request.resource.data.keys().hasOnly(
-          ['name', 'phone', 'password', 'clinicName', 'location', 'notes', 'status', 'createdAt']) &&
+          ['name', 'phone', 'password', 'clinicName', 'location', 'notes', 'status', 'createdAt',
+           'accountType', 'centerName', 'chairCount', 'doctors']) &&
         request.resource.data.name is string &&
         request.resource.data.name.size() > 0 && request.resource.data.name.size() < 200 &&
         request.resource.data.phone is string &&
@@ -113,11 +133,129 @@ service cloud.firestore {
         request.resource.data.password.size() >= 6 && request.resource.data.password.size() < 200 &&
         request.resource.data.clinicName is string && request.resource.data.clinicName.size() < 200 &&
         request.resource.data.location is string && request.resource.data.location.size() < 200 &&
-        request.resource.data.notes is string && request.resource.data.notes.size() < 1000;
+        request.resource.data.notes is string && request.resource.data.notes.size() < 1000 &&
+        (!('accountType' in request.resource.data) ||
+          request.resource.data.accountType in ['solo', 'center']) &&
+        (!('centerName' in request.resource.data) ||
+          (request.resource.data.centerName is string && request.resource.data.centerName.size() < 200)) &&
+        (!('chairCount' in request.resource.data) ||
+          (request.resource.data.chairCount is int &&
+           request.resource.data.chairCount >= 1 && request.resource.data.chairCount <= 50)) &&
+        // Per-doctor field/size validation happens app-side; here we only
+        // cap list size to keep a signed-out client from stuffing an
+        // oversized payload — same trust boundary as everything else in
+        // this collection (admin-only read, reviewed before any account
+        // is actually created).
+        (!('doctors' in request.resource.data) ||
+          (request.resource.data.doctors is list && request.resource.data.doctors.size() <= 20));
       // Never world-readable, not even by the requester who submitted it —
-      // this is the only place the plaintext password briefly lives, and
-      // only an admin approving the request ever needs to read it back.
+      // this is the only place the plaintext password(s) briefly live, and
+      // only an admin approving the request ever needs to read them back.
       allow read, update, delete: if isAdmin();
+    }
+
+    // Medical centers created by the admin while approving a 'center'
+    // accountRequest (see lib/services/firebase/medical_center_repository.dart).
+    // Member doctors may read their own center's metadata (name/chairCount)
+    // but never write it directly.
+    match /medicalCenters/{centerId} {
+      allow read: if isAdmin() || isCenterMember(centerId);
+      allow write: if isAdmin();
+    }
+
+    // Clinic-management module: a patient record belongs to either one
+    // doctor's own clinic or a shared medical center (canAccessOwner
+    // above). Orders/debt/loyalty tier above are unaffected by any of this
+    // — a completely separate data domain.
+    match /patients/{patientId} {
+      allow read, update: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+    }
+
+    // visits/patientPayments/toothPhotos are all TOP-LEVEL collections
+    // (not nested under /patients) carrying their own patientId field —
+    // deliberately, not for convenience. Firestore can only prove a `list`
+    // query safe against a resource.data-dependent rule when the collection
+    // isn't nested inside a parent with an unused path wildcard, and a
+    // get()-on-parent rule doesn't help either since a per-result varying
+    // parent (needed for cross-patient listing) isn't provable — confirmed
+    // empirically: every nested-subcollection variant of this rule
+    // (resource.data-based AND get()-parent-based) returned "Missing or
+    // insufficient permissions" for any `list`, even a same-owner query
+    // with matching filters. Flattening to a top-level collection (same
+    // pattern already proven for patients/appointments/expenses above)
+    // is the fix, not a workaround.
+    match /visits/{visitId} {
+      allow read, update: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+    }
+
+    match /patientPayments/{paymentId} {
+      allow read: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+          request.resource.data.ownerType, request.resource.data.ownerId) &&
+        request.resource.data.amount > 0;
+    }
+
+    match /toothPhotos/{photoId} {
+      allow read: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+    }
+
+    // Denormalized per-clinic aggregate (keyed by doctorId or centerId),
+    // maintained exclusively by Cloud Functions — same convention as
+    // /stats above.
+    match /clinicStats/{ownerId} {
+      allow read: if isAdmin() || isOwner(ownerId) || isCenterMember(ownerId);
+      allow write: if false;
+    }
+
+    // Top-level (not nested under /patients) so day/week range queries on
+    // scheduledAt don't need a collectionGroup query. Same ownership model
+    // as patients/visits/payments above.
+    match /appointments/{appointmentId} {
+      allow read, update: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+    }
+
+    // Expenses module — deliberately independent of /patients (no medical
+    // data at all), same ownership model throughout.
+    match /expenses/{expenseId} {
+      allow read, update: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+
+      // ExpensePayment docs don't carry their own ownerId/ownerType (unlike
+      // visits/patient-payments) — same get()-the-parent technique the
+      // orders/{id}/payments rule above uses.
+      match /payments/{paymentId} {
+        allow read: if canAccessOwner(
+          get(/databases/$(database)/documents/expenses/$(expenseId)).data.ownerType,
+          get(/databases/$(database)/documents/expenses/$(expenseId)).data.ownerId);
+        allow create: if canAccessOwner(
+            get(/databases/$(database)/documents/expenses/$(expenseId)).data.ownerType,
+            get(/databases/$(database)/documents/expenses/$(expenseId)).data.ownerId) &&
+          request.resource.data.amount > 0;
+      }
+    }
+
+    match /expenseTemplates/{templateId} {
+      allow read, update: if canAccessOwner(resource.data.ownerType, resource.data.ownerId);
+      allow create: if canAccessOwner(
+        request.resource.data.ownerType, request.resource.data.ownerId);
+    }
+
+    // الربط التجاري — global, admin-managed catalog data (which product a
+    // treatment type consumes; see lib/models/consumption_mapping.dart).
+    // Every doctor can read the full list to compute their own reorder
+    // suggestions (see reorder_suggestions.dart); only admin edits it.
+    match /consumptionMappings/{mappingId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }

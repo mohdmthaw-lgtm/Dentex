@@ -11,7 +11,7 @@ part 'account_request.g.dart';
 /// an unauthenticated client, so Firestore rules (not app logic) are what
 /// keep its shape and status restricted to `pending` on create.
 @freezed
-class AccountRequest with _$AccountRequest {
+abstract class AccountRequest with _$AccountRequest {
   const factory AccountRequest({
     required String id,
     required String name,
@@ -28,6 +28,15 @@ class AccountRequest with _$AccountRequest {
     @Default('') String notes,
     @Default(AccountRequestStatus.pending) String status,
     @TimestampConverter() DateTime? createdAt,
+    // 'solo' | 'center', chosen as step 0 of the public request form. Only
+    // 'center' populates centerName/chairCount/doctors below; a 'solo'
+    // request behaves exactly as before this field existed.
+    @Default(AccountRequestType.solo) String accountType,
+    @Default('') String centerName,
+    @Default(1) int chairCount,
+    // The *other* doctors joining this medical center alongside the primary
+    // submitter above (who becomes the manager). Empty for 'solo' requests.
+    @Default(<AccountRequestDoctor>[]) List<AccountRequestDoctor> doctors,
   }) = _AccountRequest;
 
   factory AccountRequest.fromJson(Map<String, dynamic> json) =>
@@ -35,6 +44,30 @@ class AccountRequest with _$AccountRequest {
 
   factory AccountRequest.fromDoc(String id, Map<String, dynamic> data) =>
       AccountRequest.fromJson({...data, 'id': id});
+}
+
+class AccountRequestType {
+  AccountRequestType._();
+
+  static const solo = 'solo';
+  static const center = 'center';
+}
+
+/// One additional doctor bundled into a 'center' [AccountRequest], submitted
+/// alongside the primary requester so the admin can approve the whole
+/// practice — and create every member's createDoctorAccount call — in one
+/// action instead of juggling several unrelated pending requests.
+@freezed
+abstract class AccountRequestDoctor with _$AccountRequestDoctor {
+  const factory AccountRequestDoctor({
+    required String name,
+    required String phone,
+    required String password,
+    @Default(false) bool isManager,
+  }) = _AccountRequestDoctor;
+
+  factory AccountRequestDoctor.fromJson(Map<String, dynamic> json) =>
+      _$AccountRequestDoctorFromJson(json);
 }
 
 /// Kept here (rather than only in firestore_paths.dart) so model consumers

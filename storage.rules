@@ -30,5 +30,16 @@ service firebase.storage {
       // unlike product/offer photos which doctors also need to read.
       allow read, write: if isAdmin();
     }
+
+    // Tooth photo archive — mirrors firestore.rules' canAccessOwner logic:
+    // a doctor's own uid, or membership in the medical center at ownerId
+    // via the `centerId` custom claim (set by createDoctorAccount /
+    // setCenterMembership), not a Firestore lookup — keeps this consistent
+    // with why firestore.rules' isCenterMember avoids get() too.
+    match /clinics/{ownerId}/patients/{patientId}/teeth/{toothNumber}/{visitId}/{fileName} {
+      allow read, write: if isAdmin() || (isSignedIn() && (
+        request.auth.uid == ownerId || request.auth.token.centerId == ownerId
+      ));
+    }
   }
 }

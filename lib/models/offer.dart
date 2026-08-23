@@ -10,7 +10,7 @@ part 'offer.g.dart';
 /// later product price change doesn't retroactively change an existing
 /// offer's advertised savings.
 @freezed
-class OfferItem with _$OfferItem {
+abstract class OfferItem with _$OfferItem {
   const factory OfferItem({
     required String productId,
     required String productName,
@@ -37,7 +37,7 @@ enum OfferStatus { active, inactive, expired }
 /// A promotional package/bundle: one or more existing products sold
 /// together at a discount off their combined normal price.
 @freezed
-class Offer with _$Offer {
+abstract class Offer with _$Offer {
   const factory Offer({
     required String id,
     required String title,

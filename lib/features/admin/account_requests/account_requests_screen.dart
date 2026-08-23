@@ -20,6 +20,16 @@ class AccountRequestsScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AccountRequest request,
+  ) {
+    return request.accountType == AccountRequestType.center
+        ? _approveCenter(context, ref, request)
+        : _approveSolo(context, ref, request);
+  }
+
+  Future<void> _approveSolo(
+    BuildContext context,
+    WidgetRef ref,
+    AccountRequest request,
   ) async {
     final nameCtrl = TextEditingController(text: request.name);
     final phoneCtrl = TextEditingController(text: request.phone);
@@ -81,6 +91,99 @@ class AccountRequestsScreen extends ConsumerWidget {
     }
   }
 
+  /// The primary submitter (`request.name`/`request.phone`/`request.password`)
+  /// always becomes the center's manager — [AccountRequestDoctor.isManager]
+  /// on the *added* doctors is purely a descriptive flag shown to the admin,
+  /// not decision-driving, to avoid the account-creation-order headache of
+  /// letting an added-but-not-yet-created doctor be the manager a
+  /// [MedicalCenter] doc requires a managerUid to point at.
+  Future<void> _approveCenter(
+    BuildContext context,
+    WidgetRef ref,
+    AccountRequest request,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('قبول طلب مركز طبي'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('سيتم إنشاء "${request.centerName}" بـ ${request.chairCount} كرسي، '
+                  'ومدير المركز: ${request.name}.'),
+              const SizedBox(height: 8),
+              Text('عدد الدكاترة الإضافيين: ${request.doctors.length}'),
+              const SizedBox(height: 8),
+              const Text(
+                'سيتم استخدام كلمات السر التي اختارها كل دكتور بنفسه عند تقديم الطلب.',
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('إنشاء المركز')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final userRepo = ref.read(userRepositoryProvider);
+    final centerRepo = ref.read(medicalCenterRepositoryProvider);
+    try {
+      final managerUid = await userRepo.createDoctorAccount(
+        phone: request.phone,
+        password: request.password,
+        name: request.name,
+        clinicName: request.clinicName,
+        location: request.location,
+      );
+
+      final centerId = await centerRepo.createCenter(
+        name: request.centerName,
+        chairCount: request.chairCount,
+        managerUid: managerUid,
+        managerName: request.name,
+      );
+      await userRepo.setCenterMembership(uid: managerUid, centerId: centerId);
+
+      final memberUids = [managerUid];
+      for (final doctor in request.doctors) {
+        final uid = await userRepo.createDoctorAccount(
+          phone: doctor.phone,
+          password: doctor.password,
+          name: doctor.name,
+          clinicName: request.centerName,
+          location: request.location,
+          centerId: centerId,
+          accountType: AccountRequestType.center,
+        );
+        await centerRepo.addMember(centerId, uid, doctor.name);
+        memberUids.add(uid);
+      }
+
+      await ref.read(accountRequestRepositoryProvider).markApprovedCenter(
+            id: request.id,
+            doctors: request.doctors,
+            doctorUids: memberUids,
+          );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم إنشاء المركز وحسابات الدكاترة بنجاح')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل إنشاء المركز: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _reject(BuildContext context, WidgetRef ref, AccountRequest request) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -130,11 +233,32 @@ class AccountRequestsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(r.name, style: Theme.of(context).textTheme.titleMedium),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(r.name, style: Theme.of(context).textTheme.titleMedium),
+                          ),
+                          if (r.accountType == AccountRequestType.center)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text('مركز طبي',
+                                  style: TextStyle(
+                                      color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                            ),
+                        ],
+                      ),
                       const SizedBox(height: 4),
                       Text(r.phone, textDirection: TextDirection.ltr),
                       if (r.clinicName.isNotEmpty) Text('العيادة: ${r.clinicName}'),
                       if (r.location.isNotEmpty) Text('الموقع: ${r.location}'),
+                      if (r.accountType == AccountRequestType.center) ...[
+                        Text('المركز: ${r.centerName} — ${r.chairCount} كرسي'),
+                        Text('دكاترة إضافيون: ${r.doctors.length}'),
+                      ],
                       if (r.notes.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(r.notes, style: Theme.of(context).textTheme.bodySmall),

@@ -1,6 +1,6 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'stats.dart';
@@ -9,518 +9,560 @@ part of 'stats.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-GlobalStats _$GlobalStatsFromJson(Map<String, dynamic> json) {
-  return _GlobalStats.fromJson(json);
-}
 
 /// @nodoc
 mixin _$GlobalStats {
-  int get totalProducts => throw _privateConstructorUsedError;
-  int get totalCustomers => throw _privateConstructorUsedError;
-  int get totalOrdersAllTime => throw _privateConstructorUsedError;
-  int get totalOrdersThisMonth => throw _privateConstructorUsedError;
-  num get totalProfitAllTime => throw _privateConstructorUsedError;
-  num get totalProfitThisMonth => throw _privateConstructorUsedError;
-  num get totalOutstandingDebt => throw _privateConstructorUsedError;
+
+ int get totalProducts; int get totalCustomers; int get totalOrdersAllTime; int get totalOrdersThisMonth; num get totalProfitAllTime; num get totalProfitThisMonth; num get totalOutstandingDebt;
+/// Create a copy of GlobalStats
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GlobalStatsCopyWith<GlobalStats> get copyWith => _$GlobalStatsCopyWithImpl<GlobalStats>(this as GlobalStats, _$identity);
 
   /// Serializes this GlobalStats to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of GlobalStats
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $GlobalStatsCopyWith<GlobalStats> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GlobalStats&&(identical(other.totalProducts, totalProducts) || other.totalProducts == totalProducts)&&(identical(other.totalCustomers, totalCustomers) || other.totalCustomers == totalCustomers)&&(identical(other.totalOrdersAllTime, totalOrdersAllTime) || other.totalOrdersAllTime == totalOrdersAllTime)&&(identical(other.totalOrdersThisMonth, totalOrdersThisMonth) || other.totalOrdersThisMonth == totalOrdersThisMonth)&&(identical(other.totalProfitAllTime, totalProfitAllTime) || other.totalProfitAllTime == totalProfitAllTime)&&(identical(other.totalProfitThisMonth, totalProfitThisMonth) || other.totalProfitThisMonth == totalProfitThisMonth)&&(identical(other.totalOutstandingDebt, totalOutstandingDebt) || other.totalOutstandingDebt == totalOutstandingDebt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,totalProducts,totalCustomers,totalOrdersAllTime,totalOrdersThisMonth,totalProfitAllTime,totalProfitThisMonth,totalOutstandingDebt);
+
+@override
+String toString() {
+  return 'GlobalStats(totalProducts: $totalProducts, totalCustomers: $totalCustomers, totalOrdersAllTime: $totalOrdersAllTime, totalOrdersThisMonth: $totalOrdersThisMonth, totalProfitAllTime: $totalProfitAllTime, totalProfitThisMonth: $totalProfitThisMonth, totalOutstandingDebt: $totalOutstandingDebt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $GlobalStatsCopyWith<$Res> {
-  factory $GlobalStatsCopyWith(
-          GlobalStats value, $Res Function(GlobalStats) then) =
-      _$GlobalStatsCopyWithImpl<$Res, GlobalStats>;
-  @useResult
-  $Res call(
-      {int totalProducts,
-      int totalCustomers,
-      int totalOrdersAllTime,
-      int totalOrdersThisMonth,
-      num totalProfitAllTime,
-      num totalProfitThisMonth,
-      num totalOutstandingDebt});
-}
+abstract mixin class $GlobalStatsCopyWith<$Res>  {
+  factory $GlobalStatsCopyWith(GlobalStats value, $Res Function(GlobalStats) _then) = _$GlobalStatsCopyWithImpl;
+@useResult
+$Res call({
+ int totalProducts, int totalCustomers, int totalOrdersAllTime, int totalOrdersThisMonth, num totalProfitAllTime, num totalProfitThisMonth, num totalOutstandingDebt
+});
 
+
+
+
+}
 /// @nodoc
-class _$GlobalStatsCopyWithImpl<$Res, $Val extends GlobalStats>
+class _$GlobalStatsCopyWithImpl<$Res>
     implements $GlobalStatsCopyWith<$Res> {
-  _$GlobalStatsCopyWithImpl(this._value, this._then);
+  _$GlobalStatsCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final GlobalStats _self;
+  final $Res Function(GlobalStats) _then;
 
-  /// Create a copy of GlobalStats
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? totalProducts = null,
-    Object? totalCustomers = null,
-    Object? totalOrdersAllTime = null,
-    Object? totalOrdersThisMonth = null,
-    Object? totalProfitAllTime = null,
-    Object? totalProfitThisMonth = null,
-    Object? totalOutstandingDebt = null,
-  }) {
-    return _then(_value.copyWith(
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalCustomers: null == totalCustomers
-          ? _value.totalCustomers
-          : totalCustomers // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrdersAllTime: null == totalOrdersAllTime
-          ? _value.totalOrdersAllTime
-          : totalOrdersAllTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrdersThisMonth: null == totalOrdersThisMonth
-          ? _value.totalOrdersThisMonth
-          : totalOrdersThisMonth // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalProfitAllTime: null == totalProfitAllTime
-          ? _value.totalProfitAllTime
-          : totalProfitAllTime // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalProfitThisMonth: null == totalProfitThisMonth
-          ? _value.totalProfitThisMonth
-          : totalProfitThisMonth // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalOutstandingDebt: null == totalOutstandingDebt
-          ? _value.totalOutstandingDebt
-          : totalOutstandingDebt // ignore: cast_nullable_to_non_nullable
-              as num,
-    ) as $Val);
-  }
+/// Create a copy of GlobalStats
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? totalProducts = null,Object? totalCustomers = null,Object? totalOrdersAllTime = null,Object? totalOrdersThisMonth = null,Object? totalProfitAllTime = null,Object? totalProfitThisMonth = null,Object? totalOutstandingDebt = null,}) {
+  return _then(GlobalStats(
+totalProducts: null == totalProducts ? _self.totalProducts : totalProducts // ignore: cast_nullable_to_non_nullable
+as int,totalCustomers: null == totalCustomers ? _self.totalCustomers : totalCustomers // ignore: cast_nullable_to_non_nullable
+as int,totalOrdersAllTime: null == totalOrdersAllTime ? _self.totalOrdersAllTime : totalOrdersAllTime // ignore: cast_nullable_to_non_nullable
+as int,totalOrdersThisMonth: null == totalOrdersThisMonth ? _self.totalOrdersThisMonth : totalOrdersThisMonth // ignore: cast_nullable_to_non_nullable
+as int,totalProfitAllTime: null == totalProfitAllTime ? _self.totalProfitAllTime : totalProfitAllTime // ignore: cast_nullable_to_non_nullable
+as num,totalProfitThisMonth: null == totalProfitThisMonth ? _self.totalProfitThisMonth : totalProfitThisMonth // ignore: cast_nullable_to_non_nullable
+as num,totalOutstandingDebt: null == totalOutstandingDebt ? _self.totalOutstandingDebt : totalOutstandingDebt // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
 }
 
-/// @nodoc
-abstract class _$$GlobalStatsImplCopyWith<$Res>
-    implements $GlobalStatsCopyWith<$Res> {
-  factory _$$GlobalStatsImplCopyWith(
-          _$GlobalStatsImpl value, $Res Function(_$GlobalStatsImpl) then) =
-      __$$GlobalStatsImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int totalProducts,
-      int totalCustomers,
-      int totalOrdersAllTime,
-      int totalOrdersThisMonth,
-      num totalProfitAllTime,
-      num totalProfitThisMonth,
-      num totalOutstandingDebt});
 }
 
-/// @nodoc
-class __$$GlobalStatsImplCopyWithImpl<$Res>
-    extends _$GlobalStatsCopyWithImpl<$Res, _$GlobalStatsImpl>
-    implements _$$GlobalStatsImplCopyWith<$Res> {
-  __$$GlobalStatsImplCopyWithImpl(
-      _$GlobalStatsImpl _value, $Res Function(_$GlobalStatsImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of GlobalStats
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? totalProducts = null,
-    Object? totalCustomers = null,
-    Object? totalOrdersAllTime = null,
-    Object? totalOrdersThisMonth = null,
-    Object? totalProfitAllTime = null,
-    Object? totalProfitThisMonth = null,
-    Object? totalOutstandingDebt = null,
-  }) {
-    return _then(_$GlobalStatsImpl(
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalCustomers: null == totalCustomers
-          ? _value.totalCustomers
-          : totalCustomers // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrdersAllTime: null == totalOrdersAllTime
-          ? _value.totalOrdersAllTime
-          : totalOrdersAllTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrdersThisMonth: null == totalOrdersThisMonth
-          ? _value.totalOrdersThisMonth
-          : totalOrdersThisMonth // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalProfitAllTime: null == totalProfitAllTime
-          ? _value.totalProfitAllTime
-          : totalProfitAllTime // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalProfitThisMonth: null == totalProfitThisMonth
-          ? _value.totalProfitThisMonth
-          : totalProfitThisMonth // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalOutstandingDebt: null == totalOutstandingDebt
-          ? _value.totalOutstandingDebt
-          : totalOutstandingDebt // ignore: cast_nullable_to_non_nullable
-              as num,
-    ));
-  }
+/// Adds pattern-matching-related methods to [GlobalStats].
+extension GlobalStatsPatterns on GlobalStats {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GlobalStats value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GlobalStats() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GlobalStats value)  $default,){
+final _that = this;
+switch (_that) {
+case _GlobalStats():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GlobalStats value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GlobalStats() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProducts,  int totalCustomers,  int totalOrdersAllTime,  int totalOrdersThisMonth,  num totalProfitAllTime,  num totalProfitThisMonth,  num totalOutstandingDebt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GlobalStats() when $default != null:
+return $default(_that.totalProducts,_that.totalCustomers,_that.totalOrdersAllTime,_that.totalOrdersThisMonth,_that.totalProfitAllTime,_that.totalProfitThisMonth,_that.totalOutstandingDebt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProducts,  int totalCustomers,  int totalOrdersAllTime,  int totalOrdersThisMonth,  num totalProfitAllTime,  num totalProfitThisMonth,  num totalOutstandingDebt)  $default,) {final _that = this;
+switch (_that) {
+case _GlobalStats():
+return $default(_that.totalProducts,_that.totalCustomers,_that.totalOrdersAllTime,_that.totalOrdersThisMonth,_that.totalProfitAllTime,_that.totalProfitThisMonth,_that.totalOutstandingDebt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProducts,  int totalCustomers,  int totalOrdersAllTime,  int totalOrdersThisMonth,  num totalProfitAllTime,  num totalProfitThisMonth,  num totalOutstandingDebt)?  $default,) {final _that = this;
+switch (_that) {
+case _GlobalStats() when $default != null:
+return $default(_that.totalProducts,_that.totalCustomers,_that.totalOrdersAllTime,_that.totalOrdersThisMonth,_that.totalProfitAllTime,_that.totalProfitThisMonth,_that.totalOutstandingDebt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$GlobalStatsImpl implements _GlobalStats {
-  const _$GlobalStatsImpl(
-      {this.totalProducts = 0,
-      this.totalCustomers = 0,
-      this.totalOrdersAllTime = 0,
-      this.totalOrdersThisMonth = 0,
-      this.totalProfitAllTime = 0,
-      this.totalProfitThisMonth = 0,
-      this.totalOutstandingDebt = 0});
 
-  factory _$GlobalStatsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GlobalStatsImplFromJson(json);
+class _GlobalStats implements GlobalStats {
+  const _GlobalStats({this.totalProducts = 0, this.totalCustomers = 0, this.totalOrdersAllTime = 0, this.totalOrdersThisMonth = 0, this.totalProfitAllTime = 0, this.totalProfitThisMonth = 0, this.totalOutstandingDebt = 0});
+  factory _GlobalStats.fromJson(Map<String, dynamic> json) => _$GlobalStatsFromJson(json);
 
-  @override
-  @JsonKey()
-  final int totalProducts;
-  @override
-  @JsonKey()
-  final int totalCustomers;
-  @override
-  @JsonKey()
-  final int totalOrdersAllTime;
-  @override
-  @JsonKey()
-  final int totalOrdersThisMonth;
-  @override
-  @JsonKey()
-  final num totalProfitAllTime;
-  @override
-  @JsonKey()
-  final num totalProfitThisMonth;
-  @override
-  @JsonKey()
-  final num totalOutstandingDebt;
+@override@JsonKey() final  int totalProducts;
+@override@JsonKey() final  int totalCustomers;
+@override@JsonKey() final  int totalOrdersAllTime;
+@override@JsonKey() final  int totalOrdersThisMonth;
+@override@JsonKey() final  num totalProfitAllTime;
+@override@JsonKey() final  num totalProfitThisMonth;
+@override@JsonKey() final  num totalOutstandingDebt;
 
-  @override
-  String toString() {
-    return 'GlobalStats(totalProducts: $totalProducts, totalCustomers: $totalCustomers, totalOrdersAllTime: $totalOrdersAllTime, totalOrdersThisMonth: $totalOrdersThisMonth, totalProfitAllTime: $totalProfitAllTime, totalProfitThisMonth: $totalProfitThisMonth, totalOutstandingDebt: $totalOutstandingDebt)';
-  }
+/// Create a copy of GlobalStats
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GlobalStatsCopyWith<_GlobalStats> get copyWith => __$GlobalStatsCopyWithImpl<_GlobalStats>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GlobalStatsImpl &&
-            (identical(other.totalProducts, totalProducts) ||
-                other.totalProducts == totalProducts) &&
-            (identical(other.totalCustomers, totalCustomers) ||
-                other.totalCustomers == totalCustomers) &&
-            (identical(other.totalOrdersAllTime, totalOrdersAllTime) ||
-                other.totalOrdersAllTime == totalOrdersAllTime) &&
-            (identical(other.totalOrdersThisMonth, totalOrdersThisMonth) ||
-                other.totalOrdersThisMonth == totalOrdersThisMonth) &&
-            (identical(other.totalProfitAllTime, totalProfitAllTime) ||
-                other.totalProfitAllTime == totalProfitAllTime) &&
-            (identical(other.totalProfitThisMonth, totalProfitThisMonth) ||
-                other.totalProfitThisMonth == totalProfitThisMonth) &&
-            (identical(other.totalOutstandingDebt, totalOutstandingDebt) ||
-                other.totalOutstandingDebt == totalOutstandingDebt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      totalProducts,
-      totalCustomers,
-      totalOrdersAllTime,
-      totalOrdersThisMonth,
-      totalProfitAllTime,
-      totalProfitThisMonth,
-      totalOutstandingDebt);
-
-  /// Create a copy of GlobalStats
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GlobalStatsImplCopyWith<_$GlobalStatsImpl> get copyWith =>
-      __$$GlobalStatsImplCopyWithImpl<_$GlobalStatsImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GlobalStatsImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$GlobalStatsToJson(this, );
 }
 
-abstract class _GlobalStats implements GlobalStats {
-  const factory _GlobalStats(
-      {final int totalProducts,
-      final int totalCustomers,
-      final int totalOrdersAllTime,
-      final int totalOrdersThisMonth,
-      final num totalProfitAllTime,
-      final num totalProfitThisMonth,
-      final num totalOutstandingDebt}) = _$GlobalStatsImpl;
-
-  factory _GlobalStats.fromJson(Map<String, dynamic> json) =
-      _$GlobalStatsImpl.fromJson;
-
-  @override
-  int get totalProducts;
-  @override
-  int get totalCustomers;
-  @override
-  int get totalOrdersAllTime;
-  @override
-  int get totalOrdersThisMonth;
-  @override
-  num get totalProfitAllTime;
-  @override
-  num get totalProfitThisMonth;
-  @override
-  num get totalOutstandingDebt;
-
-  /// Create a copy of GlobalStats
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GlobalStatsImplCopyWith<_$GlobalStatsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GlobalStats&&(identical(other.totalProducts, totalProducts) || other.totalProducts == totalProducts)&&(identical(other.totalCustomers, totalCustomers) || other.totalCustomers == totalCustomers)&&(identical(other.totalOrdersAllTime, totalOrdersAllTime) || other.totalOrdersAllTime == totalOrdersAllTime)&&(identical(other.totalOrdersThisMonth, totalOrdersThisMonth) || other.totalOrdersThisMonth == totalOrdersThisMonth)&&(identical(other.totalProfitAllTime, totalProfitAllTime) || other.totalProfitAllTime == totalProfitAllTime)&&(identical(other.totalProfitThisMonth, totalProfitThisMonth) || other.totalProfitThisMonth == totalProfitThisMonth)&&(identical(other.totalOutstandingDebt, totalOutstandingDebt) || other.totalOutstandingDebt == totalOutstandingDebt));
 }
 
-MonthlyProfit _$MonthlyProfitFromJson(Map<String, dynamic> json) {
-  return _MonthlyProfit.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,totalProducts,totalCustomers,totalOrdersAllTime,totalOrdersThisMonth,totalProfitAllTime,totalProfitThisMonth,totalOutstandingDebt);
+
+@override
+String toString() {
+  return 'GlobalStats(totalProducts: $totalProducts, totalCustomers: $totalCustomers, totalOrdersAllTime: $totalOrdersAllTime, totalOrdersThisMonth: $totalOrdersThisMonth, totalProfitAllTime: $totalProfitAllTime, totalProfitThisMonth: $totalProfitThisMonth, totalOutstandingDebt: $totalOutstandingDebt)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$GlobalStatsCopyWith<$Res> implements $GlobalStatsCopyWith<$Res> {
+  factory _$GlobalStatsCopyWith(_GlobalStats value, $Res Function(_GlobalStats) _then) = __$GlobalStatsCopyWithImpl;
+@override @useResult
+$Res call({
+ int totalProducts, int totalCustomers, int totalOrdersAllTime, int totalOrdersThisMonth, num totalProfitAllTime, num totalProfitThisMonth, num totalOutstandingDebt
+});
+
+
+
+
+}
+/// @nodoc
+class __$GlobalStatsCopyWithImpl<$Res>
+    implements _$GlobalStatsCopyWith<$Res> {
+  __$GlobalStatsCopyWithImpl(this._self, this._then);
+
+  final _GlobalStats _self;
+  final $Res Function(_GlobalStats) _then;
+
+/// Create a copy of GlobalStats
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? totalProducts = null,Object? totalCustomers = null,Object? totalOrdersAllTime = null,Object? totalOrdersThisMonth = null,Object? totalProfitAllTime = null,Object? totalProfitThisMonth = null,Object? totalOutstandingDebt = null,}) {
+  return _then(_GlobalStats(
+totalProducts: null == totalProducts ? _self.totalProducts : totalProducts // ignore: cast_nullable_to_non_nullable
+as int,totalCustomers: null == totalCustomers ? _self.totalCustomers : totalCustomers // ignore: cast_nullable_to_non_nullable
+as int,totalOrdersAllTime: null == totalOrdersAllTime ? _self.totalOrdersAllTime : totalOrdersAllTime // ignore: cast_nullable_to_non_nullable
+as int,totalOrdersThisMonth: null == totalOrdersThisMonth ? _self.totalOrdersThisMonth : totalOrdersThisMonth // ignore: cast_nullable_to_non_nullable
+as int,totalProfitAllTime: null == totalProfitAllTime ? _self.totalProfitAllTime : totalProfitAllTime // ignore: cast_nullable_to_non_nullable
+as num,totalProfitThisMonth: null == totalProfitThisMonth ? _self.totalProfitThisMonth : totalProfitThisMonth // ignore: cast_nullable_to_non_nullable
+as num,totalOutstandingDebt: null == totalOutstandingDebt ? _self.totalOutstandingDebt : totalOutstandingDebt // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$MonthlyProfit {
-  String get monthKey => throw _privateConstructorUsedError; // "YYYY-MM"
-  num get totalProfit => throw _privateConstructorUsedError;
-  int get totalOrders => throw _privateConstructorUsedError;
-  num get totalRevenue => throw _privateConstructorUsedError;
+
+ String get monthKey; num get totalProfit; int get totalOrders; num get totalRevenue;
+/// Create a copy of MonthlyProfit
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MonthlyProfitCopyWith<MonthlyProfit> get copyWith => _$MonthlyProfitCopyWithImpl<MonthlyProfit>(this as MonthlyProfit, _$identity);
 
   /// Serializes this MonthlyProfit to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of MonthlyProfit
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $MonthlyProfitCopyWith<MonthlyProfit> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MonthlyProfit&&(identical(other.monthKey, monthKey) || other.monthKey == monthKey)&&(identical(other.totalProfit, totalProfit) || other.totalProfit == totalProfit)&&(identical(other.totalOrders, totalOrders) || other.totalOrders == totalOrders)&&(identical(other.totalRevenue, totalRevenue) || other.totalRevenue == totalRevenue));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,monthKey,totalProfit,totalOrders,totalRevenue);
+
+@override
+String toString() {
+  return 'MonthlyProfit(monthKey: $monthKey, totalProfit: $totalProfit, totalOrders: $totalOrders, totalRevenue: $totalRevenue)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $MonthlyProfitCopyWith<$Res> {
-  factory $MonthlyProfitCopyWith(
-          MonthlyProfit value, $Res Function(MonthlyProfit) then) =
-      _$MonthlyProfitCopyWithImpl<$Res, MonthlyProfit>;
-  @useResult
-  $Res call(
-      {String monthKey, num totalProfit, int totalOrders, num totalRevenue});
-}
+abstract mixin class $MonthlyProfitCopyWith<$Res>  {
+  factory $MonthlyProfitCopyWith(MonthlyProfit value, $Res Function(MonthlyProfit) _then) = _$MonthlyProfitCopyWithImpl;
+@useResult
+$Res call({
+ String monthKey, num totalProfit, int totalOrders, num totalRevenue
+});
 
+
+
+
+}
 /// @nodoc
-class _$MonthlyProfitCopyWithImpl<$Res, $Val extends MonthlyProfit>
+class _$MonthlyProfitCopyWithImpl<$Res>
     implements $MonthlyProfitCopyWith<$Res> {
-  _$MonthlyProfitCopyWithImpl(this._value, this._then);
+  _$MonthlyProfitCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final MonthlyProfit _self;
+  final $Res Function(MonthlyProfit) _then;
 
-  /// Create a copy of MonthlyProfit
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? monthKey = null,
-    Object? totalProfit = null,
-    Object? totalOrders = null,
-    Object? totalRevenue = null,
-  }) {
-    return _then(_value.copyWith(
-      monthKey: null == monthKey
-          ? _value.monthKey
-          : monthKey // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalProfit: null == totalProfit
-          ? _value.totalProfit
-          : totalProfit // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalOrders: null == totalOrders
-          ? _value.totalOrders
-          : totalOrders // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as num,
-    ) as $Val);
-  }
+/// Create a copy of MonthlyProfit
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? monthKey = null,Object? totalProfit = null,Object? totalOrders = null,Object? totalRevenue = null,}) {
+  return _then(MonthlyProfit(
+monthKey: null == monthKey ? _self.monthKey : monthKey // ignore: cast_nullable_to_non_nullable
+as String,totalProfit: null == totalProfit ? _self.totalProfit : totalProfit // ignore: cast_nullable_to_non_nullable
+as num,totalOrders: null == totalOrders ? _self.totalOrders : totalOrders // ignore: cast_nullable_to_non_nullable
+as int,totalRevenue: null == totalRevenue ? _self.totalRevenue : totalRevenue // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
 }
 
-/// @nodoc
-abstract class _$$MonthlyProfitImplCopyWith<$Res>
-    implements $MonthlyProfitCopyWith<$Res> {
-  factory _$$MonthlyProfitImplCopyWith(
-          _$MonthlyProfitImpl value, $Res Function(_$MonthlyProfitImpl) then) =
-      __$$MonthlyProfitImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String monthKey, num totalProfit, int totalOrders, num totalRevenue});
 }
 
-/// @nodoc
-class __$$MonthlyProfitImplCopyWithImpl<$Res>
-    extends _$MonthlyProfitCopyWithImpl<$Res, _$MonthlyProfitImpl>
-    implements _$$MonthlyProfitImplCopyWith<$Res> {
-  __$$MonthlyProfitImplCopyWithImpl(
-      _$MonthlyProfitImpl _value, $Res Function(_$MonthlyProfitImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of MonthlyProfit
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? monthKey = null,
-    Object? totalProfit = null,
-    Object? totalOrders = null,
-    Object? totalRevenue = null,
-  }) {
-    return _then(_$MonthlyProfitImpl(
-      monthKey: null == monthKey
-          ? _value.monthKey
-          : monthKey // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalProfit: null == totalProfit
-          ? _value.totalProfit
-          : totalProfit // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalOrders: null == totalOrders
-          ? _value.totalOrders
-          : totalOrders // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as num,
-    ));
-  }
+/// Adds pattern-matching-related methods to [MonthlyProfit].
+extension MonthlyProfitPatterns on MonthlyProfit {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MonthlyProfit value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MonthlyProfit() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MonthlyProfit value)  $default,){
+final _that = this;
+switch (_that) {
+case _MonthlyProfit():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MonthlyProfit value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MonthlyProfit() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String monthKey,  num totalProfit,  int totalOrders,  num totalRevenue)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MonthlyProfit() when $default != null:
+return $default(_that.monthKey,_that.totalProfit,_that.totalOrders,_that.totalRevenue);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String monthKey,  num totalProfit,  int totalOrders,  num totalRevenue)  $default,) {final _that = this;
+switch (_that) {
+case _MonthlyProfit():
+return $default(_that.monthKey,_that.totalProfit,_that.totalOrders,_that.totalRevenue);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String monthKey,  num totalProfit,  int totalOrders,  num totalRevenue)?  $default,) {final _that = this;
+switch (_that) {
+case _MonthlyProfit() when $default != null:
+return $default(_that.monthKey,_that.totalProfit,_that.totalOrders,_that.totalRevenue);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$MonthlyProfitImpl implements _MonthlyProfit {
-  const _$MonthlyProfitImpl(
-      {required this.monthKey,
-      this.totalProfit = 0,
-      this.totalOrders = 0,
-      this.totalRevenue = 0});
 
-  factory _$MonthlyProfitImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MonthlyProfitImplFromJson(json);
+class _MonthlyProfit implements MonthlyProfit {
+  const _MonthlyProfit({required this.monthKey, this.totalProfit = 0, this.totalOrders = 0, this.totalRevenue = 0});
+  factory _MonthlyProfit.fromJson(Map<String, dynamic> json) => _$MonthlyProfitFromJson(json);
 
-  @override
-  final String monthKey;
-// "YYYY-MM"
-  @override
-  @JsonKey()
-  final num totalProfit;
-  @override
-  @JsonKey()
-  final int totalOrders;
-  @override
-  @JsonKey()
-  final num totalRevenue;
+@override final  String monthKey;
+@override@JsonKey() final  num totalProfit;
+@override@JsonKey() final  int totalOrders;
+@override@JsonKey() final  num totalRevenue;
 
-  @override
-  String toString() {
-    return 'MonthlyProfit(monthKey: $monthKey, totalProfit: $totalProfit, totalOrders: $totalOrders, totalRevenue: $totalRevenue)';
-  }
+/// Create a copy of MonthlyProfit
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MonthlyProfitCopyWith<_MonthlyProfit> get copyWith => __$MonthlyProfitCopyWithImpl<_MonthlyProfit>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$MonthlyProfitImpl &&
-            (identical(other.monthKey, monthKey) ||
-                other.monthKey == monthKey) &&
-            (identical(other.totalProfit, totalProfit) ||
-                other.totalProfit == totalProfit) &&
-            (identical(other.totalOrders, totalOrders) ||
-                other.totalOrders == totalOrders) &&
-            (identical(other.totalRevenue, totalRevenue) ||
-                other.totalRevenue == totalRevenue));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, monthKey, totalProfit, totalOrders, totalRevenue);
-
-  /// Create a copy of MonthlyProfit
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$MonthlyProfitImplCopyWith<_$MonthlyProfitImpl> get copyWith =>
-      __$$MonthlyProfitImplCopyWithImpl<_$MonthlyProfitImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$MonthlyProfitImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$MonthlyProfitToJson(this, );
 }
 
-abstract class _MonthlyProfit implements MonthlyProfit {
-  const factory _MonthlyProfit(
-      {required final String monthKey,
-      final num totalProfit,
-      final int totalOrders,
-      final num totalRevenue}) = _$MonthlyProfitImpl;
-
-  factory _MonthlyProfit.fromJson(Map<String, dynamic> json) =
-      _$MonthlyProfitImpl.fromJson;
-
-  @override
-  String get monthKey; // "YYYY-MM"
-  @override
-  num get totalProfit;
-  @override
-  int get totalOrders;
-  @override
-  num get totalRevenue;
-
-  /// Create a copy of MonthlyProfit
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MonthlyProfitImplCopyWith<_$MonthlyProfitImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MonthlyProfit&&(identical(other.monthKey, monthKey) || other.monthKey == monthKey)&&(identical(other.totalProfit, totalProfit) || other.totalProfit == totalProfit)&&(identical(other.totalOrders, totalOrders) || other.totalOrders == totalOrders)&&(identical(other.totalRevenue, totalRevenue) || other.totalRevenue == totalRevenue));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,monthKey,totalProfit,totalOrders,totalRevenue);
+
+@override
+String toString() {
+  return 'MonthlyProfit(monthKey: $monthKey, totalProfit: $totalProfit, totalOrders: $totalOrders, totalRevenue: $totalRevenue)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MonthlyProfitCopyWith<$Res> implements $MonthlyProfitCopyWith<$Res> {
+  factory _$MonthlyProfitCopyWith(_MonthlyProfit value, $Res Function(_MonthlyProfit) _then) = __$MonthlyProfitCopyWithImpl;
+@override @useResult
+$Res call({
+ String monthKey, num totalProfit, int totalOrders, num totalRevenue
+});
+
+
+
+
+}
+/// @nodoc
+class __$MonthlyProfitCopyWithImpl<$Res>
+    implements _$MonthlyProfitCopyWith<$Res> {
+  __$MonthlyProfitCopyWithImpl(this._self, this._then);
+
+  final _MonthlyProfit _self;
+  final $Res Function(_MonthlyProfit) _then;
+
+/// Create a copy of MonthlyProfit
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? monthKey = null,Object? totalProfit = null,Object? totalOrders = null,Object? totalRevenue = null,}) {
+  return _then(_MonthlyProfit(
+monthKey: null == monthKey ? _self.monthKey : monthKey // ignore: cast_nullable_to_non_nullable
+as String,totalProfit: null == totalProfit ? _self.totalProfit : totalProfit // ignore: cast_nullable_to_non_nullable
+as num,totalOrders: null == totalOrders ? _self.totalOrders : totalOrders // ignore: cast_nullable_to_non_nullable
+as int,totalRevenue: null == totalRevenue ? _self.totalRevenue : totalRevenue // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
+}
+
+
+}
+
+// dart format on

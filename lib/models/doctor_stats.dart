@@ -9,7 +9,7 @@ part 'doctor_stats.g.dart';
 /// (onOrderCreated / onPaymentCreated) via FieldValue.increment. Never write
 /// these fields directly from the client.
 @freezed
-class DoctorStats with _$DoctorStats {
+abstract class DoctorStats with _$DoctorStats {
   const factory DoctorStats({
     @Default(0) int totalOrders,
     @Default(0) num totalSpent,

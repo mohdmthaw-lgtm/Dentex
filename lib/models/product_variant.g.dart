@@ -6,8 +6,8 @@ part of 'product_variant.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ProductVariantImpl _$$ProductVariantImplFromJson(Map<String, dynamic> json) =>
-    _$ProductVariantImpl(
+_ProductVariant _$ProductVariantFromJson(Map<String, dynamic> json) =>
+    _ProductVariant(
       id: json['id'] as String,
       label: json['label'] as String,
       sellPrice: json['sellPrice'] as num,
@@ -20,8 +20,7 @@ _$ProductVariantImpl _$$ProductVariantImplFromJson(Map<String, dynamic> json) =>
       updatedAt: const TimestampConverter().fromJson(json['updatedAt']),
     );
 
-Map<String, dynamic> _$$ProductVariantImplToJson(
-        _$ProductVariantImpl instance) =>
+Map<String, dynamic> _$ProductVariantToJson(_ProductVariant instance) =>
     <String, dynamic>{
       'id': instance.id,
       'label': instance.label,
@@ -35,16 +34,15 @@ Map<String, dynamic> _$$ProductVariantImplToJson(
       'updatedAt': const TimestampConverter().toJson(instance.updatedAt),
     };
 
-_$VariantSummaryImpl _$$VariantSummaryImplFromJson(Map<String, dynamic> json) =>
-    _$VariantSummaryImpl(
+_VariantSummary _$VariantSummaryFromJson(Map<String, dynamic> json) =>
+    _VariantSummary(
       variantId: json['variantId'] as String,
       label: json['label'] as String,
       sellPrice: json['sellPrice'] as num,
       quantity: (json['quantity'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$VariantSummaryImplToJson(
-        _$VariantSummaryImpl instance) =>
+Map<String, dynamic> _$VariantSummaryToJson(_VariantSummary instance) =>
     <String, dynamic>{
       'variantId': instance.variantId,
       'label': instance.label,
@@ -52,14 +50,8 @@ Map<String, dynamic> _$$VariantSummaryImplToJson(
       'quantity': instance.quantity,
     };
 
-_$ProductVariantCostImpl _$$ProductVariantCostImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ProductVariantCostImpl(
-      costPrice: json['costPrice'] as num,
-    );
+_ProductVariantCost _$ProductVariantCostFromJson(Map<String, dynamic> json) =>
+    _ProductVariantCost(costPrice: json['costPrice'] as num);
 
-Map<String, dynamic> _$$ProductVariantCostImplToJson(
-        _$ProductVariantCostImpl instance) =>
-    <String, dynamic>{
-      'costPrice': instance.costPrice,
-    };
+Map<String, dynamic> _$ProductVariantCostToJson(_ProductVariantCost instance) =>
+    <String, dynamic>{'costPrice': instance.costPrice};

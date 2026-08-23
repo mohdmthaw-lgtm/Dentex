@@ -1,6 +1,6 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'offer.dart';
@@ -9,783 +9,599 @@ part of 'offer.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-OfferItem _$OfferItemFromJson(Map<String, dynamic> json) {
-  return _OfferItem.fromJson(json);
-}
 
 /// @nodoc
 mixin _$OfferItem {
-  String get productId => throw _privateConstructorUsedError;
-  String get productName =>
-      throw _privateConstructorUsedError; // Snapshotted at package-build time, same as productName, so the
-// offer-contents list can show a thumbnail without a live product
-// lookup even if the product is later edited or deleted.
-  String get productImageUrl => throw _privateConstructorUsedError;
-  String get variantId => throw _privateConstructorUsedError;
-  String get variantLabel => throw _privateConstructorUsedError;
-  num get unitPrice => throw _privateConstructorUsedError;
-  int get quantity => throw _privateConstructorUsedError;
+
+ String get productId; String get productName; String get productImageUrl; String get variantId; String get variantLabel; num get unitPrice; int get quantity;
+/// Create a copy of OfferItem
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$OfferItemCopyWith<OfferItem> get copyWith => _$OfferItemCopyWithImpl<OfferItem>(this as OfferItem, _$identity);
 
   /// Serializes this OfferItem to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of OfferItem
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $OfferItemCopyWith<OfferItem> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OfferItem&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productImageUrl, productImageUrl) || other.productImageUrl == productImageUrl)&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.variantLabel, variantLabel) || other.variantLabel == variantLabel)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,productId,productName,productImageUrl,variantId,variantLabel,unitPrice,quantity);
+
+@override
+String toString() {
+  return 'OfferItem(productId: $productId, productName: $productName, productImageUrl: $productImageUrl, variantId: $variantId, variantLabel: $variantLabel, unitPrice: $unitPrice, quantity: $quantity)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $OfferItemCopyWith<$Res> {
-  factory $OfferItemCopyWith(OfferItem value, $Res Function(OfferItem) then) =
-      _$OfferItemCopyWithImpl<$Res, OfferItem>;
-  @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      String productImageUrl,
-      String variantId,
-      String variantLabel,
-      num unitPrice,
-      int quantity});
-}
+abstract mixin class $OfferItemCopyWith<$Res>  {
+  factory $OfferItemCopyWith(OfferItem value, $Res Function(OfferItem) _then) = _$OfferItemCopyWithImpl;
+@useResult
+$Res call({
+ String productId, String productName, String productImageUrl, String variantId, String variantLabel, num unitPrice, int quantity
+});
 
+
+
+
+}
 /// @nodoc
-class _$OfferItemCopyWithImpl<$Res, $Val extends OfferItem>
+class _$OfferItemCopyWithImpl<$Res>
     implements $OfferItemCopyWith<$Res> {
-  _$OfferItemCopyWithImpl(this._value, this._then);
+  _$OfferItemCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final OfferItem _self;
+  final $Res Function(OfferItem) _then;
 
-  /// Create a copy of OfferItem
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? productId = null,
-    Object? productName = null,
-    Object? productImageUrl = null,
-    Object? variantId = null,
-    Object? variantLabel = null,
-    Object? unitPrice = null,
-    Object? quantity = null,
-  }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productImageUrl: null == productImageUrl
-          ? _value.productImageUrl
-          : productImageUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      variantId: null == variantId
-          ? _value.variantId
-          : variantId // ignore: cast_nullable_to_non_nullable
-              as String,
-      variantLabel: null == variantLabel
-          ? _value.variantLabel
-          : variantLabel // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as num,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
+/// Create a copy of OfferItem
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? productId = null,Object? productName = null,Object? productImageUrl = null,Object? variantId = null,Object? variantLabel = null,Object? unitPrice = null,Object? quantity = null,}) {
+  return _then(OfferItem(
+productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
+as String,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
+as String,productImageUrl: null == productImageUrl ? _self.productImageUrl : productImageUrl // ignore: cast_nullable_to_non_nullable
+as String,variantId: null == variantId ? _self.variantId : variantId // ignore: cast_nullable_to_non_nullable
+as String,variantLabel: null == variantLabel ? _self.variantLabel : variantLabel // ignore: cast_nullable_to_non_nullable
+as String,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
+as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
 }
 
-/// @nodoc
-abstract class _$$OfferItemImplCopyWith<$Res>
-    implements $OfferItemCopyWith<$Res> {
-  factory _$$OfferItemImplCopyWith(
-          _$OfferItemImpl value, $Res Function(_$OfferItemImpl) then) =
-      __$$OfferItemImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      String productImageUrl,
-      String variantId,
-      String variantLabel,
-      num unitPrice,
-      int quantity});
 }
 
-/// @nodoc
-class __$$OfferItemImplCopyWithImpl<$Res>
-    extends _$OfferItemCopyWithImpl<$Res, _$OfferItemImpl>
-    implements _$$OfferItemImplCopyWith<$Res> {
-  __$$OfferItemImplCopyWithImpl(
-      _$OfferItemImpl _value, $Res Function(_$OfferItemImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of OfferItem
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? productId = null,
-    Object? productName = null,
-    Object? productImageUrl = null,
-    Object? variantId = null,
-    Object? variantLabel = null,
-    Object? unitPrice = null,
-    Object? quantity = null,
-  }) {
-    return _then(_$OfferItemImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productImageUrl: null == productImageUrl
-          ? _value.productImageUrl
-          : productImageUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      variantId: null == variantId
-          ? _value.variantId
-          : variantId // ignore: cast_nullable_to_non_nullable
-              as String,
-      variantLabel: null == variantLabel
-          ? _value.variantLabel
-          : variantLabel // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as num,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
+/// Adds pattern-matching-related methods to [OfferItem].
+extension OfferItemPatterns on OfferItem {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _OfferItem value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _OfferItem() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _OfferItem value)  $default,){
+final _that = this;
+switch (_that) {
+case _OfferItem():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _OfferItem value)?  $default,){
+final _that = this;
+switch (_that) {
+case _OfferItem() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String productId,  String productName,  String productImageUrl,  String variantId,  String variantLabel,  num unitPrice,  int quantity)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _OfferItem() when $default != null:
+return $default(_that.productId,_that.productName,_that.productImageUrl,_that.variantId,_that.variantLabel,_that.unitPrice,_that.quantity);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String productId,  String productName,  String productImageUrl,  String variantId,  String variantLabel,  num unitPrice,  int quantity)  $default,) {final _that = this;
+switch (_that) {
+case _OfferItem():
+return $default(_that.productId,_that.productName,_that.productImageUrl,_that.variantId,_that.variantLabel,_that.unitPrice,_that.quantity);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String productId,  String productName,  String productImageUrl,  String variantId,  String variantLabel,  num unitPrice,  int quantity)?  $default,) {final _that = this;
+switch (_that) {
+case _OfferItem() when $default != null:
+return $default(_that.productId,_that.productName,_that.productImageUrl,_that.variantId,_that.variantLabel,_that.unitPrice,_that.quantity);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$OfferItemImpl extends _OfferItem {
-  const _$OfferItemImpl(
-      {required this.productId,
-      required this.productName,
-      this.productImageUrl = '',
-      required this.variantId,
-      required this.variantLabel,
-      required this.unitPrice,
-      required this.quantity})
-      : super._();
 
-  factory _$OfferItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfferItemImplFromJson(json);
+class _OfferItem extends OfferItem {
+  const _OfferItem({required this.productId, required this.productName, this.productImageUrl = '', required this.variantId, required this.variantLabel, required this.unitPrice, required this.quantity}): super._();
+  factory _OfferItem.fromJson(Map<String, dynamic> json) => _$OfferItemFromJson(json);
 
-  @override
-  final String productId;
-  @override
-  final String productName;
-// Snapshotted at package-build time, same as productName, so the
-// offer-contents list can show a thumbnail without a live product
-// lookup even if the product is later edited or deleted.
-  @override
-  @JsonKey()
-  final String productImageUrl;
-  @override
-  final String variantId;
-  @override
-  final String variantLabel;
-  @override
-  final num unitPrice;
-  @override
-  final int quantity;
+@override final  String productId;
+@override final  String productName;
+@override@JsonKey() final  String productImageUrl;
+@override final  String variantId;
+@override final  String variantLabel;
+@override final  num unitPrice;
+@override final  int quantity;
 
-  @override
-  String toString() {
-    return 'OfferItem(productId: $productId, productName: $productName, productImageUrl: $productImageUrl, variantId: $variantId, variantLabel: $variantLabel, unitPrice: $unitPrice, quantity: $quantity)';
-  }
+/// Create a copy of OfferItem
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$OfferItemCopyWith<_OfferItem> get copyWith => __$OfferItemCopyWithImpl<_OfferItem>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$OfferItemImpl &&
-            (identical(other.productId, productId) ||
-                other.productId == productId) &&
-            (identical(other.productName, productName) ||
-                other.productName == productName) &&
-            (identical(other.productImageUrl, productImageUrl) ||
-                other.productImageUrl == productImageUrl) &&
-            (identical(other.variantId, variantId) ||
-                other.variantId == variantId) &&
-            (identical(other.variantLabel, variantLabel) ||
-                other.variantLabel == variantLabel) &&
-            (identical(other.unitPrice, unitPrice) ||
-                other.unitPrice == unitPrice) &&
-            (identical(other.quantity, quantity) ||
-                other.quantity == quantity));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, productId, productName,
-      productImageUrl, variantId, variantLabel, unitPrice, quantity);
-
-  /// Create a copy of OfferItem
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$OfferItemImplCopyWith<_$OfferItemImpl> get copyWith =>
-      __$$OfferItemImplCopyWithImpl<_$OfferItemImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfferItemImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$OfferItemToJson(this, );
 }
 
-abstract class _OfferItem extends OfferItem {
-  const factory _OfferItem(
-      {required final String productId,
-      required final String productName,
-      final String productImageUrl,
-      required final String variantId,
-      required final String variantLabel,
-      required final num unitPrice,
-      required final int quantity}) = _$OfferItemImpl;
-  const _OfferItem._() : super._();
-
-  factory _OfferItem.fromJson(Map<String, dynamic> json) =
-      _$OfferItemImpl.fromJson;
-
-  @override
-  String get productId;
-  @override
-  String
-      get productName; // Snapshotted at package-build time, same as productName, so the
-// offer-contents list can show a thumbnail without a live product
-// lookup even if the product is later edited or deleted.
-  @override
-  String get productImageUrl;
-  @override
-  String get variantId;
-  @override
-  String get variantLabel;
-  @override
-  num get unitPrice;
-  @override
-  int get quantity;
-
-  /// Create a copy of OfferItem
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OfferItemImplCopyWith<_$OfferItemImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OfferItem&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productImageUrl, productImageUrl) || other.productImageUrl == productImageUrl)&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.variantLabel, variantLabel) || other.variantLabel == variantLabel)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity));
 }
 
-Offer _$OfferFromJson(Map<String, dynamic> json) {
-  return _Offer.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,productId,productName,productImageUrl,variantId,variantLabel,unitPrice,quantity);
+
+@override
+String toString() {
+  return 'OfferItem(productId: $productId, productName: $productName, productImageUrl: $productImageUrl, variantId: $variantId, variantLabel: $variantLabel, unitPrice: $unitPrice, quantity: $quantity)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$OfferItemCopyWith<$Res> implements $OfferItemCopyWith<$Res> {
+  factory _$OfferItemCopyWith(_OfferItem value, $Res Function(_OfferItem) _then) = __$OfferItemCopyWithImpl;
+@override @useResult
+$Res call({
+ String productId, String productName, String productImageUrl, String variantId, String variantLabel, num unitPrice, int quantity
+});
+
+
+
+
+}
+/// @nodoc
+class __$OfferItemCopyWithImpl<$Res>
+    implements _$OfferItemCopyWith<$Res> {
+  __$OfferItemCopyWithImpl(this._self, this._then);
+
+  final _OfferItem _self;
+  final $Res Function(_OfferItem) _then;
+
+/// Create a copy of OfferItem
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? productId = null,Object? productName = null,Object? productImageUrl = null,Object? variantId = null,Object? variantLabel = null,Object? unitPrice = null,Object? quantity = null,}) {
+  return _then(_OfferItem(
+productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
+as String,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
+as String,productImageUrl: null == productImageUrl ? _self.productImageUrl : productImageUrl // ignore: cast_nullable_to_non_nullable
+as String,variantId: null == variantId ? _self.variantId : variantId // ignore: cast_nullable_to_non_nullable
+as String,variantLabel: null == variantLabel ? _self.variantLabel : variantLabel // ignore: cast_nullable_to_non_nullable
+as String,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
+as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$Offer {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get imageUrl => throw _privateConstructorUsedError;
-  String get imagePath => throw _privateConstructorUsedError;
-  List<OfferItem> get items => throw _privateConstructorUsedError;
-  num get offerPrice => throw _privateConstructorUsedError;
-  bool get isActive => throw _privateConstructorUsedError;
-  @NullableTimestampConverter()
-  DateTime? get startDate => throw _privateConstructorUsedError;
-  @NullableTimestampConverter()
-  DateTime? get endDate => throw _privateConstructorUsedError;
-  @TimestampConverter()
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  int get timesSold => throw _privateConstructorUsedError;
-  int get unitsSold => throw _privateConstructorUsedError;
-  num get totalRevenue => throw _privateConstructorUsedError;
-  num get totalDiscountGiven => throw _privateConstructorUsedError;
+
+ String get id; String get title; String get description; String get imageUrl; String get imagePath; List<OfferItem> get items; num get offerPrice; bool get isActive;@NullableTimestampConverter() DateTime? get startDate;@NullableTimestampConverter() DateTime? get endDate;@TimestampConverter() DateTime? get createdAt; int get timesSold; int get unitsSold; num get totalRevenue; num get totalDiscountGiven;
+/// Create a copy of Offer
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$OfferCopyWith<Offer> get copyWith => _$OfferCopyWithImpl<Offer>(this as Offer, _$identity);
 
   /// Serializes this Offer to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Offer
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $OfferCopyWith<Offer> get copyWith => throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Offer&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.offerPrice, offerPrice) || other.offerPrice == offerPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.timesSold, timesSold) || other.timesSold == timesSold)&&(identical(other.unitsSold, unitsSold) || other.unitsSold == unitsSold)&&(identical(other.totalRevenue, totalRevenue) || other.totalRevenue == totalRevenue)&&(identical(other.totalDiscountGiven, totalDiscountGiven) || other.totalDiscountGiven == totalDiscountGiven));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,title,description,imageUrl,imagePath,const DeepCollectionEquality().hash(items),offerPrice,isActive,startDate,endDate,createdAt,timesSold,unitsSold,totalRevenue,totalDiscountGiven);
+
+@override
+String toString() {
+  return 'Offer(id: $id, title: $title, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, items: $items, offerPrice: $offerPrice, isActive: $isActive, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, timesSold: $timesSold, unitsSold: $unitsSold, totalRevenue: $totalRevenue, totalDiscountGiven: $totalDiscountGiven)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $OfferCopyWith<$Res> {
-  factory $OfferCopyWith(Offer value, $Res Function(Offer) then) =
-      _$OfferCopyWithImpl<$Res, Offer>;
-  @useResult
-  $Res call(
-      {String id,
-      String title,
-      String description,
-      String imageUrl,
-      String imagePath,
-      List<OfferItem> items,
-      num offerPrice,
-      bool isActive,
-      @NullableTimestampConverter() DateTime? startDate,
-      @NullableTimestampConverter() DateTime? endDate,
-      @TimestampConverter() DateTime? createdAt,
-      int timesSold,
-      int unitsSold,
-      num totalRevenue,
-      num totalDiscountGiven});
-}
+abstract mixin class $OfferCopyWith<$Res>  {
+  factory $OfferCopyWith(Offer value, $Res Function(Offer) _then) = _$OfferCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, String description, String imageUrl, String imagePath, List<OfferItem> items, num offerPrice, bool isActive,@NullableTimestampConverter() DateTime? startDate,@NullableTimestampConverter() DateTime? endDate,@TimestampConverter() DateTime? createdAt, int timesSold, int unitsSold, num totalRevenue, num totalDiscountGiven
+});
 
+
+
+
+}
 /// @nodoc
-class _$OfferCopyWithImpl<$Res, $Val extends Offer>
+class _$OfferCopyWithImpl<$Res>
     implements $OfferCopyWith<$Res> {
-  _$OfferCopyWithImpl(this._value, this._then);
+  _$OfferCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Offer _self;
+  final $Res Function(Offer) _then;
 
-  /// Create a copy of Offer
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? description = null,
-    Object? imageUrl = null,
-    Object? imagePath = null,
-    Object? items = null,
-    Object? offerPrice = null,
-    Object? isActive = null,
-    Object? startDate = freezed,
-    Object? endDate = freezed,
-    Object? createdAt = freezed,
-    Object? timesSold = null,
-    Object? unitsSold = null,
-    Object? totalRevenue = null,
-    Object? totalDiscountGiven = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      imageUrl: null == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      imagePath: null == imagePath
-          ? _value.imagePath
-          : imagePath // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OfferItem>,
-      offerPrice: null == offerPrice
-          ? _value.offerPrice
-          : offerPrice // ignore: cast_nullable_to_non_nullable
-              as num,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      timesSold: null == timesSold
-          ? _value.timesSold
-          : timesSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitsSold: null == unitsSold
-          ? _value.unitsSold
-          : unitsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalDiscountGiven: null == totalDiscountGiven
-          ? _value.totalDiscountGiven
-          : totalDiscountGiven // ignore: cast_nullable_to_non_nullable
-              as num,
-    ) as $Val);
-  }
+/// Create a copy of Offer
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? items = null,Object? offerPrice = null,Object? isActive = null,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = freezed,Object? timesSold = null,Object? unitsSold = null,Object? totalRevenue = null,Object? totalDiscountGiven = null,}) {
+  return _then(Offer(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<OfferItem>,offerPrice: null == offerPrice ? _self.offerPrice : offerPrice // ignore: cast_nullable_to_non_nullable
+as num,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,timesSold: null == timesSold ? _self.timesSold : timesSold // ignore: cast_nullable_to_non_nullable
+as int,unitsSold: null == unitsSold ? _self.unitsSold : unitsSold // ignore: cast_nullable_to_non_nullable
+as int,totalRevenue: null == totalRevenue ? _self.totalRevenue : totalRevenue // ignore: cast_nullable_to_non_nullable
+as num,totalDiscountGiven: null == totalDiscountGiven ? _self.totalDiscountGiven : totalDiscountGiven // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
 }
 
-/// @nodoc
-abstract class _$$OfferImplCopyWith<$Res> implements $OfferCopyWith<$Res> {
-  factory _$$OfferImplCopyWith(
-          _$OfferImpl value, $Res Function(_$OfferImpl) then) =
-      __$$OfferImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id,
-      String title,
-      String description,
-      String imageUrl,
-      String imagePath,
-      List<OfferItem> items,
-      num offerPrice,
-      bool isActive,
-      @NullableTimestampConverter() DateTime? startDate,
-      @NullableTimestampConverter() DateTime? endDate,
-      @TimestampConverter() DateTime? createdAt,
-      int timesSold,
-      int unitsSold,
-      num totalRevenue,
-      num totalDiscountGiven});
 }
 
-/// @nodoc
-class __$$OfferImplCopyWithImpl<$Res>
-    extends _$OfferCopyWithImpl<$Res, _$OfferImpl>
-    implements _$$OfferImplCopyWith<$Res> {
-  __$$OfferImplCopyWithImpl(
-      _$OfferImpl _value, $Res Function(_$OfferImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of Offer
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? description = null,
-    Object? imageUrl = null,
-    Object? imagePath = null,
-    Object? items = null,
-    Object? offerPrice = null,
-    Object? isActive = null,
-    Object? startDate = freezed,
-    Object? endDate = freezed,
-    Object? createdAt = freezed,
-    Object? timesSold = null,
-    Object? unitsSold = null,
-    Object? totalRevenue = null,
-    Object? totalDiscountGiven = null,
-  }) {
-    return _then(_$OfferImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      imageUrl: null == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      imagePath: null == imagePath
-          ? _value.imagePath
-          : imagePath // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OfferItem>,
-      offerPrice: null == offerPrice
-          ? _value.offerPrice
-          : offerPrice // ignore: cast_nullable_to_non_nullable
-              as num,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      timesSold: null == timesSold
-          ? _value.timesSold
-          : timesSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitsSold: null == unitsSold
-          ? _value.unitsSold
-          : unitsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as num,
-      totalDiscountGiven: null == totalDiscountGiven
-          ? _value.totalDiscountGiven
-          : totalDiscountGiven // ignore: cast_nullable_to_non_nullable
-              as num,
-    ));
-  }
+/// Adds pattern-matching-related methods to [Offer].
+extension OfferPatterns on Offer {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Offer value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Offer() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Offer value)  $default,){
+final _that = this;
+switch (_that) {
+case _Offer():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Offer value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Offer() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String imageUrl,  String imagePath,  List<OfferItem> items,  num offerPrice,  bool isActive, @NullableTimestampConverter()  DateTime? startDate, @NullableTimestampConverter()  DateTime? endDate, @TimestampConverter()  DateTime? createdAt,  int timesSold,  int unitsSold,  num totalRevenue,  num totalDiscountGiven)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Offer() when $default != null:
+return $default(_that.id,_that.title,_that.description,_that.imageUrl,_that.imagePath,_that.items,_that.offerPrice,_that.isActive,_that.startDate,_that.endDate,_that.createdAt,_that.timesSold,_that.unitsSold,_that.totalRevenue,_that.totalDiscountGiven);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String imageUrl,  String imagePath,  List<OfferItem> items,  num offerPrice,  bool isActive, @NullableTimestampConverter()  DateTime? startDate, @NullableTimestampConverter()  DateTime? endDate, @TimestampConverter()  DateTime? createdAt,  int timesSold,  int unitsSold,  num totalRevenue,  num totalDiscountGiven)  $default,) {final _that = this;
+switch (_that) {
+case _Offer():
+return $default(_that.id,_that.title,_that.description,_that.imageUrl,_that.imagePath,_that.items,_that.offerPrice,_that.isActive,_that.startDate,_that.endDate,_that.createdAt,_that.timesSold,_that.unitsSold,_that.totalRevenue,_that.totalDiscountGiven);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String imageUrl,  String imagePath,  List<OfferItem> items,  num offerPrice,  bool isActive, @NullableTimestampConverter()  DateTime? startDate, @NullableTimestampConverter()  DateTime? endDate, @TimestampConverter()  DateTime? createdAt,  int timesSold,  int unitsSold,  num totalRevenue,  num totalDiscountGiven)?  $default,) {final _that = this;
+switch (_that) {
+case _Offer() when $default != null:
+return $default(_that.id,_that.title,_that.description,_that.imageUrl,_that.imagePath,_that.items,_that.offerPrice,_that.isActive,_that.startDate,_that.endDate,_that.createdAt,_that.timesSold,_that.unitsSold,_that.totalRevenue,_that.totalDiscountGiven);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$OfferImpl extends _Offer {
-  const _$OfferImpl(
-      {required this.id,
-      required this.title,
-      this.description = '',
-      this.imageUrl = '',
-      this.imagePath = '',
-      final List<OfferItem> items = const <OfferItem>[],
-      this.offerPrice = 0,
-      this.isActive = true,
-      @NullableTimestampConverter() this.startDate,
-      @NullableTimestampConverter() this.endDate,
-      @TimestampConverter() this.createdAt,
-      this.timesSold = 0,
-      this.unitsSold = 0,
-      this.totalRevenue = 0,
-      this.totalDiscountGiven = 0})
-      : _items = items,
-        super._();
 
-  factory _$OfferImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfferImplFromJson(json);
+class _Offer extends Offer {
+  const _Offer({required this.id, required this.title, this.description = '', this.imageUrl = '', this.imagePath = '',  List<OfferItem> items = const <OfferItem>[], this.offerPrice = 0, this.isActive = true, @NullableTimestampConverter() this.startDate, @NullableTimestampConverter() this.endDate, @TimestampConverter() this.createdAt, this.timesSold = 0, this.unitsSold = 0, this.totalRevenue = 0, this.totalDiscountGiven = 0}): _items = items,super._();
+  factory _Offer.fromJson(Map<String, dynamic> json) => _$OfferFromJson(json);
 
-  @override
-  final String id;
-  @override
-  final String title;
-  @override
-  @JsonKey()
-  final String description;
-  @override
-  @JsonKey()
-  final String imageUrl;
-  @override
-  @JsonKey()
-  final String imagePath;
-  final List<OfferItem> _items;
-  @override
-  @JsonKey()
-  List<OfferItem> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
-  }
-
-  @override
-  @JsonKey()
-  final num offerPrice;
-  @override
-  @JsonKey()
-  final bool isActive;
-  @override
-  @NullableTimestampConverter()
-  final DateTime? startDate;
-  @override
-  @NullableTimestampConverter()
-  final DateTime? endDate;
-  @override
-  @TimestampConverter()
-  final DateTime? createdAt;
-  @override
-  @JsonKey()
-  final int timesSold;
-  @override
-  @JsonKey()
-  final int unitsSold;
-  @override
-  @JsonKey()
-  final num totalRevenue;
-  @override
-  @JsonKey()
-  final num totalDiscountGiven;
-
-  @override
-  String toString() {
-    return 'Offer(id: $id, title: $title, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, items: $items, offerPrice: $offerPrice, isActive: $isActive, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, timesSold: $timesSold, unitsSold: $unitsSold, totalRevenue: $totalRevenue, totalDiscountGiven: $totalDiscountGiven)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$OfferImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
-            (identical(other.imagePath, imagePath) ||
-                other.imagePath == imagePath) &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
-            (identical(other.offerPrice, offerPrice) ||
-                other.offerPrice == offerPrice) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
-            (identical(other.startDate, startDate) ||
-                other.startDate == startDate) &&
-            (identical(other.endDate, endDate) || other.endDate == endDate) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.timesSold, timesSold) ||
-                other.timesSold == timesSold) &&
-            (identical(other.unitsSold, unitsSold) ||
-                other.unitsSold == unitsSold) &&
-            (identical(other.totalRevenue, totalRevenue) ||
-                other.totalRevenue == totalRevenue) &&
-            (identical(other.totalDiscountGiven, totalDiscountGiven) ||
-                other.totalDiscountGiven == totalDiscountGiven));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      title,
-      description,
-      imageUrl,
-      imagePath,
-      const DeepCollectionEquality().hash(_items),
-      offerPrice,
-      isActive,
-      startDate,
-      endDate,
-      createdAt,
-      timesSold,
-      unitsSold,
-      totalRevenue,
-      totalDiscountGiven);
-
-  /// Create a copy of Offer
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$OfferImplCopyWith<_$OfferImpl> get copyWith =>
-      __$$OfferImplCopyWithImpl<_$OfferImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfferImplToJson(
-      this,
-    );
-  }
+@override final  String id;
+@override final  String title;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String imageUrl;
+@override@JsonKey() final  String imagePath;
+ final  List<OfferItem> _items;
+@override@JsonKey() List<OfferItem> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_items);
 }
 
-abstract class _Offer extends Offer {
-  const factory _Offer(
-      {required final String id,
-      required final String title,
-      final String description,
-      final String imageUrl,
-      final String imagePath,
-      final List<OfferItem> items,
-      final num offerPrice,
-      final bool isActive,
-      @NullableTimestampConverter() final DateTime? startDate,
-      @NullableTimestampConverter() final DateTime? endDate,
-      @TimestampConverter() final DateTime? createdAt,
-      final int timesSold,
-      final int unitsSold,
-      final num totalRevenue,
-      final num totalDiscountGiven}) = _$OfferImpl;
-  const _Offer._() : super._();
+@override@JsonKey() final  num offerPrice;
+@override@JsonKey() final  bool isActive;
+@override@NullableTimestampConverter() final  DateTime? startDate;
+@override@NullableTimestampConverter() final  DateTime? endDate;
+@override@TimestampConverter() final  DateTime? createdAt;
+@override@JsonKey() final  int timesSold;
+@override@JsonKey() final  int unitsSold;
+@override@JsonKey() final  num totalRevenue;
+@override@JsonKey() final  num totalDiscountGiven;
 
-  factory _Offer.fromJson(Map<String, dynamic> json) = _$OfferImpl.fromJson;
+/// Create a copy of Offer
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$OfferCopyWith<_Offer> get copyWith => __$OfferCopyWithImpl<_Offer>(this, _$identity);
 
-  @override
-  String get id;
-  @override
-  String get title;
-  @override
-  String get description;
-  @override
-  String get imageUrl;
-  @override
-  String get imagePath;
-  @override
-  List<OfferItem> get items;
-  @override
-  num get offerPrice;
-  @override
-  bool get isActive;
-  @override
-  @NullableTimestampConverter()
-  DateTime? get startDate;
-  @override
-  @NullableTimestampConverter()
-  DateTime? get endDate;
-  @override
-  @TimestampConverter()
-  DateTime? get createdAt;
-  @override
-  int get timesSold;
-  @override
-  int get unitsSold;
-  @override
-  num get totalRevenue;
-  @override
-  num get totalDiscountGiven;
-
-  /// Create a copy of Offer
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OfferImplCopyWith<_$OfferImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+Map<String, dynamic> toJson() {
+  return _$OfferToJson(this, );
 }
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Offer&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.offerPrice, offerPrice) || other.offerPrice == offerPrice)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.timesSold, timesSold) || other.timesSold == timesSold)&&(identical(other.unitsSold, unitsSold) || other.unitsSold == unitsSold)&&(identical(other.totalRevenue, totalRevenue) || other.totalRevenue == totalRevenue)&&(identical(other.totalDiscountGiven, totalDiscountGiven) || other.totalDiscountGiven == totalDiscountGiven));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,title,description,imageUrl,imagePath,const DeepCollectionEquality().hash(_items),offerPrice,isActive,startDate,endDate,createdAt,timesSold,unitsSold,totalRevenue,totalDiscountGiven);
+
+@override
+String toString() {
+  return 'Offer(id: $id, title: $title, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, items: $items, offerPrice: $offerPrice, isActive: $isActive, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, timesSold: $timesSold, unitsSold: $unitsSold, totalRevenue: $totalRevenue, totalDiscountGiven: $totalDiscountGiven)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$OfferCopyWith<$Res> implements $OfferCopyWith<$Res> {
+  factory _$OfferCopyWith(_Offer value, $Res Function(_Offer) _then) = __$OfferCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, String description, String imageUrl, String imagePath, List<OfferItem> items, num offerPrice, bool isActive,@NullableTimestampConverter() DateTime? startDate,@NullableTimestampConverter() DateTime? endDate,@TimestampConverter() DateTime? createdAt, int timesSold, int unitsSold, num totalRevenue, num totalDiscountGiven
+});
+
+
+
+
+}
+/// @nodoc
+class __$OfferCopyWithImpl<$Res>
+    implements _$OfferCopyWith<$Res> {
+  __$OfferCopyWithImpl(this._self, this._then);
+
+  final _Offer _self;
+  final $Res Function(_Offer) _then;
+
+/// Create a copy of Offer
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? items = null,Object? offerPrice = null,Object? isActive = null,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = freezed,Object? timesSold = null,Object? unitsSold = null,Object? totalRevenue = null,Object? totalDiscountGiven = null,}) {
+  return _then(_Offer(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<OfferItem>,offerPrice: null == offerPrice ? _self.offerPrice : offerPrice // ignore: cast_nullable_to_non_nullable
+as num,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,timesSold: null == timesSold ? _self.timesSold : timesSold // ignore: cast_nullable_to_non_nullable
+as int,unitsSold: null == unitsSold ? _self.unitsSold : unitsSold // ignore: cast_nullable_to_non_nullable
+as int,totalRevenue: null == totalRevenue ? _self.totalRevenue : totalRevenue // ignore: cast_nullable_to_non_nullable
+as num,totalDiscountGiven: null == totalDiscountGiven ? _self.totalDiscountGiven : totalDiscountGiven // ignore: cast_nullable_to_non_nullable
+as num,
+  ));
+}
+
+
+}
+
+// dart format on

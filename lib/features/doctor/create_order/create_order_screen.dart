@@ -8,10 +8,14 @@ import '../../../core/constants/firestore_paths.dart';
 import '../../../core/constants/loyalty_tiers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/doctor_tier.dart';
+import '../../../core/utils/reorder_suggestions.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../models/consumption_mapping.dart';
 import '../../../models/order.dart';
+import '../../../models/patient.dart';
 import '../../../models/product.dart';
 import '../../../models/product_variant.dart';
+import '../../../models/user_profile.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/product_thumbnail.dart';
@@ -25,7 +29,13 @@ final _currency =
 /// Firestore rules, since costs live in an admin-only sibling path the
 /// doctor's credentials can't read at all).
 class CreateOrderScreen extends ConsumerStatefulWidget {
-  const CreateOrderScreen({super.key});
+  const CreateOrderScreen({super.key, this.profile});
+
+  // Nullable: this screen is reachable from a couple of dashboard entry
+  // points that may not always have the profile in hand yet. Reorder
+  // suggestions (see _ReorderSuggestionsBanner) simply don't show without
+  // it — everything else about ordering is unaffected.
+  final UserProfile? profile;
 
   @override
   ConsumerState<CreateOrderScreen> createState() => _CreateOrderScreenState();
@@ -202,6 +212,12 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
       appBar: AppBar(title: const Text('إنشاء طلبية')),
       body: Column(
         children: [
+          if (widget.profile != null)
+            _ReorderSuggestionsBanner(
+              profile: widget.profile!,
+              doctorOrders: _doctorOrders,
+              onAdd: (line) => setState(() => _cart.add(line)),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
             child: TextField(
@@ -303,6 +319,10 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                     ),
                     FilledButton(
                       onPressed: _submitting ? null : () => _showCartSheet(context),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                       child: const Text('مراجعة الطلبية'),
                     ),
                   ],
@@ -370,15 +390,22 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                 ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: FilledButton(
-                  onPressed: _cart.isEmpty || _submitting
-                      ? null
-                      : () {
-                          Navigator.pop(context);
-                          _submitOrder();
-                        },
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: Text('تأكيد الطلبية (${_currency.format(_total)})'),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _cart.isEmpty || _submitting
+                        ? null
+                        : () {
+                            Navigator.pop(context);
+                            _submitOrder();
+                          },
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: Text('تأكيد الطلبية (${_currency.format(_total)})'),
+                  ),
                 ),
               ),
             ],
@@ -594,14 +621,19 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
+                                icon: const Icon(Icons.remove_circle_outline, size: 28),
                                 onPressed: qty > 0
                                     ? () => setState(() => _quantities[v.id] = qty - 1)
                                     : null,
                               ),
-                              Text('$qty', style: Theme.of(context).textTheme.titleMedium),
+                              Text('$qty',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold)),
                               IconButton(
-                                icon: const Icon(Icons.add_circle_outline, color: AppTheme.primary),
+                                icon: const Icon(Icons.add_circle_outline,
+                                    color: AppTheme.primary, size: 28),
                                 onPressed: () => setState(() => _quantities[v.id] = qty + 1),
                               ),
                             ],
@@ -611,15 +643,135 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
                   );
                 }),
                 const SizedBox(height: 8),
-                FilledButton(
-                  onPressed: _selectedCount > 0 ? _submit : null,
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: Text(_selectedCount > 0
-                      ? 'إضافة $_selectedCount مواصفة إلى السلة'
-                      : 'إضافة إلى السلة'),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _selectedCount > 0 ? _submit : null,
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: Text(_selectedCount > 0
+                        ? 'إضافة $_selectedCount مواصفة إلى السلة'
+                        : 'إضافة إلى السلة'),
+                  ),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "الربط التجاري" — combines this owner's consumption mappings + all
+/// recorded visits with the doctor's own order history (already loaded by
+/// the parent screen for tier computation) to surface reorder prompts
+/// based on actual clinic usage. See computeReorderSuggestions for the
+/// "consumed since last order" heuristic.
+class _ReorderSuggestionsBanner extends ConsumerWidget {
+  const _ReorderSuggestionsBanner({
+    required this.profile,
+    required this.doctorOrders,
+    required this.onAdd,
+  });
+
+  final UserProfile profile;
+  final List<Order> doctorOrders;
+  final ValueChanged<CartLine> onAdd;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ownerId = profile.clinicOwnerId;
+    final ownerType = profile.clinicOwnerType;
+
+    return StreamBuilder<List<ConsumptionMapping>>(
+      // Global, admin-managed catalog data (see ConsumptionMapping's doc
+      // comment) — every doctor reads the same list, only the visits/
+      // orders side below is scoped to this owner.
+      stream: ref.watch(consumptionMappingRepositoryProvider).watchAllMappings(),
+      builder: (context, mappingsSnap) {
+        final mappings = mappingsSnap.data ?? [];
+        if (mappings.isEmpty) return const SizedBox.shrink();
+
+        return StreamBuilder<List<Visit>>(
+          stream: ref.watch(patientRepositoryProvider).watchVisitsForOwner(ownerId, ownerType),
+          builder: (context, visitsSnap) {
+            final suggestions =
+                computeReorderSuggestions(mappings, visitsSnap.data ?? [], doctorOrders);
+            if (suggestions.isEmpty) return const SizedBox.shrink();
+
+            return Container(
+              margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.warning.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.warning.withOpacity(0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.lightbulb_outline, color: AppTheme.warning, size: 18),
+                      SizedBox(width: 6),
+                      Text('بناءً على استخدامك الفعلي', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ...suggestions.map((s) => _SuggestionRow(suggestion: s, onAdd: onAdd)),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _SuggestionRow extends ConsumerWidget {
+  const _SuggestionRow({required this.suggestion, required this.onAdd});
+
+  final ReorderSuggestion suggestion;
+  final ValueChanged<CartLine> onAdd;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mapping = suggestion.mapping;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${mapping.productName} (${mapping.variantLabel}) — استهلكت ما يقارب آخر طلبية',
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final variants =
+                  await ref.read(productRepositoryProvider).watchVariants(mapping.productId).first;
+              ProductVariant? variant;
+              for (final v in variants) {
+                if (v.id == mapping.variantId) variant = v;
+              }
+              if (variant == null) return;
+              onAdd(CartLine(
+                productId: mapping.productId,
+                productName: mapping.productName,
+                productImageUrl: variant.imageUrl,
+                variantId: variant.id,
+                variantLabel: variant.label,
+                unitSellPrice: variant.sellPrice,
+                quantity: suggestion.lastOrderedQuantity.round(),
+              ));
+            },
+            child: const Text('أضف للطلب'),
           ),
         ],
       ),

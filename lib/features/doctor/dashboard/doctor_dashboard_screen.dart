@@ -114,45 +114,46 @@ class _DoctorDashboardBody extends ConsumerWidget {
               StatTileRow(tiles: [
                 // List order is mirrored by the RTL grid: item 1
                 // lands in the rightmost cell, item 2 to its left.
-                _TappableStatTile(
-                  label: 'متأخر عليّ',
-                  value: _currency.format(profile?.stats.totalDebt ?? 0),
-                  icon: Icons.warning_amber_outlined,
-                  color: AppTheme.warning,
-                  onTap: () => context.push('/doctor/orders?filter=debt'),
-                ),
                 _ActionTile(
                   label: 'فواتيري / طلبياتي',
-                  icon: Icons.receipt_long,
-                  color: AppTheme.primary,
+                  emoji: '🧾',
+                  warning: (profile?.stats.totalDebt ?? 0) > 0
+                      ? '⚠️ ${_currency.format(profile?.stats.totalDebt ?? 0)} متأخر عليّ'
+                      : null,
                   onTap: () => context.push('/doctor/orders'),
                 ),
                 _ActionTile(
-                  label: 'العروض',
-                  icon: Icons.local_offer_outlined,
-                  color: AppTheme.warning,
-                  onTap: () => context.push('/doctor/offers'),
-                ),
-                _ActionTile(
-                  label: 'كافة المنتجات',
-                  icon: Icons.inventory_2_outlined,
-                  color: AppTheme.primary,
-                  onTap: () => context.push('/doctor/create-order'),
+                  label: 'المنتجات والعروض',
+                  emoji: '📦',
+                  onTap: () => context.push('/doctor/create-order', extra: profile),
                 ),
               ]),
+              const SizedBox(height: 4),
+              _CreateOrderCta(onTap: () => context.push('/doctor/create-order', extra: profile)),
+              const SizedBox(height: 24),
+              Text('قسم الإدارة', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
-              SizedBox(
-                height: 120,
-                child: FilledButton.icon(
-                  onPressed: () => context.push('/doctor/create-order'),
-                  icon: const Icon(Icons.add_shopping_cart, size: 32),
-                  label: const Text('إنشاء طلبية',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              if (profile != null)
+                StatTileRow(tiles: [
+                  _ManagementTile(
+                    label: 'مرضاي',
+                    emoji: '🦷',
+                    color: AppTheme.accent,
+                    onTap: () => context.push('/doctor/patients', extra: profile),
                   ),
-                ),
-              ),
+                  _ManagementTile(
+                    label: 'حساباتي',
+                    emoji: '💳',
+                    color: AppTheme.warning,
+                    onTap: () => context.push('/doctor/accounting', extra: profile),
+                  ),
+                  _ManagementTile(
+                    label: 'مواعيدي',
+                    emoji: '📅',
+                    color: AppTheme.info,
+                    onTap: () => context.push('/doctor/appointments', extra: profile),
+                  ),
+                ]),
             ],
           );
         },
@@ -198,11 +199,6 @@ class _WelcomeCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'إليك ملخص حسابك',
-            style: TextStyle(color: Colors.white.withOpacity(0.85)),
-          ),
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -229,69 +225,46 @@ class _WelcomeCard extends StatelessWidget {
                 : 'باقي ${_currency.format(tierInfo.amountToNext)} للمستوى التالي (هذا العام)',
             style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
           ),
-          if (tierInfo.frozen) ...[
-            const SizedBox(height: 4),
-            const Text(
-              'مستوى مجمّد مؤقتاً بسبب متأخرات — سدّد لاستعادة مستواك',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFFFFCDD2), fontSize: 12, fontWeight: FontWeight.w600),
-            ),
-          ],
         ],
       ),
     );
   }
 }
 
-/// Same visual shell as [StatTile] but tappable and without a value line —
-/// used for the two link-style tiles ("العروض" / "فواتيري / طلبياتي").
-/// Same visual as [StatTile] (icon + value + label) but tappable — used for
-/// "متأخر عليّ", which links straight to the doctor's unpaid orders.
-class _TappableStatTile extends StatelessWidget {
-  const _TappableStatTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
+/// Full-width, single-row CTA — replaces a previous 120px-tall block
+/// button that ate too much of the dashboard for what's just one tap
+/// target. Icon-label-chevron reads right-to-left with the rest of the
+/// screen (Directionality is rtl app-wide), so the chevron lands on the
+/// leading/left edge as a "go" affordance rather than centered dead space.
+/// primaryDark (not plain primary) so this — the dashboard's one real
+/// call-to-action — reads as a step darker/richer than the flat-teal icons
+/// on the tiles around it, instead of blending into them.
+class _CreateOrderCta extends StatelessWidget {
+  const _CreateOrderCta({required this.onTap});
 
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return Material(
+      color: AppTheme.primaryDark,
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
+        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
             children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 8),
-              Text(value,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 4),
-              Text(label,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey.shade600),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
+              Icon(Icons.add_shopping_cart, color: Colors.white, size: 22),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'إنشاء طلبية',
+                  style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Icon(Icons.arrow_back_ios_new, color: Colors.white70, size: 16),
             ],
           ),
         ),
@@ -300,18 +273,22 @@ class _TappableStatTile extends StatelessWidget {
   }
 }
 
+/// Same visual shell as [StatTile] but tappable and without a value line —
+/// used for "فواتيري / طلبياتي" and "المنتجات والعروض". [warning], when
+/// set, folds what used to be the separate "متأخر عليّ" tile into a small
+/// orange line under the label instead of its own grid cell.
 class _ActionTile extends StatelessWidget {
   const _ActionTile({
     required this.label,
-    required this.icon,
-    required this.color,
+    required this.emoji,
     required this.onTap,
+    this.warning,
   });
 
   final String label;
-  final IconData icon;
-  final Color color;
+  final String emoji;
   final VoidCallback onTap;
+  final String? warning;
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +301,7 @@ class _ActionTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 28),
+              Text(emoji, style: const TextStyle(fontSize: 26)),
               const SizedBox(height: 8),
               Text(
                 label,
@@ -335,6 +312,91 @@ class _ActionTile extends StatelessWidget {
                     ?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+              ),
+              if (warning != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  warning!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: AppTheme.warning, fontSize: 11, fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The two "قسم الإدارة" entry points (مرضاي/حساباتي) — visually set apart
+/// from the ordering tiles above by reusing [_WelcomeCard]'s own gradient
+/// (rather than inventing a new color), plus a small "جديد" pill in the
+/// same ad-hoc-pill convention as [TierBadge].
+class _ManagementTile extends StatelessWidget {
+  const _ManagementTile({
+    required this.label,
+    required this.emoji,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final String emoji;
+  // Each tile gets its own accent (patients=teal, accounting=amber,
+  // appointments=blue) instead of all three sharing the brand teal — three
+  // back-to-back identical-color cards was the single most repetitive
+  // block on the dashboard.
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [color, _darken(color)],
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text('جديد',
+                      style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(emoji, style: const TextStyle(fontSize: 26)),
+                  const SizedBox(height: 8),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ],
           ),

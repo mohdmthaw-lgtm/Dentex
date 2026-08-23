@@ -11,7 +11,7 @@ part 'shipment.g.dart';
 /// shipment from one freight supplier/exporter routinely bundles goods
 /// from several different factories.
 @freezed
-class ShipmentItem with _$ShipmentItem {
+abstract class ShipmentItem with _$ShipmentItem {
   const factory ShipmentItem({
     required String productName,
     @Default('') String manufacturer,
@@ -29,7 +29,7 @@ class ShipmentItem with _$ShipmentItem {
 }
 
 @freezed
-class ShipmentCosts with _$ShipmentCosts {
+abstract class ShipmentCosts with _$ShipmentCosts {
   const factory ShipmentCosts({
     @Default(0) num shipping,
     @Default(0) num customs,
@@ -48,7 +48,7 @@ class ShipmentCosts with _$ShipmentCosts {
 }
 
 @freezed
-class ShipmentDocument with _$ShipmentDocument {
+abstract class ShipmentDocument with _$ShipmentDocument {
   const factory ShipmentDocument({
     required String label,
     required String url,
@@ -64,7 +64,7 @@ class ShipmentDocument with _$ShipmentDocument {
 /// admin-only (never doctor-facing) — costs/supplier terms are internal
 /// business data.
 @freezed
-class Shipment with _$Shipment {
+abstract class Shipment with _$Shipment {
   const factory Shipment({
     required String id,
     required String shipmentNumber,

@@ -83,4 +83,26 @@ class StorageService {
   }
 
   String offerImagePath(String offerId) => 'offers/$offerId/main.jpg';
+
+  /// Path is keyed by ownerId (doctorId for a solo clinic, centerId for a
+  /// medical center — see PatientOwnerType), matching how storage.rules
+  /// grants access, not literally "doctors/..." — a center's photos are
+  /// shared by every member doctor the same way its patient records are.
+  /// Unlike product/offer photos, each upload gets a unique filename
+  /// (multiple photos can exist per tooth+visit+category).
+  Future<({String url, String path})> uploadToothPhoto({
+    required String ownerId,
+    required String patientId,
+    required String toothNumber,
+    required String visitId,
+    required File file,
+  }) async {
+    final compressed = await _compress(file);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final path = 'clinics/$ownerId/patients/$patientId/teeth/$toothNumber/$visitId/$fileName';
+    final ref = _storage.ref(path);
+    await ref.putFile(compressed);
+    final url = await ref.getDownloadURL();
+    return (url: url, path: path);
+  }
 }

@@ -2,12 +2,20 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // DateFormat (unlike NumberFormat, which already renders Western digits
+  // for locale 'ar') defaults to native/Eastern-Arabic-Indic numerals —
+  // every DateFormat.*('ar') call across the app (appointment times, visit
+  // dates, etc.) was rendering "١١:٥٠" instead of "11:50" as a result. This
+  // flips that one default globally instead of setting useNativeDigits on
+  // each of the ~20 DateFormat instances scattered across the codebase.
+  DateFormat.useNativeDigitsByDefaultFor('ar', false);
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {

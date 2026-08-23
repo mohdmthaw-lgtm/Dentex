@@ -7,7 +7,7 @@ part 'user_profile.freezed.dart';
 part 'user_profile.g.dart';
 
 @freezed
-class UserProfile with _$UserProfile {
+abstract class UserProfile with _$UserProfile {
   const factory UserProfile({
     required String uid,
     required String role, // AppRoles.admin | AppRoles.doctor
@@ -32,6 +32,13 @@ class UserProfile with _$UserProfile {
     // change-password screen on first login and ends up the sole holder of
     // their real password. See createDoctorAccount Cloud Function.
     @Default(false) bool mustChangePassword,
+    // 'solo' | 'center' — see MedicalCenter. Defaults to 'solo' for every
+    // pre-existing doctor doc (no backfill migration needed). Orders, debt,
+    // and loyalty tier are always per-doctor regardless of accountType; only
+    // patient records (lib/models/patient.dart) are shared when centerId is
+    // set.
+    @Default('solo') String accountType,
+    String? centerId,
   }) = _UserProfile;
 
   const UserProfile._();
@@ -44,4 +51,11 @@ class UserProfile with _$UserProfile {
 
   bool get isAdmin => role == 'admin';
   bool get isDoctor => role == 'doctor';
+  bool get isCenterMember => centerId != null;
+
+  /// The key patient records are scoped by (see PatientOwnerType) — a
+  /// centerId when this doctor belongs to a medical center (patients are
+  /// shared with every other member), otherwise this doctor's own uid.
+  String get clinicOwnerId => centerId ?? uid;
+  String get clinicOwnerType => isCenterMember ? 'center' : 'doctor';
 }
