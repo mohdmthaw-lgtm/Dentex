@@ -30,6 +30,8 @@
 	<string>يحتاج التطبيق للوصول إلى الكاميرا لالتقاط صور المنتجات والعروض.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>يحتاج التطبيق للوصول إلى معرض الصور لاختيار صور المنتجات والعروض.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>لا يستخدم تطبيق Dentex موقعك الجغرافي في أي من ميزاته.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
