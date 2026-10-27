@@ -15,6 +15,9 @@ _ProductVariant _$ProductVariantFromJson(Map<String, dynamic> json) =>
       totalSold: (json['totalSold'] as num?)?.toInt() ?? 0,
       imageUrl: json['imageUrl'] as String? ?? '',
       imagePath: json['imagePath'] as String? ?? '',
+      diameterMm: json['diameterMm'] as num?,
+      totalLengthMm: json['totalLengthMm'] as num?,
+      roughness: json['roughness'] as String? ?? '',
       productName: json['productName'] as String? ?? '',
       createdAt: const TimestampConverter().fromJson(json['createdAt']),
       updatedAt: const TimestampConverter().fromJson(json['updatedAt']),
@@ -29,6 +32,9 @@ Map<String, dynamic> _$ProductVariantToJson(_ProductVariant instance) =>
       'totalSold': instance.totalSold,
       'imageUrl': instance.imageUrl,
       'imagePath': instance.imagePath,
+      'diameterMm': instance.diameterMm,
+      'totalLengthMm': instance.totalLengthMm,
+      'roughness': instance.roughness,
       'productName': instance.productName,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
       'updatedAt': const TimestampConverter().toJson(instance.updatedAt),
@@ -40,6 +46,9 @@ _VariantSummary _$VariantSummaryFromJson(Map<String, dynamic> json) =>
       label: json['label'] as String,
       sellPrice: json['sellPrice'] as num,
       quantity: (json['quantity'] as num?)?.toInt() ?? 0,
+      diameterMm: json['diameterMm'] as num?,
+      totalLengthMm: json['totalLengthMm'] as num?,
+      roughness: json['roughness'] as String? ?? '',
     );
 
 Map<String, dynamic> _$VariantSummaryToJson(_VariantSummary instance) =>
@@ -48,6 +57,9 @@ Map<String, dynamic> _$VariantSummaryToJson(_VariantSummary instance) =>
       'label': instance.label,
       'sellPrice': instance.sellPrice,
       'quantity': instance.quantity,
+      'diameterMm': instance.diameterMm,
+      'totalLengthMm': instance.totalLengthMm,
+      'roughness': instance.roughness,
     };
 
 _ProductVariantCost _$ProductVariantCostFromJson(Map<String, dynamic> json) =>

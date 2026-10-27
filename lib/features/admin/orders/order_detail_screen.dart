@@ -150,8 +150,14 @@ class OrderDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (order.amountRemaining > 0)
-                _RecordPaymentButton(order: order),
+              Row(
+                children: [
+                  if (order.amountRemaining > 0)
+                    Expanded(child: _RecordPaymentButton(order: order)),
+                  if (order.amountRemaining > 0) const SizedBox(width: 10),
+                  Expanded(child: _ApplyDiscountButton(order: order)),
+                ],
+              ),
               const SizedBox(height: 16),
               Text('سجل الدفعات', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
@@ -167,15 +173,21 @@ class OrderDetailScreen extends ConsumerWidget {
                   }
                   return Card(
                     child: Column(
-                      children: payments
-                          .map((p) => ListTile(
-                                leading: const Icon(Icons.payments_outlined),
-                                title: Text(_currency.format(p.amount)),
-                                subtitle: p.recordedAt != null
-                                    ? Text(_dateFormat.format(p.recordedAt!))
-                                    : null,
-                              ))
-                          .toList(),
+                      children: payments.map((p) {
+                        final isDiscount = p.method == 'discount';
+                        return ListTile(
+                          leading: Icon(
+                            isDiscount ? Icons.local_offer_outlined : Icons.payments_outlined,
+                            color: isDiscount ? AppTheme.warning : null,
+                          ),
+                          title: Text(_currency.format(p.amount)),
+                          subtitle: Text([
+                            isDiscount ? 'خصم' : 'دفعة نقدية',
+                            if (p.note.isNotEmpty) p.note,
+                            if (p.recordedAt != null) _dateFormat.format(p.recordedAt!),
+                          ].join(' — ')),
+                        );
+                      }).toList(),
                     ),
                   );
                 },
@@ -247,6 +259,64 @@ class _RecordPaymentButton extends ConsumerWidget {
       },
       icon: const Icon(Icons.add_card),
       label: const Text('تسجيل دفعة'),
+    );
+  }
+}
+
+class _ApplyDiscountButton extends ConsumerWidget {
+  const _ApplyDiscountButton({required this.order});
+  final Order order;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(foregroundColor: AppTheme.warning),
+      onPressed: () async {
+        final amountController = TextEditingController();
+        final noteController = TextEditingController();
+        final amount = await showDialog<num>(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: const Text('منح خصم'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: amountController,
+                  autofocus: true,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    labelText: 'قيمة الخصم (المتبقي ${_currency.format(order.amountRemaining)})',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: noteController,
+                  decoration: const InputDecoration(labelText: 'سبب الخصم (اختياري)'),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(c), child: const Text('إلغاء')),
+              FilledButton(
+                onPressed: () => Navigator.pop(c, num.tryParse(amountController.text)),
+                child: const Text('منح الخصم'),
+              ),
+            ],
+          ),
+        );
+        if (amount != null && amount > 0) {
+          final uid = ref.read(authServiceProvider).currentUser!.uid;
+          await ref.read(orderRepositoryProvider).applyDiscount(
+                orderId: order.id,
+                amount: amount,
+                appliedByUid: uid,
+                note: noteController.text.trim(),
+              );
+        }
+      },
+      icon: const Icon(Icons.local_offer_outlined),
+      label: const Text('منح خصم'),
     );
   }
 }

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductVariant {
 
- String get id; String get label; num get sellPrice; int get quantity; int get totalSold; String get imageUrl; String get imagePath; String get productName;@TimestampConverter() DateTime? get createdAt;@TimestampConverter() DateTime? get updatedAt;
+ String get id; String get label; num get sellPrice; int get quantity; int get totalSold; String get imageUrl; String get imagePath; num? get diameterMm; num? get totalLengthMm; String get roughness; String get productName;@TimestampConverter() DateTime? get createdAt;@TimestampConverter() DateTime? get updatedAt;
 /// Create a copy of ProductVariant
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ProductVariantCopyWith<ProductVariant> get copyWith => _$ProductVariantCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductVariant&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.totalSold, totalSold) || other.totalSold == totalSold)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductVariant&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.totalSold, totalSold) || other.totalSold == totalSold)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.diameterMm, diameterMm) || other.diameterMm == diameterMm)&&(identical(other.totalLengthMm, totalLengthMm) || other.totalLengthMm == totalLengthMm)&&(identical(other.roughness, roughness) || other.roughness == roughness)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,sellPrice,quantity,totalSold,imageUrl,imagePath,productName,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,label,sellPrice,quantity,totalSold,imageUrl,imagePath,diameterMm,totalLengthMm,roughness,productName,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, imageUrl: $imageUrl, imagePath: $imagePath, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, imageUrl: $imageUrl, imagePath: $imagePath, diameterMm: $diameterMm, totalLengthMm: $totalLengthMm, roughness: $roughness, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ProductVariantCopyWith<$Res>  {
   factory $ProductVariantCopyWith(ProductVariant value, $Res Function(ProductVariant) _then) = _$ProductVariantCopyWithImpl;
 @useResult
 $Res call({
- String id, String label, num sellPrice, int quantity, int totalSold, String imageUrl, String imagePath, String productName,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
+ String id, String label, num sellPrice, int quantity, int totalSold, String imageUrl, String imagePath, num? diameterMm, num? totalLengthMm, String roughness, String productName,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
 });
 
 
@@ -66,7 +66,7 @@ class _$ProductVariantCopyWithImpl<$Res>
 
 /// Create a copy of ProductVariant
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? totalSold = null,Object? imageUrl = null,Object? imagePath = null,Object? productName = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? totalSold = null,Object? imageUrl = null,Object? imagePath = null,Object? diameterMm = freezed,Object? totalLengthMm = freezed,Object? roughness = null,Object? productName = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(ProductVariant(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
@@ -75,6 +75,9 @@ as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nu
 as int,totalSold: null == totalSold ? _self.totalSold : totalSold // ignore: cast_nullable_to_non_nullable
 as int,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,diameterMm: freezed == diameterMm ? _self.diameterMm : diameterMm // ignore: cast_nullable_to_non_nullable
+as num?,totalLengthMm: freezed == totalLengthMm ? _self.totalLengthMm : totalLengthMm // ignore: cast_nullable_to_non_nullable
+as num?,roughness: null == roughness ? _self.roughness : roughness // ignore: cast_nullable_to_non_nullable
 as String,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
 as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -163,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  num? diameterMm,  num? totalLengthMm,  String roughness,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductVariant() when $default != null:
-return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.productName,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.diameterMm,_that.totalLengthMm,_that.roughness,_that.productName,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -184,10 +187,10 @@ return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalS
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  num? diameterMm,  num? totalLengthMm,  String roughness,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProductVariant():
-return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.productName,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.diameterMm,_that.totalLengthMm,_that.roughness,_that.productName,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +207,10 @@ return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalS
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String label,  num sellPrice,  int quantity,  int totalSold,  String imageUrl,  String imagePath,  num? diameterMm,  num? totalLengthMm,  String roughness,  String productName, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductVariant() when $default != null:
-return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.productName,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalSold,_that.imageUrl,_that.imagePath,_that.diameterMm,_that.totalLengthMm,_that.roughness,_that.productName,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -219,7 +222,7 @@ return $default(_that.id,_that.label,_that.sellPrice,_that.quantity,_that.totalS
 @JsonSerializable()
 
 class _ProductVariant implements ProductVariant {
-  const _ProductVariant({required this.id, required this.label, required this.sellPrice, this.quantity = 0, this.totalSold = 0, this.imageUrl = '', this.imagePath = '', this.productName = '', @TimestampConverter() this.createdAt, @TimestampConverter() this.updatedAt});
+  const _ProductVariant({required this.id, required this.label, required this.sellPrice, this.quantity = 0, this.totalSold = 0, this.imageUrl = '', this.imagePath = '', this.diameterMm, this.totalLengthMm, this.roughness = '', this.productName = '', @TimestampConverter() this.createdAt, @TimestampConverter() this.updatedAt});
   factory _ProductVariant.fromJson(Map<String, dynamic> json) => _$ProductVariantFromJson(json);
 
 @override final  String id;
@@ -229,6 +232,9 @@ class _ProductVariant implements ProductVariant {
 @override@JsonKey() final  int totalSold;
 @override@JsonKey() final  String imageUrl;
 @override@JsonKey() final  String imagePath;
+@override final  num? diameterMm;
+@override final  num? totalLengthMm;
+@override@JsonKey() final  String roughness;
 @override@JsonKey() final  String productName;
 @override@TimestampConverter() final  DateTime? createdAt;
 @override@TimestampConverter() final  DateTime? updatedAt;
@@ -246,16 +252,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductVariant&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.totalSold, totalSold) || other.totalSold == totalSold)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductVariant&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.totalSold, totalSold) || other.totalSold == totalSold)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.diameterMm, diameterMm) || other.diameterMm == diameterMm)&&(identical(other.totalLengthMm, totalLengthMm) || other.totalLengthMm == totalLengthMm)&&(identical(other.roughness, roughness) || other.roughness == roughness)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,sellPrice,quantity,totalSold,imageUrl,imagePath,productName,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,label,sellPrice,quantity,totalSold,imageUrl,imagePath,diameterMm,totalLengthMm,roughness,productName,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, imageUrl: $imageUrl, imagePath: $imagePath, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ProductVariant(id: $id, label: $label, sellPrice: $sellPrice, quantity: $quantity, totalSold: $totalSold, imageUrl: $imageUrl, imagePath: $imagePath, diameterMm: $diameterMm, totalLengthMm: $totalLengthMm, roughness: $roughness, productName: $productName, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -266,7 +272,7 @@ abstract mixin class _$ProductVariantCopyWith<$Res> implements $ProductVariantCo
   factory _$ProductVariantCopyWith(_ProductVariant value, $Res Function(_ProductVariant) _then) = __$ProductVariantCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String label, num sellPrice, int quantity, int totalSold, String imageUrl, String imagePath, String productName,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
+ String id, String label, num sellPrice, int quantity, int totalSold, String imageUrl, String imagePath, num? diameterMm, num? totalLengthMm, String roughness, String productName,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
 });
 
 
@@ -283,7 +289,7 @@ class __$ProductVariantCopyWithImpl<$Res>
 
 /// Create a copy of ProductVariant
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? totalSold = null,Object? imageUrl = null,Object? imagePath = null,Object? productName = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? totalSold = null,Object? imageUrl = null,Object? imagePath = null,Object? diameterMm = freezed,Object? totalLengthMm = freezed,Object? roughness = null,Object? productName = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_ProductVariant(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
@@ -292,6 +298,9 @@ as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nu
 as int,totalSold: null == totalSold ? _self.totalSold : totalSold // ignore: cast_nullable_to_non_nullable
 as int,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,diameterMm: freezed == diameterMm ? _self.diameterMm : diameterMm // ignore: cast_nullable_to_non_nullable
+as num?,totalLengthMm: freezed == totalLengthMm ? _self.totalLengthMm : totalLengthMm // ignore: cast_nullable_to_non_nullable
+as num?,roughness: null == roughness ? _self.roughness : roughness // ignore: cast_nullable_to_non_nullable
 as String,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
 as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -306,7 +315,7 @@ as DateTime?,
 /// @nodoc
 mixin _$VariantSummary {
 
- String get variantId; String get label; num get sellPrice; int get quantity;
+ String get variantId; String get label; num get sellPrice; int get quantity; num? get diameterMm; num? get totalLengthMm; String get roughness;
 /// Create a copy of VariantSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -319,16 +328,16 @@ $VariantSummaryCopyWith<VariantSummary> get copyWith => _$VariantSummaryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VariantSummary&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VariantSummary&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.diameterMm, diameterMm) || other.diameterMm == diameterMm)&&(identical(other.totalLengthMm, totalLengthMm) || other.totalLengthMm == totalLengthMm)&&(identical(other.roughness, roughness) || other.roughness == roughness));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,variantId,label,sellPrice,quantity);
+int get hashCode => Object.hash(runtimeType,variantId,label,sellPrice,quantity,diameterMm,totalLengthMm,roughness);
 
 @override
 String toString() {
-  return 'VariantSummary(variantId: $variantId, label: $label, sellPrice: $sellPrice, quantity: $quantity)';
+  return 'VariantSummary(variantId: $variantId, label: $label, sellPrice: $sellPrice, quantity: $quantity, diameterMm: $diameterMm, totalLengthMm: $totalLengthMm, roughness: $roughness)';
 }
 
 
@@ -339,7 +348,7 @@ abstract mixin class $VariantSummaryCopyWith<$Res>  {
   factory $VariantSummaryCopyWith(VariantSummary value, $Res Function(VariantSummary) _then) = _$VariantSummaryCopyWithImpl;
 @useResult
 $Res call({
- String variantId, String label, num sellPrice, int quantity
+ String variantId, String label, num sellPrice, int quantity, num? diameterMm, num? totalLengthMm, String roughness
 });
 
 
@@ -356,13 +365,16 @@ class _$VariantSummaryCopyWithImpl<$Res>
 
 /// Create a copy of VariantSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? variantId = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? variantId = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? diameterMm = freezed,Object? totalLengthMm = freezed,Object? roughness = null,}) {
   return _then(VariantSummary(
 variantId: null == variantId ? _self.variantId : variantId // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,sellPrice: null == sellPrice ? _self.sellPrice : sellPrice // ignore: cast_nullable_to_non_nullable
 as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
-as int,
+as int,diameterMm: freezed == diameterMm ? _self.diameterMm : diameterMm // ignore: cast_nullable_to_non_nullable
+as num?,totalLengthMm: freezed == totalLengthMm ? _self.totalLengthMm : totalLengthMm // ignore: cast_nullable_to_non_nullable
+as num?,roughness: null == roughness ? _self.roughness : roughness // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -447,10 +459,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String variantId,  String label,  num sellPrice,  int quantity)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String variantId,  String label,  num sellPrice,  int quantity,  num? diameterMm,  num? totalLengthMm,  String roughness)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VariantSummary() when $default != null:
-return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case _:
+return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity,_that.diameterMm,_that.totalLengthMm,_that.roughness);case _:
   return orElse();
 
 }
@@ -468,10 +480,10 @@ return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String variantId,  String label,  num sellPrice,  int quantity)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String variantId,  String label,  num sellPrice,  int quantity,  num? diameterMm,  num? totalLengthMm,  String roughness)  $default,) {final _that = this;
 switch (_that) {
 case _VariantSummary():
-return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case _:
+return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity,_that.diameterMm,_that.totalLengthMm,_that.roughness);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -488,10 +500,10 @@ return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String variantId,  String label,  num sellPrice,  int quantity)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String variantId,  String label,  num sellPrice,  int quantity,  num? diameterMm,  num? totalLengthMm,  String roughness)?  $default,) {final _that = this;
 switch (_that) {
 case _VariantSummary() when $default != null:
-return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case _:
+return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity,_that.diameterMm,_that.totalLengthMm,_that.roughness);case _:
   return null;
 
 }
@@ -503,13 +515,16 @@ return $default(_that.variantId,_that.label,_that.sellPrice,_that.quantity);case
 @JsonSerializable()
 
 class _VariantSummary implements VariantSummary {
-  const _VariantSummary({required this.variantId, required this.label, required this.sellPrice, this.quantity = 0});
+  const _VariantSummary({required this.variantId, required this.label, required this.sellPrice, this.quantity = 0, this.diameterMm, this.totalLengthMm, this.roughness = ''});
   factory _VariantSummary.fromJson(Map<String, dynamic> json) => _$VariantSummaryFromJson(json);
 
 @override final  String variantId;
 @override final  String label;
 @override final  num sellPrice;
 @override@JsonKey() final  int quantity;
+@override final  num? diameterMm;
+@override final  num? totalLengthMm;
+@override@JsonKey() final  String roughness;
 
 /// Create a copy of VariantSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -524,16 +539,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VariantSummary&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VariantSummary&&(identical(other.variantId, variantId) || other.variantId == variantId)&&(identical(other.label, label) || other.label == label)&&(identical(other.sellPrice, sellPrice) || other.sellPrice == sellPrice)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.diameterMm, diameterMm) || other.diameterMm == diameterMm)&&(identical(other.totalLengthMm, totalLengthMm) || other.totalLengthMm == totalLengthMm)&&(identical(other.roughness, roughness) || other.roughness == roughness));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,variantId,label,sellPrice,quantity);
+int get hashCode => Object.hash(runtimeType,variantId,label,sellPrice,quantity,diameterMm,totalLengthMm,roughness);
 
 @override
 String toString() {
-  return 'VariantSummary(variantId: $variantId, label: $label, sellPrice: $sellPrice, quantity: $quantity)';
+  return 'VariantSummary(variantId: $variantId, label: $label, sellPrice: $sellPrice, quantity: $quantity, diameterMm: $diameterMm, totalLengthMm: $totalLengthMm, roughness: $roughness)';
 }
 
 
@@ -544,7 +559,7 @@ abstract mixin class _$VariantSummaryCopyWith<$Res> implements $VariantSummaryCo
   factory _$VariantSummaryCopyWith(_VariantSummary value, $Res Function(_VariantSummary) _then) = __$VariantSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- String variantId, String label, num sellPrice, int quantity
+ String variantId, String label, num sellPrice, int quantity, num? diameterMm, num? totalLengthMm, String roughness
 });
 
 
@@ -561,13 +576,16 @@ class __$VariantSummaryCopyWithImpl<$Res>
 
 /// Create a copy of VariantSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? variantId = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? variantId = null,Object? label = null,Object? sellPrice = null,Object? quantity = null,Object? diameterMm = freezed,Object? totalLengthMm = freezed,Object? roughness = null,}) {
   return _then(_VariantSummary(
 variantId: null == variantId ? _self.variantId : variantId // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,sellPrice: null == sellPrice ? _self.sellPrice : sellPrice // ignore: cast_nullable_to_non_nullable
 as num,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
-as int,
+as int,diameterMm: freezed == diameterMm ? _self.diameterMm : diameterMm // ignore: cast_nullable_to_non_nullable
+as num?,totalLengthMm: freezed == totalLengthMm ? _self.totalLengthMm : totalLengthMm // ignore: cast_nullable_to_non_nullable
+as num?,roughness: null == roughness ? _self.roughness : roughness // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Product {
 
- String get id; String get name; String get manufacturer; String get description; String get imageUrl; String get imagePath; int get lowStockThreshold; bool get isActive; int get totalQuantity; List<VariantSummary> get variantSummaries;@TimestampConverter() DateTime? get createdAt;@TimestampConverter() DateTime? get updatedAt;
+ String get id; String get name; String get manufacturer; String get description; String get imageUrl; String get imagePath; String get category; int get lowStockThreshold; bool get isActive; int get totalQuantity; List<VariantSummary> get variantSummaries;@TimestampConverter() DateTime? get createdAt;@TimestampConverter() DateTime? get updatedAt;
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ProductCopyWith<Product> get copyWith => _$ProductCopyWithImpl<Product>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Product&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.totalQuantity, totalQuantity) || other.totalQuantity == totalQuantity)&&const DeepCollectionEquality().equals(other.variantSummaries, variantSummaries)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Product&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.category, category) || other.category == category)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.totalQuantity, totalQuantity) || other.totalQuantity == totalQuantity)&&const DeepCollectionEquality().equals(other.variantSummaries, variantSummaries)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,manufacturer,description,imageUrl,imagePath,lowStockThreshold,isActive,totalQuantity,const DeepCollectionEquality().hash(variantSummaries),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,manufacturer,description,imageUrl,imagePath,category,lowStockThreshold,isActive,totalQuantity,const DeepCollectionEquality().hash(variantSummaries),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Product(id: $id, name: $name, manufacturer: $manufacturer, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Product(id: $id, name: $name, manufacturer: $manufacturer, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, category: $category, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ProductCopyWith<$Res>  {
   factory $ProductCopyWith(Product value, $Res Function(Product) _then) = _$ProductCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String manufacturer, String description, String imageUrl, String imagePath, int lowStockThreshold, bool isActive, int totalQuantity, List<VariantSummary> variantSummaries,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
+ String id, String name, String manufacturer, String description, String imageUrl, String imagePath, String category, int lowStockThreshold, bool isActive, int totalQuantity, List<VariantSummary> variantSummaries,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
 });
 
 
@@ -66,7 +66,7 @@ class _$ProductCopyWithImpl<$Res>
 
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? manufacturer = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? lowStockThreshold = null,Object? isActive = null,Object? totalQuantity = null,Object? variantSummaries = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? manufacturer = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? category = null,Object? lowStockThreshold = null,Object? isActive = null,Object? totalQuantity = null,Object? variantSummaries = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(Product(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -74,6 +74,7 @@ as String,manufacturer: null == manufacturer ? _self.manufacturer : manufacturer
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,totalQuantity: null == totalQuantity ? _self.totalQuantity : totalQuantity // ignore: cast_nullable_to_non_nullable
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  String category,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
-return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.category,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.i
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  String category,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Product():
-return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.category,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.i
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String manufacturer,  String description,  String imageUrl,  String imagePath,  String category,  int lowStockThreshold,  bool isActive,  int totalQuantity,  List<VariantSummary> variantSummaries, @TimestampConverter()  DateTime? createdAt, @TimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Product() when $default != null:
-return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.imageUrl,_that.imagePath,_that.category,_that.lowStockThreshold,_that.isActive,_that.totalQuantity,_that.variantSummaries,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.name,_that.manufacturer,_that.description,_that.i
 @JsonSerializable()
 
 class _Product extends Product {
-  const _Product({required this.id, required this.name, this.manufacturer = '', this.description = '', this.imageUrl = '', this.imagePath = '', this.lowStockThreshold = 0, this.isActive = true, this.totalQuantity = 0,  List<VariantSummary> variantSummaries = const <VariantSummary>[], @TimestampConverter() this.createdAt, @TimestampConverter() this.updatedAt}): _variantSummaries = variantSummaries,super._();
+  const _Product({required this.id, required this.name, this.manufacturer = '', this.description = '', this.imageUrl = '', this.imagePath = '', this.category = '', this.lowStockThreshold = 0, this.isActive = true, this.totalQuantity = 0,  List<VariantSummary> variantSummaries = const <VariantSummary>[], @TimestampConverter() this.createdAt, @TimestampConverter() this.updatedAt}): _variantSummaries = variantSummaries,super._();
   factory _Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
 @override final  String id;
@@ -230,6 +231,7 @@ class _Product extends Product {
 @override@JsonKey() final  String description;
 @override@JsonKey() final  String imageUrl;
 @override@JsonKey() final  String imagePath;
+@override@JsonKey() final  String category;
 @override@JsonKey() final  int lowStockThreshold;
 @override@JsonKey() final  bool isActive;
 @override@JsonKey() final  int totalQuantity;
@@ -256,16 +258,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Product&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.totalQuantity, totalQuantity) || other.totalQuantity == totalQuantity)&&const DeepCollectionEquality().equals(other._variantSummaries, _variantSummaries)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Product&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.category, category) || other.category == category)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.totalQuantity, totalQuantity) || other.totalQuantity == totalQuantity)&&const DeepCollectionEquality().equals(other._variantSummaries, _variantSummaries)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,manufacturer,description,imageUrl,imagePath,lowStockThreshold,isActive,totalQuantity,const DeepCollectionEquality().hash(_variantSummaries),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,manufacturer,description,imageUrl,imagePath,category,lowStockThreshold,isActive,totalQuantity,const DeepCollectionEquality().hash(_variantSummaries),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Product(id: $id, name: $name, manufacturer: $manufacturer, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Product(id: $id, name: $name, manufacturer: $manufacturer, description: $description, imageUrl: $imageUrl, imagePath: $imagePath, category: $category, lowStockThreshold: $lowStockThreshold, isActive: $isActive, totalQuantity: $totalQuantity, variantSummaries: $variantSummaries, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -276,7 +278,7 @@ abstract mixin class _$ProductCopyWith<$Res> implements $ProductCopyWith<$Res> {
   factory _$ProductCopyWith(_Product value, $Res Function(_Product) _then) = __$ProductCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String manufacturer, String description, String imageUrl, String imagePath, int lowStockThreshold, bool isActive, int totalQuantity, List<VariantSummary> variantSummaries,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
+ String id, String name, String manufacturer, String description, String imageUrl, String imagePath, String category, int lowStockThreshold, bool isActive, int totalQuantity, List<VariantSummary> variantSummaries,@TimestampConverter() DateTime? createdAt,@TimestampConverter() DateTime? updatedAt
 });
 
 
@@ -293,7 +295,7 @@ class __$ProductCopyWithImpl<$Res>
 
 /// Create a copy of Product
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? manufacturer = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? lowStockThreshold = null,Object? isActive = null,Object? totalQuantity = null,Object? variantSummaries = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? manufacturer = null,Object? description = null,Object? imageUrl = null,Object? imagePath = null,Object? category = null,Object? lowStockThreshold = null,Object? isActive = null,Object? totalQuantity = null,Object? variantSummaries = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_Product(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -301,6 +303,7 @@ as String,manufacturer: null == manufacturer ? _self.manufacturer : manufacturer
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,totalQuantity: null == totalQuantity ? _self.totalQuantity : totalQuantity // ignore: cast_nullable_to_non_nullable

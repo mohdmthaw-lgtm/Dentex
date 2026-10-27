@@ -6,10 +6,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/constants/bur_roughness.dart';
+import '../../../core/constants/product_categories.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/product.dart';
 import '../../../services/firebase/product_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
+
+/// Categories whose products are sized by diameter/length (burs, endo
+/// files/reamers) — only these show the extra spec fields on a variant row,
+/// so a plain consumable's form doesn't get cluttered with irrelevant inputs.
+const _categoriesWithSpecs = {'burs', 'root_canal'};
+
+/// Grit/roughness + its color band is a diamond-bur-specific concept — not
+/// applicable to root canal files, which get diameter/length but no grit.
+const _categoriesWithRoughness = {'burs'};
 
 class _VariantRow {
   _VariantRow({
@@ -18,17 +30,25 @@ class _VariantRow {
     String sellPrice = '',
     String costPrice = '',
     String quantity = '',
+    String diameterMm = '',
+    String totalLengthMm = '',
+    this.roughness = '',
     this.imageUrl = '',
   })  : labelController = TextEditingController(text: label),
         sellPriceController = TextEditingController(text: sellPrice),
         costPriceController = TextEditingController(text: costPrice),
-        quantityController = TextEditingController(text: quantity);
+        quantityController = TextEditingController(text: quantity),
+        diameterController = TextEditingController(text: diameterMm),
+        totalLengthController = TextEditingController(text: totalLengthMm);
 
   final String? id; // null => not yet persisted
   final TextEditingController labelController;
   final TextEditingController sellPriceController;
   final TextEditingController costPriceController;
   final TextEditingController quantityController;
+  final TextEditingController diameterController;
+  final TextEditingController totalLengthController;
+  String roughness;
   String imageUrl;
   // A spec's photo can only be uploaded once it has a real variantId, same
   // two-phase constraint as the product photo — so this stays null (and the
@@ -46,6 +66,8 @@ class _VariantRow {
     sellPriceController.dispose();
     costPriceController.dispose();
     quantityController.dispose();
+    diameterController.dispose();
+    totalLengthController.dispose();
   }
 }
 
@@ -71,6 +93,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   final _descriptionController = TextEditingController();
   final _thresholdController = TextEditingController(text: '10');
   final List<_VariantRow> _variants = [];
+  String? _category;
 
   Product? _existingProduct;
   File? _pickedImage;
@@ -100,6 +123,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     _manufacturerController.text = product.manufacturer;
     _descriptionController.text = product.description;
     _thresholdController.text = product.lowStockThreshold.toString();
+    _category = product.category.isNotEmpty ? product.category : null;
     for (final v in variants) {
       final cost = await repo.getVariantCost(widget.productId!, v.id);
       _variants.add(_VariantRow(
@@ -108,6 +132,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         sellPrice: v.sellPrice.toString(),
         costPrice: cost.toString(),
         quantity: v.quantity.toString(),
+        diameterMm: v.diameterMm?.toString() ?? '',
+        totalLengthMm: v.totalLengthMm?.toString() ?? '',
+        roughness: v.roughness,
         imageUrl: v.imageUrl,
       ));
     }
@@ -158,6 +185,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           name: _nameController.text.trim(),
           manufacturer: _manufacturerController.text.trim(),
           description: _descriptionController.text.trim(),
+          category: _category ?? '',
           lowStockThreshold: int.tryParse(_thresholdController.text) ?? 0,
         );
         for (final v in _variants) {
@@ -170,6 +198,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                 sellPrice: num.parse(v.sellPriceController.text),
                 costPrice: num.parse(v.costPriceController.text),
                 quantity: int.parse(v.quantityController.text),
+                diameterMm: num.tryParse(v.diameterController.text),
+                totalLengthMm: num.tryParse(v.totalLengthController.text),
+                roughness: v.roughness,
               ),
             );
           } else {
@@ -178,6 +209,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               variantId: v.id!,
               sellPrice: num.parse(v.sellPriceController.text),
               costPrice: num.parse(v.costPriceController.text),
+              diameterMm: num.tryParse(v.diameterController.text),
+              totalLengthMm: num.tryParse(v.totalLengthController.text),
+              roughness: v.roughness,
             );
           }
         }
@@ -186,6 +220,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           name: _nameController.text.trim(),
           manufacturer: _manufacturerController.text.trim(),
           description: _descriptionController.text.trim(),
+          category: _category ?? '',
           lowStockThreshold: int.tryParse(_thresholdController.text) ?? 0,
           variants: _variants
               .map((v) => NewVariantInput(
@@ -193,6 +228,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     sellPrice: num.parse(v.sellPriceController.text),
                     costPrice: num.parse(v.costPriceController.text),
                     quantity: int.parse(v.quantityController.text),
+                    diameterMm: num.tryParse(v.diameterController.text),
+                    totalLengthMm: num.tryParse(v.totalLengthController.text),
+                    roughness: v.roughness,
                   ))
               .toList(),
         );
@@ -299,6 +337,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: 'المواصفات / الوصف'),
               maxLines: 2,
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _category,
+              decoration: const InputDecoration(labelText: 'التصنيف'),
+              items: productCategories
+                  .map((c) => DropdownMenuItem(value: c.id, child: Text(c.label)))
+                  .toList(),
+              onChanged: (value) => setState(() => _category = value),
+              validator: (v) => v == null ? 'مطلوب' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -427,6 +475,53 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                 ),
               ],
             ),
+            if (_categoriesWithSpecs.contains(_category)) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: v.diameterController,
+                      decoration: const InputDecoration(labelText: 'القطر (mm)'),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextFormField(
+                      controller: v.totalLengthController,
+                      decoration: const InputDecoration(labelText: 'الطول الكلي (mm)'),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (_categoriesWithRoughness.contains(_category)) ...[
+              const SizedBox(height: 10),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text('الخشونة',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+              ),
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: burRoughnessLevels.map((r) {
+                  final selected = v.roughness == r.id;
+                  return AppChoiceChip(
+                    label: r.label,
+                    avatar: CircleAvatar(backgroundColor: r.color, radius: 7),
+                    selected: selected,
+                    onSelected: (_) =>
+                        setState(() => v.roughness = selected ? '' : r.id),
+                  );
+                }).toList(),
+              ),
+            ],
             const SizedBox(height: 6),
             Align(
               alignment: AlignmentDirectional.centerStart,

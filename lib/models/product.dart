@@ -15,6 +15,7 @@ abstract class Product with _$Product {
     @Default('') String description,
     @Default('') String imageUrl,
     @Default('') String imagePath,
+    @Default('') String category,
     @Default(0) int lowStockThreshold,
     @Default(true) bool isActive,
     @Default(0) int totalQuantity,

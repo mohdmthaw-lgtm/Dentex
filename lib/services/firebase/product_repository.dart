@@ -77,6 +77,7 @@ class ProductRepository {
     required String name,
     required String manufacturer,
     required String description,
+    required String category,
     required int lowStockThreshold,
     required List<NewVariantInput> variants,
   }) async {
@@ -97,6 +98,9 @@ class ProductRepository {
         'quantity': v.quantity,
         'totalSold': 0,
         'productName': name,
+        if (v.diameterMm != null) 'diameterMm': v.diameterMm,
+        if (v.totalLengthMm != null) 'totalLengthMm': v.totalLengthMm,
+        'roughness': v.roughness,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -107,6 +111,9 @@ class ProductRepository {
         'label': v.label,
         'sellPrice': v.sellPrice,
         'quantity': v.quantity,
+        if (v.diameterMm != null) 'diameterMm': v.diameterMm,
+        if (v.totalLengthMm != null) 'totalLengthMm': v.totalLengthMm,
+        'roughness': v.roughness,
       });
       totalQuantity += v.quantity;
     }
@@ -117,6 +124,7 @@ class ProductRepository {
       'description': description,
       'imageUrl': '',
       'imagePath': '',
+      'category': category,
       'lowStockThreshold': lowStockThreshold,
       'isActive': true,
       'totalQuantity': totalQuantity,
@@ -134,12 +142,14 @@ class ProductRepository {
     required String name,
     required String manufacturer,
     required String description,
+    required String category,
     required int lowStockThreshold,
   }) {
     return _products.doc(productId).update({
       'name': name,
       'manufacturer': manufacturer,
       'description': description,
+      'category': category,
       'lowStockThreshold': lowStockThreshold,
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -182,6 +192,9 @@ class ProductRepository {
     required String variantId,
     required num sellPrice,
     required num costPrice,
+    num? diameterMm,
+    num? totalLengthMm,
+    String? roughness,
   }) async {
     final batch = _db.batch();
     final variantRef = _products
@@ -192,6 +205,9 @@ class ProductRepository {
         _products.doc(productId).collection(FirestorePaths.costs).doc(variantId);
     batch.update(variantRef, {
       'sellPrice': sellPrice,
+      if (diameterMm != null) 'diameterMm': diameterMm,
+      if (totalLengthMm != null) 'totalLengthMm': totalLengthMm,
+      if (roughness != null) 'roughness': roughness,
       'updatedAt': FieldValue.serverTimestamp(),
     });
     batch.set(costRef, {'costPrice': costPrice});
@@ -214,6 +230,9 @@ class ProductRepository {
       'quantity': variant.quantity,
       'totalSold': 0,
       'productName': productName,
+      if (variant.diameterMm != null) 'diameterMm': variant.diameterMm,
+      if (variant.totalLengthMm != null) 'totalLengthMm': variant.totalLengthMm,
+      'roughness': variant.roughness,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -261,10 +280,16 @@ class NewVariantInput {
     required this.sellPrice,
     required this.costPrice,
     required this.quantity,
+    this.diameterMm,
+    this.totalLengthMm,
+    this.roughness = '',
   });
 
   final String label;
   final num sellPrice;
   final num costPrice;
   final int quantity;
+  final num? diameterMm;
+  final num? totalLengthMm;
+  final String roughness;
 }

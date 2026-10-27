@@ -53,12 +53,15 @@ export const onPaymentCreated = onDocumentCreated(
       );
     });
 
+    const isDiscount = payment.method === "discount";
     await db.collection(Paths.activityLog).add({
       type: ActivityType.paymentRecorded,
       actorUid: payment.recordedByUid,
       actorName: "",
       actorRole: "admin",
-      message: `تم تسجيل دفعة بقيمة ${payment.amount} على طلبية`,
+      message: isDiscount
+        ? `تم منح خصم بقيمة ${payment.amount} على طلبية`
+        : `تم تسجيل دفعة بقيمة ${payment.amount} على طلبية`,
       relatedOrderId: orderId,
       createdAt: FieldValue.serverTimestamp(),
     });

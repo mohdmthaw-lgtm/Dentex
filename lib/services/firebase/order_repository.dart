@@ -186,16 +186,40 @@ class OrderRepository {
     required num amount,
     required String recordedByUid,
     String note = '',
+    String method = 'cash',
   }) {
     final paymentRef =
         _orders.doc(orderId).collection(FirestorePaths.payments).doc();
     return paymentRef.set({
       'amount': amount,
-      'method': 'cash',
+      'method': method,
       'recordedByUid': recordedByUid,
       'recordedAt': FieldValue.serverTimestamp(),
       'note': note,
     });
+  }
+
+  /// A goodwill reduction on what a doctor owes (e.g. rounding a balance
+  /// down) — not a cash collection. Written to the same payments ledger as
+  /// [recordPayment] (method: 'discount' instead of 'cash') so it reduces
+  /// amountRemaining/outstanding-debt exactly like a real payment via the
+  /// existing onPaymentCreated trigger, while staying visually distinct in
+  /// the order's payment history. Never touches profit — profit is derived
+  /// once at order creation (see ProfitDataSummary) and is structurally
+  /// untouched by anything written to this subcollection.
+  Future<void> applyDiscount({
+    required String orderId,
+    required num amount,
+    required String appliedByUid,
+    String note = '',
+  }) {
+    return recordPayment(
+      orderId: orderId,
+      amount: amount,
+      recordedByUid: appliedByUid,
+      note: note,
+      method: 'discount',
+    );
   }
 
   Stream<List<Payment>> watchPayments(String orderId) {

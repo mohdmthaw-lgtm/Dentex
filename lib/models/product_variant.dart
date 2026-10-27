@@ -19,6 +19,16 @@ abstract class ProductVariant with _$ProductVariant {
     @Default(0) int totalSold,
     @Default('') String imageUrl,
     @Default('') String imagePath,
+    // Spec fields shown on burs/endo-file catalog cards and detail sheets
+    // (see create_order_screen.dart) — left null for product lines where
+    // they don't apply (gauze, syringes, etc.) rather than defaulting to 0,
+    // so the UI can tell "no spec" apart from "zero".
+    num? diameterMm,
+    num? totalLengthMm,
+    // Diamond-bur grit — id into [burRoughnessLevels] (bur_roughness.dart).
+    // The display color is always derived from this, never stored
+    // separately, so there's no way for color/roughness to drift apart.
+    @Default('') String roughness,
     // Denormalized parent product name — written alongside the variant so
     // best-seller analytics (a collectionGroup query across every
     // product's variants) can display "product + variant" without an N+1
@@ -45,6 +55,9 @@ abstract class VariantSummary with _$VariantSummary {
     required String label,
     required num sellPrice,
     @Default(0) int quantity,
+    num? diameterMm,
+    num? totalLengthMm,
+    @Default('') String roughness,
   }) = _VariantSummary;
 
   factory VariantSummary.fromJson(Map<String, dynamic> json) =>

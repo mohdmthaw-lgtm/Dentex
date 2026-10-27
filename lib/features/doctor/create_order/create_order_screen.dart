@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/bur_roughness.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/constants/loyalty_tiers.dart';
+import '../../../core/constants/product_categories.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/doctor_tier.dart';
 import '../../../core/utils/reorder_suggestions.dart';
@@ -18,11 +20,46 @@ import '../../../models/product_variant.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
 import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
+
+String _trimZero(num n) =>
+    n == n.roundToDouble() ? n.toStringAsFixed(0) : n.toString();
+
+/// One labeled spec cell ("الطول الكلي" / "22 mm") — these sit side by side
+/// below a bur/endo-file variant row, matching the reference mockup's
+/// boxed spec layout (roughness/color is shown separately as a dot+label,
+/// not a box, since it's a selectable attribute rather than a measurement).
+class _SpecBox extends StatelessWidget {
+  const _SpecBox({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Text(label,
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+          const SizedBox(height: 2),
+          Text(value,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+}
 
 /// Doctor-facing order builder. Shows sell price only (never cost/profit —
 /// enforced both here by simply not fetching cost data, and structurally by
@@ -45,6 +82,7 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
   final List<CartLine> _cart = [];
   final _searchController = TextEditingController();
   String _query = '';
+  String? _categoryFilter;
   bool _submitting = false;
 
   // This doctor's orders (all-time), fetched once and reused both to
@@ -240,6 +278,32 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
               onChanged: (v) => setState(() => _query = v.trim()),
             ),
           ),
+          SizedBox(
+            height: 48,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: AppChoiceChip(
+                    label: 'الكل',
+                    selected: _categoryFilter == null,
+                    onSelected: (_) => setState(() => _categoryFilter = null),
+                  ),
+                ),
+                for (final c in productCategories)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: AppChoiceChip(
+                      label: c.label,
+                      selected: _categoryFilter == c.id,
+                      onSelected: (_) => setState(() => _categoryFilter = c.id),
+                    ),
+                  ),
+              ],
+            ),
+          ),
           Expanded(
             child: StreamBuilder<List<Product>>(
               stream: productsStream,
@@ -254,13 +318,18 @@ class _CreateOrderScreenState extends ConsumerState<CreateOrderScreen> {
                 if (products.isEmpty) {
                   return const Center(child: Text('لا توجد منتجات متاحة حالياً'));
                 }
-                final filtered = _query.isEmpty
-                    ? products
-                    : products
-                        .where((p) =>
-                            p.name.contains(_query) ||
-                            p.manufacturer.contains(_query))
-                        .toList();
+                final q = _query.toLowerCase();
+                final filtered = products.where((p) {
+                  if (q.isNotEmpty &&
+                      !p.name.toLowerCase().contains(q) &&
+                      !p.manufacturer.toLowerCase().contains(q)) {
+                    return false;
+                  }
+                  if (_categoryFilter != null && p.category != _categoryFilter) {
+                    return false;
+                  }
+                  return true;
+                }).toList();
                 if (filtered.isEmpty) {
                   return const Center(child: Text('لا نتائج مطابقة'));
                 }
@@ -571,6 +640,10 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
                   final qty = _quantities[v.id] ?? 0;
                   final outOfStock = v.quantity <= 0;
                   final selected = qty > 0;
+                  final roughness = burRoughnessById(v.roughness);
+                  final hasSpecs = roughness != null ||
+                      v.diameterMm != null ||
+                      v.totalLengthMm != null;
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.all(10),
@@ -582,62 +655,106 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
                       ),
                       color: selected ? AppTheme.primary.withOpacity(0.05) : null,
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: SizedBox(
-                            width: 52,
-                            height: 52,
-                            child: v.imageUrl.isNotEmpty
-                                ? CachedNetworkImage(imageUrl: v.imageUrl, fit: BoxFit.cover)
-                                : Container(
-                                    color: Colors.grey.shade100,
-                                    child: Icon(Icons.inventory_2_outlined,
-                                        color: Colors.grey.shade400),
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: SizedBox(
+                                width: hasSpecs ? 72 : 52,
+                                height: hasSpecs ? 72 : 52,
+                                child: v.imageUrl.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: v.imageUrl, fit: BoxFit.cover)
+                                    : Container(
+                                        color: Colors.grey.shade100,
+                                        child: Icon(Icons.inventory_2_outlined,
+                                            color: Colors.grey.shade400),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(v.label,
+                                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                                  if (roughness != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          CircleAvatar(
+                                              backgroundColor: roughness.color, radius: 5),
+                                          const SizedBox(width: 5),
+                                          Text(roughness.label,
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.grey.shade700)),
+                                        ],
+                                      ),
+                                    ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    outOfStock
+                                        ? 'نفذ من المخزون'
+                                        : _currency.format(v.sellPrice),
+                                    style: TextStyle(
+                                      color: outOfStock ? AppTheme.danger : AppTheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
                                   ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(v.label,
-                                  style: const TextStyle(fontWeight: FontWeight.w600)),
-                              Text(
-                                outOfStock ? 'نفذ من المخزون' : _currency.format(v.sellPrice),
-                                style: TextStyle(
-                                  color: outOfStock ? AppTheme.danger : AppTheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            if (!outOfStock)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove_circle_outline, size: 28),
+                                    onPressed: qty > 0
+                                        ? () => setState(() => _quantities[v.id] = qty - 1)
+                                        : null,
+                                  ),
+                                  Text('$qty',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(fontWeight: FontWeight.bold)),
+                                  IconButton(
+                                    icon: const Icon(Icons.add_circle_outline,
+                                        color: AppTheme.primary, size: 28),
+                                    onPressed: () =>
+                                        setState(() => _quantities[v.id] = qty + 1),
+                                  ),
+                                ],
+                              ),
+                          ],
                         ),
-                        if (!outOfStock)
+                        if (v.diameterMm != null || v.totalLengthMm != null) ...[
+                          const SizedBox(height: 10),
                           Row(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline, size: 28),
-                                onPressed: qty > 0
-                                    ? () => setState(() => _quantities[v.id] = qty - 1)
-                                    : null,
-                              ),
-                              Text('$qty',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold)),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline,
-                                    color: AppTheme.primary, size: 28),
-                                onPressed: () => setState(() => _quantities[v.id] = qty + 1),
-                              ),
+                              if (v.totalLengthMm != null)
+                                Expanded(
+                                    child: _SpecBox(
+                                        label: 'الطول الكلي',
+                                        value: '${_trimZero(v.totalLengthMm!)} mm')),
+                              if (v.totalLengthMm != null && v.diameterMm != null)
+                                const SizedBox(width: 6),
+                              if (v.diameterMm != null)
+                                Expanded(
+                                    child: _SpecBox(
+                                        label: 'القطر',
+                                        value: 'Ø ${_trimZero(v.diameterMm!)}')),
                             ],
                           ),
+                        ],
                       ],
                     ),
                   );

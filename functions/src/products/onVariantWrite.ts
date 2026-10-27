@@ -28,6 +28,13 @@ export const onVariantWrite = onDocumentWritten(
       label: d.data().label,
       sellPrice: d.data().sellPrice,
       quantity: d.data().quantity ?? 0,
+      // Denormalized alongside price/quantity so catalog grid cards (burs,
+      // endo files) can show Ø/length without an N+1 read into variants —
+      // same rationale as the rest of this summary cache. Omitted when the
+      // variant doesn't carry a spec (plain consumables).
+      ...(d.data().diameterMm != null ? { diameterMm: d.data().diameterMm } : {}),
+      ...(d.data().totalLengthMm != null ? { totalLengthMm: d.data().totalLengthMm } : {}),
+      roughness: d.data().roughness ?? "",
     }));
     const totalQuantity = variantSummaries.reduce((sum, v) => sum + v.quantity, 0);
 

@@ -4,18 +4,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/product_categories.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/product.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
 
-class ProductsListScreen extends ConsumerWidget {
+class ProductsListScreen extends ConsumerStatefulWidget {
   const ProductsListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProductsListScreen> createState() => _ProductsListScreenState();
+}
+
+class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
+  String? _categoryFilter;
+
+  @override
+  Widget build(BuildContext context) {
     final productsStream = ref.watch(productRepositoryProvider).watchProducts();
 
     return Scaffold(
@@ -35,11 +44,50 @@ class ProductsListScreen extends ConsumerWidget {
           if (products.isEmpty) {
             return const Center(child: Text('لا توجد منتجات بعد'));
           }
-          return ListView.separated(
-            padding: const EdgeInsets.all(12),
-            itemCount: products.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, i) => _ProductCard(product: products[i]),
+          final filtered = _categoryFilter == null
+              ? products
+              : products.where((p) => p.category == _categoryFilter).toList();
+          return Column(
+            children: [
+              SizedBox(
+                height: 48,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: AppChoiceChip(
+                        label: 'الكل',
+                        selected: _categoryFilter == null,
+                        onSelected: (_) => setState(() => _categoryFilter = null),
+                      ),
+                    ),
+                    for (final c in productCategories)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: AppChoiceChip(
+                          label: c.label,
+                          selected: _categoryFilter == c.id,
+                          onSelected: (_) =>
+                              setState(() => _categoryFilter = c.id),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: filtered.isEmpty
+                    ? const Center(child: Text('لا توجد منتجات بهذا التصنيف'))
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: filtered.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (context, i) =>
+                            _ProductCard(product: filtered[i]),
+                      ),
+              ),
+            ],
           );
         },
       ),
