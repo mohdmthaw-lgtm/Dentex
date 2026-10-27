@@ -21,6 +21,7 @@ import '../../../models/user_profile.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/app_choice_chip.dart';
+import '../../../shared/widgets/full_screen_image_viewer.dart';
 import '../../../shared/widgets/product_thumbnail.dart';
 import '../../../shared/widgets/tier_badge.dart';
 
@@ -505,15 +506,20 @@ class _ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: product.imageUrl.isEmpty
-                  ? Container(
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.inventory_2_outlined,
-                          size: 36, color: Colors.grey),
-                    )
-                  : CachedNetworkImage(imageUrl: product.imageUrl, fit: BoxFit.cover),
+            GestureDetector(
+              onTap: product.imageUrl.isEmpty
+                  ? null
+                  : () => showFullScreenImage(context, product.imageUrl),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: product.imageUrl.isEmpty
+                    ? Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.inventory_2_outlined,
+                            size: 36, color: Colors.grey),
+                      )
+                    : CachedNetworkImage(imageUrl: product.imageUrl, fit: BoxFit.cover),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
@@ -603,12 +609,15 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: [
                 if (widget.product.imageUrl.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: CachedNetworkImage(
-                          imageUrl: widget.product.imageUrl, fit: BoxFit.cover),
+                  GestureDetector(
+                    onTap: () => showFullScreenImage(context, widget.product.imageUrl),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: CachedNetworkImage(
+                            imageUrl: widget.product.imageUrl, fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                 const SizedBox(height: 14),
@@ -660,19 +669,24 @@ class _VariantPickerSheetState extends State<_VariantPickerSheet> {
                       children: [
                         Row(
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: SizedBox(
-                                width: hasSpecs ? 72 : 52,
-                                height: hasSpecs ? 72 : 52,
-                                child: v.imageUrl.isNotEmpty
-                                    ? CachedNetworkImage(
-                                        imageUrl: v.imageUrl, fit: BoxFit.cover)
-                                    : Container(
-                                        color: Colors.grey.shade100,
-                                        child: Icon(Icons.inventory_2_outlined,
-                                            color: Colors.grey.shade400),
-                                      ),
+                            GestureDetector(
+                              onTap: v.imageUrl.isEmpty
+                                  ? null
+                                  : () => showFullScreenImage(context, v.imageUrl),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox(
+                                  width: hasSpecs ? 72 : 52,
+                                  height: hasSpecs ? 72 : 52,
+                                  child: v.imageUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: v.imageUrl, fit: BoxFit.cover)
+                                      : Container(
+                                          color: Colors.grey.shade100,
+                                          child: Icon(Icons.inventory_2_outlined,
+                                              color: Colors.grey.shade400),
+                                        ),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 12),

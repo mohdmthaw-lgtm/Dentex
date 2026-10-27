@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/offer.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/full_screen_image_viewer.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -66,9 +67,12 @@ class _OfferCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (offer.imageUrl.isNotEmpty)
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: CachedNetworkImage(imageUrl: offer.imageUrl, fit: BoxFit.cover),
+              GestureDetector(
+                onTap: () => showFullScreenImage(context, offer.imageUrl),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: CachedNetworkImage(imageUrl: offer.imageUrl, fit: BoxFit.cover),
+                ),
               ),
             Padding(
               padding: const EdgeInsets.all(14),

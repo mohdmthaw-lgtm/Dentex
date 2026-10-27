@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../models/offer.dart';
 import '../../../services/firebase/order_repository.dart';
 import '../../../services/firebase/service_providers.dart';
+import '../../../shared/widgets/full_screen_image_viewer.dart';
 import '../../../shared/widgets/product_thumbnail.dart';
 
 final _currency =
@@ -100,9 +101,12 @@ class _OfferDetailScreenState extends ConsumerState<OfferDetailScreen> {
                 child: ListView(
                   children: [
                     if (offer.imageUrl.isNotEmpty)
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: CachedNetworkImage(imageUrl: offer.imageUrl, fit: BoxFit.cover),
+                      GestureDetector(
+                        onTap: () => showFullScreenImage(context, offer.imageUrl),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: CachedNetworkImage(imageUrl: offer.imageUrl, fit: BoxFit.cover),
+                        ),
                       ),
                     Padding(
                       padding: const EdgeInsets.all(16),

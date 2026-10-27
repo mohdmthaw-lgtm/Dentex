@@ -9,6 +9,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../models/product.dart';
 import '../../../services/firebase/service_providers.dart';
 import '../../../shared/widgets/app_choice_chip.dart';
+import '../../../shared/widgets/full_screen_image_viewer.dart';
 
 final _currency =
     NumberFormat.currency(locale: 'ar', symbol: '₪', decimalDigits: 0);
@@ -116,21 +117,26 @@ class _ProductCard extends ConsumerWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 64,
-                  height: 64,
-                  child: product.imageUrl.isEmpty
-                      ? Container(
-                          color: Colors.grey.shade200,
-                          child: const Icon(Icons.inventory_2_outlined,
-                              color: Colors.grey),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: product.imageUrl,
-                          fit: BoxFit.cover,
-                        ),
+              GestureDetector(
+                onTap: product.imageUrl.isEmpty
+                    ? null
+                    : () => showFullScreenImage(context, product.imageUrl),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: product.imageUrl.isEmpty
+                        ? Container(
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.inventory_2_outlined,
+                                color: Colors.grey),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: product.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
